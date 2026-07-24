@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seller Portal · Ambassador Shopping Center</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{--wine:#8a1450;--teal:#0D7A6F;--ink:#221820;--mid:#7d6e76;--line:#e8e2e5;--bg:#f8f5f6}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0}
+  .top{background:linear-gradient(135deg,var(--wine),#5e0e38);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px}
+  .top h1{font-size:1.05rem;margin:0;flex:1}
+  .top .shop{font-size:.8rem;opacity:.85}
+  .top button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;font-size:.8rem}
+  .wrap{max-width:860px;margin:0 auto;padding:18px}
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tabs button{flex:1;padding:11px;border:1.5px solid var(--line);background:#fff;border-radius:11px;font-weight:700;font-size:.85rem;cursor:pointer;color:var(--mid)}
+  .tabs button.on{border-color:var(--wine);color:var(--wine);background:#faf2f6}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:12px;font-size:.86rem}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .ref{font-family:ui-monospace,monospace;font-weight:700;color:var(--wine)}
+  .muted{color:var(--mid);font-size:.78rem}
+  .tot{font-weight:800;color:var(--wine);font-size:1rem}
+  .pill{border-radius:99px;padding:3px 11px;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+  .pill.placed{background:#eee;color:#666}.pill.confirmed{background:#e6f4ff;color:#1769aa}
+  .pill.preparing{background:#fff7e0;color:#9a6b00}.pill.out_for_delivery{background:#efe9ff;color:#6b3fd1}
+  .pill.delivered{background:#e9f8ee;color:#1d9e54}.pill.cancelled{background:#fdeaf0;color:#c2185b}
+  select,input{padding:9px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:.85rem;background:#fff}
+  .btn{background:var(--teal);color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.82rem}
+  .btn.wine{background:var(--wine)}
+  .btn:disabled{opacity:.5}
+  .login{max-width:380px;margin:8vh auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;text-align:center}
+  .login .logo{width:56px;height:56px;border-radius:15px;background:linear-gradient(135deg,var(--wine),#b03d77);color:#fff;font-size:1.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .login h2{margin:0 0 4px;font-size:1.25rem}
+  .login p{color:var(--mid);font-size:.82rem;margin:0 0 18px}
+  .login input{width:100%;margin-bottom:10px}
+  .login .btn{width:100%;padding:12px}
+  .err{color:#c2185b;font-size:.8rem;min-height:18px;margin-top:8px}
+  .items{color:var(--mid);font-size:.78rem;line-height:1.6;margin:6px 0}
+  .buyer{background:var(--bg);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:.8rem}
+  .empty{text-align:center;color:#aaa;padding:48px 10px}
+  .prod{display:grid;grid-template-columns:1fr 100px 140px 60px 90px;gap:8px;align-items:center}
+  .prod.is-off{opacity:.55;background:#fafafa}
+  @media(max-width:640px){.prod{grid-template-columns:1fr 1fr}}
+  .savebar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px;display:none;text-align:right}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => (''+(s==null?'':s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const STATUS_LABEL = {placed:'Placed', confirmed:'Payment confirmed', preparing:'Preparing', out_for_delivery:'Out for delivery', delivered:'Delivered', cancelled:'Cancelled'};
+let me = null, tab = 'orders';
+
+async function api(path, opts){
+  const o = opts||{};
+  const r = await fetch(path, { method:o.method||'GET',
+    headers:o.body?{'Content-Type':'application/json'}:undefined,
+    body:o.body?JSON.stringify(o.body):undefined, credentials:'same-origin' });
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||('HTTP '+r.status));
+  return d;
+}
+
+function loginView(msg){
+  $('#app').innerHTML = `
+  <div class="login">
+    <div class="logo">A</div>
+    <h2>Seller Portal</h2>
+    <p>Ambassador Shopping Center · sign in with the phone and access code given to you by Bisinka Marketplace.</p>
+    <input id="ph" type="tel" placeholder="Phone (09xx xxx xxx)">
+    <input id="code" type="password" placeholder="Access code" inputmode="numeric">
+    <button class="btn wine" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i> Sign in</button>
+    <div class="err" id="err">${esc(msg||'')}</div>
+  </div>`;
+}
+async function doLogin(){
+  try{
+    const d = await api('/api/seller/login', {method:'POST', body:{phone:$('#ph').value, code:$('#code').value}});
+    me = d.tenant; render();
+  }catch(e){ $('#err').textContent = e.message; }
+}
+async function doLogout(){ await api('/api/seller/logout',{method:'POST',body:{}}).catch(()=>{}); me=null; loginView(); }
+
+function shell(inner){
+  $('#app').innerHTML = `
+  <div class="top"><h1><i class="fas fa-store"></i> ${esc(me.name)}</h1>
+    <span class="shop">${esc(me.floor)} · Seller Portal</span>
+    <button onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Sign out</button></div>
+  <div class="wrap">
+    <div class="tabs">
+      <button class="${tab==='orders'?'on':''}" onclick="tab='orders';render()"><i class="fas fa-receipt"></i> Orders</button>
+      <button class="${tab==='stock'?'on':''}" onclick="tab='stock';render()"><i class="fas fa-boxes-stacked"></i> Stock & Prices</button>
+    </div>
+    <div id="body">${inner}</div>
+  </div>`;
+}
+
+async function render(){
+  if(!me){ loginView(); return; }
+  shell('<div class="empty">Loading…</div>');
+  try{
+    if(tab==='orders'){
+      const d = await api('/api/seller/orders');
+      const list = d.orders||[];
+      $('#body').innerHTML = list.length ? list.map(o=>{
+        const items = (o.items||[]).map(i=>esc(i.name)+(i.variant?' ['+esc(i.variant)+']':'')+' ×'+i.qty).join(', ');
+        const b=o.buyer||{};
+        const opts = (d.statuses||[]).map(s=>`<option value="${s}" ${s===o.status?'selected':''}>${STATUS_LABEL[s]||s}</option>`).join('');
+        return `<div class="card">
+          <div class="row"><span class="ref">${esc(o.ref)}</span><span class="pill ${esc(o.status)}">${esc(STATUS_LABEL[o.status]||o.status)}</span></div>
+          <div class="items">${items}</div>
+          <div class="buyer"><b>${esc(b.name||'')}</b> · <a href="tel:${esc(b.phone||'')}">${esc(b.phone||'')}</a><br>
+            ${b.method==='pickup'?'<i class="fas fa-store"></i> Pickup at shop':'<i class="fas fa-truck-fast"></i> '+esc((b.area||'')+' — '+(b.addr||''))}
+            ${b.geo?` · <a href="${esc(b.geo)}" target="_blank" rel="noopener">map</a>`:''}</div>
+          <div class="row">
+            <span class="muted">subtotal ${o.subtotal} + delivery ${o.delivery_fee} + VAT ${o.tax} → <span class="tot">${o.total} ETB</span></span>
+            <span>
+              <select id="st-${esc(o.ref)}">${opts}</select>
+              <button class="btn" onclick="setStatus('${esc(o.ref)}')">Update</button>
+            </span>
+          </div>
+          <div class="muted" style="margin-top:6px"><i class="fas fa-comment-sms"></i> The buyer gets an SMS when you confirm payment, send it out, deliver, or cancel.</div>
+        </div>`;
+      }).join('') : '<div class="empty"><i class="fas fa-receipt"></i><br>No orders yet. They will appear here the moment a buyer checks out.</div>';
+    } else {
+      const cat = await api('/api/catalog');
+      const t = (cat.building.tenants||[]).find(x=>x.id===me.id) || {products:[]};
+      $('#body').innerHTML = `<div class="card muted" style="margin-bottom:14px"><i class="fas fa-circle-info"></i>
+        Change a price or stock state and press <b>Save</b> on that row — the storefront updates instantly. Mark items <b>Sold out</b> to stop new orders; buyers can then request “notify me”. Use <b>ON/OFF</b> to hide an item from the storefront entirely without losing it — turn it back on any time.</div>` +
+        t.products.map(p=>`<div class="card prod${p.active===false?' is-off':''}">
+          <div><b>${esc(p.name)}</b><div class="muted">${esc(p.cat)} · ${esc(p.id)}${p.active===false?' · <span style="color:#c2185b;font-weight:700">OFF</span>':''}</div></div>
+          <input type="number" id="pr-${esc(p.id)}" value="${p.price}" min="1"> 
+          <select id="sk-${esc(p.id)}">
+            <option value="in" ${p.stock&&p.stock.state==='in'?'selected':''}>In stock</option>
+            <option value="low" ${p.stock&&p.stock.state==='low'?'selected':''}>Low (few left)</option>
+            <option value="made" ${p.stock&&p.stock.state==='made'?'selected':''}>Made to order</option>
+            <option value="out" ${p.stock&&p.stock.state==='out'?'selected':''}>Sold out</option>
+          </select>
+          <button class="btn" onclick="saveProd('${esc(p.id)}')">Save</button>
+          <button class="btn ${p.active===false?'':'wine'}" style="${p.active===false?'background:#2f9e44':''}" onclick="toggleActive('${esc(p.id)}',${p.active===false})">${p.active===false?'Turn ON':'Turn OFF'}</button>
+        </div>`).join('');
+    }
+  }catch(e){
+    if((''+e.message).match(/sign in/i)){ me=null; loginView('Session expired — please sign in again.'); return; }
+    $('#body').innerHTML = '<div class="empty">Error: '+esc(e.message)+'</div>';
+  }
+}
+async function setStatus(ref){
+  const sel = document.getElementById('st-'+ref);
+  try{ await api('/api/seller/order-status',{method:'POST',body:{ref, status:sel.value}}); render(); }
+  catch(e){ alert(e.message); }
+}
+async function saveProd(pid){
+  const price = document.getElementById('pr-'+pid).value;
+  const state = document.getElementById('sk-'+pid).value;
+  try{
+    await api('/api/seller/product',{method:'POST',body:{pid, price:+price, stock:{state, label: state==='low'?'2':''}}});
+    render();
+  }catch(e){ alert(e.message); }
+}
+async function toggleActive(pid, turnOn){
+  try{ await api('/api/seller/product',{method:'POST',body:{pid, active:turnOn}}); render(); }catch(e){ alert(e.message); }
+}
+/* boot: restore session if cookie valid */
+api('/api/seller/me').then(d=>{ me=d.tenant; render(); }).catch(()=>loginView());
+</script>
+</body>
+</html>

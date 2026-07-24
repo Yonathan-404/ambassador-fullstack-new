@@ -1,0 +1,15 @@
+{
+  "name": "ambassador-store",
+  "version": "1.0.0",
+  "description": "Ambassador Shopping Center — full-stack marketplace storefront (Bisinka)",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}

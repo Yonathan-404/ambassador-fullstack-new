@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Ambassador Store</title>
+<style>
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:#f6f3f4;color:#221820;margin:0;padding:22px}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:1.25rem;display:flex;align-items:center;gap:10px}
+  h1 span{background:#8a1450;color:#fff;border-radius:8px;padding:4px 10px;font-size:.75rem}
+  .bar{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+  input,select{padding:9px 12px;border:1.5px solid #ddd;border-radius:9px;font-size:.85rem;background:#fff}
+  input.key{flex:1;min-width:200px}
+  button{background:#8a1450;color:#fff;border:0;border-radius:9px;padding:9px 15px;font-weight:600;cursor:pointer;font-size:.82rem}
+  button.alt{background:#0D7A6F}button.gray{background:#888}button.danger{background:#c2185b}
+  .card{background:#fff;border:1px solid #e8e2e5;border-radius:13px;padding:13px 15px;margin-bottom:10px;font-size:.84rem}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .ref{color:#8a1450;font-family:ui-monospace,monospace;font-weight:700}
+  .muted{color:#8a7a84;font-size:.76rem}
+  .pill{border-radius:99px;padding:2px 10px;font-size:.66rem;font-weight:800;text-transform:uppercase}
+  .pill.placed{background:#eee;color:#666}.pill.confirmed{background:#e6f4ff;color:#1769aa}.pill.preparing{background:#fff7e0;color:#9a6b00}
+  .pill.out_for_delivery{background:#efe9ff;color:#6b3fd1}.pill.delivered{background:#e9f8ee;color:#1d9e54}.pill.cancelled{background:#fdeaf0;color:#c2185b}
+  .empty{padding:40px;text-align:center;color:#999}
+  .grid{display:grid;gap:8px}
+  .codebox{background:#fff7e0;border:1px solid #e8c96a;border-radius:9px;padding:8px 12px;font-weight:700;display:inline-block}
+  .formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+  h3{margin:18px 0 8px;font-size:.95rem}
+  .card.is-off{opacity:.55;background:#fafafa}
+  .offpill{border-radius:99px;padding:2px 9px;font-size:.62rem;font-weight:800;text-transform:uppercase;background:#eee;color:#999;margin-left:6px}
+  button.toggle-on{background:#2f9e44}
+  button.toggle-off{background:#c2185b}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ambassador Store <span>ADMIN</span></h1>
+  <div class="bar">
+    <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
+    <button onclick="show('orders')">Orders</button>
+    <button class="alt" onclick="show('sellers')">Sellers</button>
+    <button class="alt" onclick="show('products')">Products</button>
+    <button class="alt" onclick="show('services')">Services</button>
+    <button class="gray" onclick="show('notify')">Notify</button>
+    <button class="gray" onclick="show('sms')">SMS log</button>
+  </div>
+  <div id="out" class="empty">Enter your ADMIN_KEY and choose a view.</div>
+</div>
+<script>
+const out = document.getElementById('out');
+const esc = s => (''+(s==null?'':s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const K = () => document.getElementById('key').value.trim();
+const STATUS_LABEL = {placed:'Placed',confirmed:'Confirmed',preparing:'Preparing',out_for_delivery:'Out for delivery',delivered:'Delivered',cancelled:'Cancelled'};
+async function api(path, opts){
+  const o=opts||{};
+  const r=await fetch(path,{method:o.method||'GET',headers:Object.assign({'x-admin-key':K()},o.body?{'Content-Type':'application/json'}:{}),body:o.body?JSON.stringify(o.body):undefined});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||('HTTP '+r.status));
+  return d;
+}
+function fail(e){ out.className='empty'; out.textContent='Error: '+e.message; }
+
+async function show(view){
+  if(!K()){ out.className='empty'; out.textContent='Please enter the ADMIN_KEY.'; return; }
+  out.className='empty'; out.textContent='Loading…';
+  try{
+    if(view==='orders'){
+      const d=await api('/api/admin/orders'); const list=d.orders||[]; out.className='';
+      out.innerHTML=list.length?list.map(o=>{
+        const items=(o.items||[]).map(i=>esc(i.name)+(i.variant?' ['+esc(i.variant)+']':'')+' ×'+i.qty).join(', ');
+        const b=o.buyer||{};
+        return `<div class="card"><div class="row"><span class="ref">${esc(o.ref)}</span><span class="pill ${esc(o.status)}">${esc(STATUS_LABEL[o.status]||o.status)}</span></div>
+          <div class="muted">${esc(o.tenant_id)} · ${esc((o.created_at||'').toString().slice(0,19).replace('T',' '))}</div>
+          <div>${items}</div>
+          <div class="muted">${esc(b.name||'')} ${esc(b.phone||'')} · ${b.method==='pickup'?'pickup':esc((b.area||'')+' — '+(b.addr||''))}</div>
+          <div>sub ${o.subtotal} + dlv ${o.delivery_fee} + VAT ${o.tax} = <b style="color:#8a1450">${o.total} ETB</b> → ${esc((o.bank||{}).name||'')} ${esc((o.bank||{}).acct||'')}</div>
+        </div>`;}).join(''):'<div class="empty">No orders yet.</div>';
+    }
+    else if(view==='sellers'){
+      const c=await api('/api/admin/catalog'); const ts=c.building.tenants||[]; out.className='';
+      out.innerHTML =
+        ts.map(t=>`<div class="card row ${t.active===false?'is-off':''}">
+          <div><b>${esc(t.name)}</b> <span class="muted">(${esc(t.id)})</span>${t.active===false?'<span class="offpill">OFF</span>':''}<div class="muted">${esc(t.floor)} · ${esc(t.cat)} · ${(t.products||[]).length} products · mobile ${esc(t.mobile||'—')}</div></div>
+          <span>
+            <input id="ph-${esc(t.id)}" placeholder="Seller login phone" value="${esc((t.mobile||'').replace(/\\s/g,''))}" style="width:170px">
+            <button class="alt" onclick="genCode('${esc(t.id)}')">Generate access code</button>
+            <button class="${t.active===false?'toggle-on':'toggle-off'}" onclick="toggleTenant('${esc(t.id)}',${t.active===false})">${t.active===false?'Turn ON':'Turn OFF'}</button>
+            <button class="danger" onclick="delTenant('${esc(t.id)}')">Delete</button>
+          </span>
+          <div id="code-${esc(t.id)}" style="width:100%"></div>
+        </div>`).join('') +
+        `<h3>Add a new seller</h3><div class="card">
+          <div class="formgrid">
+            <input id="nt-id" placeholder="id (e.g. bluecafe)"><input id="nt-name" placeholder="Shop name">
+            <input id="nt-floor" placeholder="Floor (e.g. 2nd Floor)"><input id="nt-cat" placeholder="Category (e.g. Café)">
+            <input id="nt-wa" placeholder="WhatsApp (2519…)"><input id="nt-mobile" placeholder="Mobile (+251 …)">
+            <input id="nt-owner" placeholder="Owner name"><input id="nt-acct" placeholder="CBE account number">
+            <input id="nt-holder" placeholder="Account holder name">
+          </div>
+          <div style="margin-top:10px;text-align:right"><button onclick="addTenant()">Add seller</button></div>
+          <div class="muted" style="margin-top:6px">New sellers get safe defaults (color, icon, empty products) and start turned ON. Generate their access code after adding, then add products in the Products tab.</div>
+        </div>`;
+    }
+    else if(view==='products'){
+      const c=await api('/api/admin/catalog'); const ts=c.building.tenants||[]; out.className='';
+      const opts=ts.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}${t.active===false?' (OFF)':''}</option>`).join('');
+      window.__cat=c;
+      out.innerHTML=`<div class="bar"><select id="ptid" onchange="renderProds()">${opts}</select></div><div id="prods"></div>`;
+      renderProds();
+    }
+    else if(view==='services'){
+      const c=await api('/api/admin/catalog'); const list=c.building.services||[]; out.className='';
+      out.innerHTML =
+        list.map(s=>`<div class="card row ${s.active===false?'is-off':''}">
+          <div><b>${esc(s.name)}</b> <span class="muted">(${esc(s.id)})</span>${s.active===false?'<span class="offpill">OFF</span>':''}<div class="muted">${esc(s.floor)} · ${esc(s.type)} · ${esc(s.mobile||'—')}</div></div>
+          <span>
+            <button class="${s.active===false?'toggle-on':'toggle-off'}" onclick="toggleService('${esc(s.id)}',${s.active===false})">${s.active===false?'Turn ON':'Turn OFF'}</button>
+            <button class="danger" onclick="delService('${esc(s.id)}')">Delete</button>
+          </span>
+        </div>`).join('') +
+        `<h3>Add a new service</h3><div class="card">
+          <div class="formgrid">
+            <input id="ns-name" placeholder="Service name"><input id="ns-floor" placeholder="Floor (e.g. 3rd Floor)">
+            <input id="ns-type" placeholder="Type (e.g. Banking, Health)"><input id="ns-icon" placeholder="Icon (fa-store)">
+            <input id="ns-mobile" placeholder="Mobile (+251 …)"><input id="ns-owner" placeholder="Owner name">
+            <input id="ns-hours" placeholder="Hours (e.g. 9:00–19:00 daily)"><input id="ns-photo" placeholder="Photo URL">
+          </div>
+          <textarea id="ns-blurb" placeholder="Short description" style="width:100%;margin-top:8px;padding:9px 12px;border:1.5px solid #ddd;border-radius:9px;font-family:inherit;font-size:.85rem" rows="2"></textarea>
+          <div style="margin-top:10px;text-align:right"><button onclick="addService()">Add service</button></div>
+          <div class="muted" style="margin-top:6px">New services start turned ON and appear immediately under Building Services on the storefront.</div>
+        </div>`;
+    }
+    else if(view==='notify'){
+      const d=await api('/api/admin/notify'); const list=d.requests||[]; out.className='';
+      out.innerHTML=list.length?'<div class="card">'+list.map(n=>`<div class="row"><span class="ref">${esc(n.product_id)}</span><span>${esc(n.phone)}</span><span class="muted">${esc((n.created_at||'').toString().slice(0,16).replace('T',' '))}</span></div>`).join('')+'</div>':'<div class="empty">No notify requests.</div>';
+    }
+    else if(view==='sms'){
+      const d=await api('/api/admin/sms'); const list=d.messages||[]; out.className='';
+      out.innerHTML=list.length?'<div class="card">'+list.map(m=>`<div style="padding:6px 0;border-bottom:1px dashed #eee"><b>+${esc(m.to)}</b> <span class="muted">${esc(m.ts.slice(0,19).replace('T',' '))} via ${esc(m.provider)}</span><br>${esc(m.text)}</div>`).join('')+'</div>':'<div class="empty">No SMS sent yet (this session).</div>';
+    }
+  }catch(e){ fail(e); }
+}
+function renderProds(){
+  const tid=document.getElementById('ptid').value;
+  const t=(window.__cat.building.tenants||[]).find(x=>x.id===tid);
+  document.getElementById('prods').innerHTML =
+    (t.products||[]).map(p=>`<div class="card row ${p.active===false?'is-off':''}">
+      <div style="flex:1"><b>${esc(p.name)}</b> <span class="muted">(${esc(p.id)} · ${esc(p.cat)})</span>${p.active===false?'<span class="offpill">OFF</span>':''}</div>
+      <input type="number" id="prc-${esc(p.id)}" value="${p.price}" style="width:100px">
+      <select id="stk-${esc(p.id)}">
+        ${['in','low','made','out'].map(s=>`<option value="${s}" ${p.stock&&p.stock.state===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <button class="alt" onclick="saveProd('${esc(tid)}','${esc(p.id)}')">Save</button>
+      <button class="${p.active===false?'toggle-on':'toggle-off'}" onclick="toggleProd('${esc(p.id)}',${p.active===false})">${p.active===false?'Turn ON':'Turn OFF'}</button>
+      <button class="danger" onclick="delProd('${esc(p.id)}')">Delete</button>
+    </div>`).join('') +
+    `<h3>Add product to ${esc(t.name)}</h3><div class="card">
+      <div class="formgrid">
+        <input id="np-name" placeholder="Product name"><input id="np-cat" placeholder="Category">
+        <input id="np-price" type="number" placeholder="Price (ETB)"><input id="np-img" placeholder="Image URL">
+      </div>
+      <div style="margin-top:10px;text-align:right"><button onclick="addProd('${esc(tid)}')">Add product</button></div>
+    </div>`;
+}
+async function genCode(tid){
+  try{
+    const phone=document.getElementById('ph-'+tid).value;
+    const d=await api('/api/admin/seller-code',{method:'POST',body:{tenantId:tid,phone}});
+    document.getElementById('code-'+tid).innerHTML =
+      `<div class="codebox">Access code for ${esc(tid)} → phone +${esc(d.phone)}: <span style="font-size:1.1rem">${esc(d.code)}</span></div>
+       <div class="muted">Shown once — send it to the seller now (only a hash is stored). They sign in at <b>/seller.html</b>.</div>`;
+  }catch(e){ alert(e.message); }
+}
+async function addTenant(){
+  try{
+    await api('/api/admin/tenant',{method:'PUT',body:{tenant:{
+      id:v('nt-id'),name:v('nt-name'),floor:v('nt-floor'),cat:v('nt-cat'),
+      whatsapp:v('nt-wa'),mobile:v('nt-mobile'),owner:v('nt-owner'),
+      bank:{acct:v('nt-acct'),holder:v('nt-holder')}
+    }}});
+    show('sellers');
+  }catch(e){ alert(e.message); }
+}
+
+async function saveProd(tid,pid){
+  try{
+    await api('/api/admin/product',{method:'PUT',body:{tenantId:tid,product:{
+      id:pid, price:+document.getElementById('prc-'+pid).value,
+      stock:{state:document.getElementById('stk-'+pid).value,label:''}
+    }}});
+    show('products');
+  }catch(e){ alert(e.message); }
+}
+async function addProd(tid){
+  try{
+    await api('/api/admin/product',{method:'PUT',body:{tenantId:tid,product:{
+      name:v('np-name'),cat:v('np-cat')||'General',price:+v('np-price')||1,img:v('np-img')
+    }}});
+    show('products');
+  }catch(e){ alert(e.message); }
+}
+async function delTenant(tid){
+  if(!confirm('Delete seller '+tid+' and all their products from the catalog? Orders are kept.')) return;
+  try{ await api('/api/admin/tenant/'+tid,{method:'DELETE'}); show('sellers'); }catch(e){ alert(e.message); }
+}
+async function delProd(pid){
+  if(!confirm('Delete this product?')) return;
+  try{ await api('/api/admin/product/'+pid,{method:'DELETE'}); show('products'); }catch(e){ alert(e.message); }
+}
+async function toggleTenant(tid, turnOn){
+  try{ await api('/api/admin/tenant/'+tid+'/toggle',{method:'POST',body:{active:turnOn}}); show('sellers'); }catch(e){ alert(e.message); }
+}
+async function toggleProd(pid, turnOn){
+  try{ await api('/api/admin/product/'+pid+'/toggle',{method:'POST',body:{active:turnOn}}); show('products'); }catch(e){ alert(e.message); }
+}
+async function toggleService(sid, turnOn){
+  try{ await api('/api/admin/service/'+sid+'/toggle',{method:'POST',body:{active:turnOn}}); show('services'); }catch(e){ alert(e.message); }
+}
+async function addService(){
+  try{
+    await api('/api/admin/service',{method:'PUT',body:{service:{
+      name:v('ns-name'), floor:v('ns-floor'), type:v('ns-type')||'Other', icon:v('ns-icon')||'fa-concierge-bell',
+      mobile:v('ns-mobile'), owner:v('ns-owner'), hours:v('ns-hours'), photo:v('ns-photo'),
+      blurb:document.getElementById('ns-blurb').value.trim()
+    }}});
+    show('services');
+  }catch(e){ alert(e.message); }
+}
+async function delService(sid){
+  if(!confirm('Delete this service?')) return;
+  try{ await api('/api/admin/service/'+sid,{method:'DELETE'}); show('services'); }catch(e){ alert(e.message); }
+}
+const v = id => document.getElementById(id).value.trim();
+</script>
+</body>
+</html>
