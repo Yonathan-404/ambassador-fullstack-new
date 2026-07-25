@@ -16,53 +16,53 @@ import json,sys
 c=json.load(sys.stdin)['building']
 print('public tenants:', len(c['tenants']))
 print('public services:', len(c.get('services',[])))
-print('sahis products:', len([p for t in c['tenants'] if t['id']=='sahis' for p in t['products']]))
+print('gf5 products:', len([p for t in c['tenants'] if t['id']=='gf5' for p in t['products']]))
 "
 
 echo; echo "########## ADMIN: toggle a tenant OFF ##########"
-curl -s -m 5 -H "$AK" -X POST $B/api/admin/tenant/sahis/toggle | python3 -c "import json,sys;t=json.load(sys.stdin)['tenant'];print('sahis active now:',t['active'])"
+curl -s -m 5 -H "$AK" -X POST $B/api/admin/tenant/gf5/toggle | python3 -c "import json,sys;t=json.load(sys.stdin)['tenant'];print('gf5 active now:',t['active'])"
 
-echo "== public catalog after tenant OFF (sahis must be gone) =="
+echo "== public catalog after tenant OFF (gf5 must be gone) =="
 curl -s -m 5 $B/api/catalog | python3 -c "
 import json,sys
 c=json.load(sys.stdin)['building']
 ids=[t['id'] for t in c['tenants']]
-print('tenant count:', len(c['tenants']), '| sahis present:', 'sahis' in ids)
+print('tenant count:', len(c['tenants']), '| gf5 present:', 'gf5' in ids)
 "
-echo "== admin catalog still shows sahis (unfiltered) =="
+echo "== admin catalog still shows gf5 (unfiltered) =="
 curl -s -m 5 -H "$AK" $B/api/admin/catalog | python3 -c "
 import json,sys
 c=json.load(sys.stdin)['building']
 ids=[t['id'] for t in c['tenants']]
-print('admin tenant count:', len(c['tenants']), '| sahis present:', 'sahis' in ids)
+print('admin tenant count:', len(c['tenants']), '| gf5 present:', 'gf5' in ids)
 "
 echo "== ordering from a disabled tenant is rejected =="
-curl -s -m 5 -X POST $B/api/orders -H 'Content-Type: application/json' -d '{"tenantId":"sahis","items":[{"pid":"sahis-1","qty":1}],"buyer":{"name":"X","phone":"1","method":"pickup"},"bankKey":"cbe"}'; echo
+curl -s -m 5 -X POST $B/api/orders -H 'Content-Type: application/json' -d '{"tenantId":"gf5","items":[{"pid":"gf5-1","qty":1}],"buyer":{"name":"X","phone":"1","method":"pickup"},"bankKey":"cbe"}'; echo
 
-echo "== turn sahis back ON =="
-curl -s -m 5 -H "$AK" -X POST $B/api/admin/tenant/sahis/toggle -H 'Content-Type: application/json' -d '{"active":true}' | python3 -c "import json,sys;t=json.load(sys.stdin)['tenant'];print('sahis active now:',t['active'])"
+echo "== turn gf5 back ON =="
+curl -s -m 5 -H "$AK" -X POST $B/api/admin/tenant/gf5/toggle -H 'Content-Type: application/json' -d '{"active":true}' | python3 -c "import json,sys;t=json.load(sys.stdin)['tenant'];print('gf5 active now:',t['active'])"
 curl -s -m 5 $B/api/catalog | python3 -c "
 import json,sys
 c=json.load(sys.stdin)['building']
 ids=[t['id'] for t in c['tenants']]
-print('after re-enable, sahis present:', 'sahis' in ids)
+print('after re-enable, gf5 present:', 'gf5' in ids)
 "
 
 echo; echo "########## ADMIN: toggle a single PRODUCT OFF (tenant stays on) ##########"
-curl -s -m 5 -H "$AK" -X POST $B/api/admin/product/sahis-2/toggle | python3 -c "import json,sys;p=json.load(sys.stdin)['product'];print('sahis-2 active now:',p['active'])"
+curl -s -m 5 -H "$AK" -X POST $B/api/admin/product/gf5-2/toggle | python3 -c "import json,sys;p=json.load(sys.stdin)['product'];print('gf5-2 active now:',p['active'])"
 curl -s -m 5 $B/api/catalog | python3 -c "
 import json,sys
 c=json.load(sys.stdin)['building']
-t=[t for t in c['tenants'] if t['id']=='sahis'][0]
+t=[t for t in c['tenants'] if t['id']=='gf5'][0]
 pids=[p['id'] for p in t['products']]
-print('sahis still listed:', True, '| sahis-2 in public products:', 'sahis-2' in pids, '| product count:', len(pids))
+print('gf5 still listed:', True, '| gf5-2 in public products:', 'gf5-2' in pids, '| product count:', len(pids))
 "
 echo "== ordering the disabled product is rejected, tenant itself is fine =="
-curl -s -m 5 -X POST $B/api/orders -H 'Content-Type: application/json' -d '{"tenantId":"sahis","items":[{"pid":"sahis-2","qty":1}],"buyer":{"name":"X","phone":"1","method":"pickup"},"bankKey":"cbe"}'; echo
+curl -s -m 5 -X POST $B/api/orders -H 'Content-Type: application/json' -d '{"tenantId":"gf5","items":[{"pid":"gf5-2","qty":1}],"buyer":{"name":"X","phone":"1","method":"pickup"},"bankKey":"cbe"}'; echo
 echo "== ordering a DIFFERENT (still active) product from same tenant still works =="
-curl -s -m 5 -X POST $B/api/orders -H 'Content-Type: application/json' -d '{"tenantId":"sahis","items":[{"pid":"sahis-1","qty":1}],"buyer":{"name":"Marta","phone":"0912222222","method":"pickup"},"bankKey":"cbe"}' | python3 -c "import json,sys;o=json.load(sys.stdin)['order'];print('order placed ok, ref:',o['ref'],'status:',o['status'])"
-echo "== turn sahis-2 back on =="
-curl -s -m 5 -H "$AK" -X POST $B/api/admin/product/sahis-2/toggle -H 'Content-Type: application/json' -d '{"active":true}' | python3 -c "import json,sys;print('sahis-2 active:',json.load(sys.stdin)['product']['active'])"
+curl -s -m 5 -X POST $B/api/orders -H 'Content-Type: application/json' -d '{"tenantId":"gf5","items":[{"pid":"gf5-1","qty":1}],"buyer":{"name":"Marta","phone":"0912222222","method":"pickup"},"bankKey":"cbe"}' | python3 -c "import json,sys;o=json.load(sys.stdin)['order'];print('order placed ok, ref:',o['ref'],'status:',o['status'])"
+echo "== turn gf5-2 back on =="
+curl -s -m 5 -H "$AK" -X POST $B/api/admin/product/gf5-2/toggle -H 'Content-Type: application/json' -d '{"active":true}' | python3 -c "import json,sys;print('gf5-2 active:',json.load(sys.stdin)['product']['active'])"
 
 echo; echo "########## BUILDING SERVICES — full CRUD + toggle (new feature) ##########"
 echo "== public catalog includes services =="
@@ -86,21 +86,21 @@ curl -s -m 5 -H "$AK" -X DELETE $B/api/admin/service/$NEWSVC; echo
 curl -s -m 5 $B/api/catalog | python3 -c "import json,sys;c=json.load(sys.stdin)['building'];print('services back to:',len(c.get('services',[])))"
 
 echo; echo "########## SELLER SELF-SERVICE ON/OFF ##########"
-curl -s -m 5 -H "$AK" -X POST $B/api/admin/seller-code -H 'Content-Type: application/json' -d '{"tenantId":"sahis","phone":"0911111111"}' > /tmp/code.json
+curl -s -m 5 -H "$AK" -X POST $B/api/admin/seller-code -H 'Content-Type: application/json' -d '{"tenantId":"gf5","phone":"0911111111"}' > /tmp/code.json
 CODE=$(python3 -c "import json;print(json.load(open('/tmp/code.json'))['code'])")
 curl -s -m 5 -c /tmp/j_seller.txt -X POST $B/api/seller/login -H 'Content-Type: application/json' -d "{\"phone\":\"0911111111\",\"code\":\"$CODE\"}" > /dev/null
 echo "== seller turns their own product OFF =="
-curl -s -m 5 -b /tmp/j_seller.txt -X POST $B/api/seller/product -H 'Content-Type: application/json' -d '{"pid":"sahis-1","active":false}' | python3 -c "import json,sys;p=json.load(sys.stdin)['product'];print('sahis-1 active:',p['active'])"
+curl -s -m 5 -b /tmp/j_seller.txt -X POST $B/api/seller/product -H 'Content-Type: application/json' -d '{"pid":"gf5-1","active":false}' | python3 -c "import json,sys;p=json.load(sys.stdin)['product'];print('gf5-1 active:',p['active'])"
 curl -s -m 5 $B/api/catalog | python3 -c "
 import json,sys
 c=json.load(sys.stdin)['building']
-t=[t for t in c['tenants'] if t['id']=='sahis'][0]
-print('public sahis products now:', [p['id'] for p in t['products']])
+t=[t for t in c['tenants'] if t['id']=='gf5'][0]
+print('public gf5 products now:', [p['id'] for p in t['products']])
 "
 echo "== seller CANNOT toggle another shop's product (ownership enforced) =="
-curl -s -m 5 -b /tmp/j_seller.txt -X POST $B/api/seller/product -H 'Content-Type: application/json' -d '{"pid":"rose-1","active":false}'; echo
+curl -s -m 5 -b /tmp/j_seller.txt -X POST $B/api/seller/product -H 'Content-Type: application/json' -d '{"pid":"402-1","active":false}'; echo
 echo "== seller turns it back on =="
-curl -s -m 5 -b /tmp/j_seller.txt -X POST $B/api/seller/product -H 'Content-Type: application/json' -d '{"pid":"sahis-1","active":true}' | python3 -c "import json,sys;print('sahis-1 active:',json.load(sys.stdin)['product']['active'])"
+curl -s -m 5 -b /tmp/j_seller.txt -X POST $B/api/seller/product -H 'Content-Type: application/json' -d '{"pid":"gf5-1","active":true}' | python3 -c "import json,sys;print('gf5-1 active:',json.load(sys.stdin)['product']['active'])"
 
 echo; echo "########## REGRESSION: original flows still work ##########"
 echo "== seller/me =="; curl -s -m 5 -b /tmp/j_seller.txt $B/api/seller/me; echo

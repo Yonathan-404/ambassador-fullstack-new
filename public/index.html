@@ -160,6 +160,68 @@
 #amb-store .amb-hstat-n{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:900;color:var(--teal)}
 #amb-store .amb-hstat-l{font-size:.7rem;color:var(--mid);line-height:1.2;text-transform:uppercase;letter-spacing:.5px}
 
+/* ════ HERO VISUAL — Jump to Floor + phone mockup + carousel ════ */
+#amb-store .amb-hero-split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(1.5rem,4vw,3.2rem);align-items:center}
+#amb-store .amb-hero-visual{display:flex;gap:20px;max-width:100%}
+#amb-store .amb-hero-visual .welcome-left{flex:0 0 auto}
+#amb-store .amb-hero-visual .welcome-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+#amb-store .floor-list-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+#amb-store .floor-vertical-list{display:flex;flex-direction:column;gap:5px;max-height:250px;overflow-y:auto;padding-right:6px}
+#amb-store .floor-vertical-list::-webkit-scrollbar{width:4px}
+#amb-store .floor-vertical-list::-webkit-scrollbar-track{background:var(--wine-tint);border-radius:4px}
+#amb-store .floor-vertical-list::-webkit-scrollbar-thumb{background:var(--wine-l);border-radius:4px}
+#amb-store .floor-vertical-item{background:var(--wine-tint);padding:10px 15px;border-radius:10px;color:var(--wine-d);font-weight:600;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:var(--tr);border-left:4px solid var(--fc,var(--wine));box-shadow:var(--sm);font-size:.86rem}
+#amb-store .floor-vertical-item:hover{background:var(--wine);color:#fff;transform:translateX(3px);box-shadow:var(--md)}
+#amb-store .floor-vertical-item .amh-inline{color:var(--gold-d)}
+#amb-store .floor-vertical-item:hover .amh-inline{color:#fff}
+#amb-store .floor-vertical-item .floor-occ{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+#amb-store .floor-vertical-item:hover .floor-occ{color:rgba(255,255,255,.85)}
+#amb-store .floor-vertical-item .floor-occ i{color:var(--success);font-size:.6rem}
+#amb-store .floor-vertical-item .floor-arrow{opacity:.4;transition:.2s;font-size:.72rem;margin-left:8px}
+#amb-store .floor-vertical-item:hover .floor-arrow{opacity:1;transform:translateX(3px)}
+
+/* phone mockup */
+#amb-store .mobile-frame-container{background:#fff;padding:16px 11px;border-radius:28px;box-shadow:0 18px 38px rgba(123,0,63,.12);position:relative;border:13px solid #121212;width:180px;margin:0 auto;min-height:250px;display:flex;flex-direction:column}
+#amb-store .mobile-frame-container::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:82px;height:16px;background:#121212;border-radius:0 0 9px 9px;z-index:2}
+#amb-store .mobile-frame-container::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:55px;height:4px;background:#121212;border-radius:6px}
+#amb-store .mobile-screen{flex:1;background:#fff;border-radius:15px;overflow:hidden;display:flex;flex-direction:column}
+#amb-store .mobile-header{background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;padding:8px 9px;text-align:center}
+#amb-store .mobile-header h3{font-size:.76rem;color:var(--gold);margin:0}
+#amb-store .mobile-header p{font-size:.52rem;opacity:.9;margin:1px 0 0}
+#amb-store .mobile-body{padding:11px 9px 13px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1}
+#amb-store .qr-code-container{width:78px;height:78px;margin:0 auto 8px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);overflow:hidden;box-shadow:var(--sm)}
+#amb-store .qr-code-container img{width:100%;height:100%;object-fit:cover}
+#amb-store .nfc-tag{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);padding:4px 9px;border-radius:50px;margin-bottom:5px;border:1px solid var(--line);font-size:.52rem;flex-wrap:wrap;justify-content:center}
+#amb-store .nfc-tag i{color:var(--teal);font-size:.62rem}
+#amb-store .nfc-tag .nfc-highlight{font-weight:700;color:var(--wine)}
+#amb-store .qr-instruction{font-size:.48rem;color:var(--muted);margin-top:2px;line-height:1.3}
+
+/* explore carousel — prev/next now overlaid on the image itself (left/right), dots stay below */
+#amb-store .explore-carousel-wrap{position:relative;overflow:hidden;border-radius:16px;background:var(--wine-tint);width:100%;height:190px;box-shadow:inset 0 2px 8px rgba(0,0,0,.03);flex-shrink:0}
+#amb-store .explore-track{display:flex;height:100%;transition:transform 1s var(--ease);will-change:transform}
+#amb-store .explore-slide{flex:0 0 100%;height:100%;position:relative;overflow:hidden}
+#amb-store .explore-slide img{width:100%;height:100%;object-fit:cover;transition:transform 4s ease}
+#amb-store .explore-slide:hover img{transform:scale(1.05)}
+#amb-store .explore-slide .slide-overlay{position:absolute;bottom:0;left:0;right:0;padding:18px 22px 16px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff;pointer-events:none}
+#amb-store .explore-slide .slide-overlay .slide-label{font-size:1.05rem;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+#amb-store .explore-slide .slide-overlay .slide-sub{font-size:.72rem;opacity:.85;text-shadow:0 1px 4px rgba(0,0,0,.2)}
+#amb-store .explore-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.85);color:var(--wine);display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:var(--tr);box-shadow:var(--sm);z-index:2;border:none}
+#amb-store .explore-arrow:hover{background:var(--wine);color:#fff;transform:translateY(-50%) scale(1.08)}
+#amb-store .explore-arrow.prev{left:10px}
+#amb-store .explore-arrow.next{right:10px}
+#amb-store .explore-dots{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px}
+#amb-store .explore-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.3s;cursor:pointer}
+#amb-store .explore-dot.active{background:var(--gold);width:18px;border-radius:4px}
+
+@media(max-width:900px){
+  #amb-store .amb-hero-split{grid-template-columns:1fr}
+  #amb-store .amb-hero-visual{flex-direction:column;align-items:center}
+}
+@media(max-width:480px){
+  #amb-store .mobile-frame-container{width:150px;min-height:210px}
+  #amb-store .explore-carousel-wrap{height:150px}
+}
+
 /* ════ BANK / TRUST BAND ════ */
 #amb-store .amb-trust-band{
   background:linear-gradient(90deg,var(--wine-d),var(--burgundy));padding:14px clamp(1rem,3vw,2rem);
@@ -430,6 +492,21 @@
 #amb-store .amb-dlv-s{font-size:.66rem;color:var(--muted)}
 /* bank options */
 #amb-store .amb-banks{display:flex;flex-direction:column;gap:8px;margin-bottom:13px}
+
+/* ════ PAYMENT METHOD TABS (Bank Transfer / Chapa / USSD) ════ */
+#amb-store .amb-pay-tabs{display:flex;gap:8px;margin-bottom:14px}
+#amb-store .amb-pay-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 8px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--mid);font-size:.8rem;font-weight:700;transition:var(--tr)}
+#amb-store .amb-pay-tab:hover{border-color:var(--wine)}
+#amb-store .amb-pay-tab.on{border-color:var(--wine);background:var(--wine);color:#fff}
+#amb-store .amb-pay-tab-logo{height:16px;width:auto;background:#fff;border-radius:4px;padding:2px 5px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+#amb-store .amb-pay-panel{text-align:center;padding:22px 16px;background:var(--surface2);border-radius:14px;margin-bottom:14px}
+#amb-store .amb-pay-panel-ic{width:46px;height:46px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin:0 auto 10px}
+#amb-store .amb-pay-panel-ic-logo{background:#fff;border:1px solid var(--line);box-shadow:var(--sm)}
+#amb-store .amb-pay-panel-ic-logo img{width:30px;height:30px;object-fit:contain}
+#amb-store .amb-pay-panel h4{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:8px}
+#amb-store .amb-pay-panel p{font-size:.82rem;color:var(--mid);line-height:1.6;margin-bottom:0}
+#amb-store .amb-pay-note{display:flex;align-items:flex-start;gap:7px;text-align:left;font-size:.72rem;color:var(--wine);background:var(--gold-tint);border-radius:9px;padding:9px 11px;margin-top:12px}
+#amb-store .amb-pay-note i{margin-top:2px;flex-shrink:0}
 #amb-store .amb-bank{border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;transition:var(--tr)}
 #amb-store .amb-bank:hover{border-color:var(--wine)}
 #amb-store .amb-bank.sel{border-color:var(--wine);background:var(--wine-tint)}
@@ -1078,6 +1155,144 @@
 #amb-store .amb-sms-note{font-size:.76rem;color:var(--teal-d);background:var(--teal-tint);border-radius:10px;padding:9px 13px;margin:10px 0 2px;line-height:1.55;text-align:left}
 #amb-store .amb-sms-note i{margin-right:6px}
 
+/* ════════════════════════════════════════════════════════════════
+   ENHANCEMENTS · floor panel · building directory · filter bar ·
+   mobile search — scoped under #amb-store
+═══════════════════════════════════════════════════════════════════ */
+
+/* ── FLOOR PANEL (slide-in listing every office on a floor) ── */
+#amb-store .amb-floor-scrim{position:fixed;inset:0;background:rgba(40,11,26,.5);backdrop-filter:blur(3px);z-index:440;opacity:0;pointer-events:none;transition:opacity .3s}
+#amb-store .amb-floor-scrim.on{opacity:1;pointer-events:all}
+#amb-store .amb-floor-panel{position:fixed;top:0;right:0;bottom:0;width:min(500px,100vw);background:var(--paper,#fff);z-index:450;display:flex;flex-direction:column;transform:translateX(102%);transition:transform .38s var(--ease);box-shadow:-16px 0 44px rgba(40,11,26,.24)}
+#amb-store .amb-floor-panel.open{transform:none}
+#amb-store .amb-fp-head{padding:18px 20px 14px;background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;display:flex;align-items:center;gap:12px;flex-shrink:0}
+#amb-store .amb-fp-head-ic{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:var(--gold);flex-shrink:0}
+#amb-store .amb-fp-head h3{font-size:1.14rem;font-weight:800;line-height:1.15;margin:0}
+#amb-store .amb-fp-head h3 .amh-inline{display:block;font-size:.76rem;font-weight:600;color:var(--gold);opacity:.95}
+#amb-store .amb-fp-sub{font-size:.68rem;opacity:.85;margin-top:2px}
+#amb-store .amb-fp-x{margin-left:auto;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:var(--tr);flex-shrink:0;border:none;cursor:pointer}
+#amb-store .amb-fp-x:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+#amb-store .amb-fp-stats{display:flex;gap:8px;padding:12px 20px 0;flex-wrap:wrap;flex-shrink:0}
+#amb-store .amb-fp-stat{font-size:.66rem;font-weight:700;color:var(--wine-d);background:var(--wine-tint);border:1px solid rgba(138,20,80,.14);padding:5px 11px;border-radius:100px;display:flex;align-items:center;gap:5px}
+#amb-store .amb-fp-stat i{color:var(--gold-d);font-size:.62rem}
+#amb-store .amb-fp-body{flex:1;overflow-y:auto;padding:14px 20px 20px}
+#amb-store .amb-fp-body::-webkit-scrollbar{width:5px}
+#amb-store .amb-fp-body::-webkit-scrollbar-thumb{background:var(--wine-l);border-radius:4px}
+#amb-store .amb-fp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#amb-store .amb-fp-card{position:relative;background:#fff;border:1.5px solid var(--line,#eee);border-radius:14px;padding:14px 12px 12px;text-align:center;cursor:pointer;transition:var(--tr);overflow:hidden}
+#amb-store .amb-fp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--uc,var(--wine));opacity:.85}
+#amb-store .amb-fp-card:hover{transform:translateY(-3px);border-color:var(--uc,var(--wine));box-shadow:0 10px 22px rgba(40,11,26,.12)}
+#amb-store .amb-fp-card .fp-ic{width:44px;height:44px;border-radius:12px;margin:2px auto 8px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;transition:var(--tr)}
+#amb-store .amb-fp-card:hover .fp-ic{transform:scale(1.08) rotate(-4deg)}
+#amb-store .amb-fp-card .fp-unit{position:absolute;top:8px;right:8px;font-size:.58rem;font-weight:800;letter-spacing:.4px;background:var(--ink,#241318);color:var(--gold);padding:3px 8px;border-radius:100px}
+#amb-store .amb-fp-card .fp-name{font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.25;display:block}
+#amb-store .amb-fp-card .fp-name .amh-inline{display:block;font-size:.66rem;color:var(--wine);font-weight:600}
+#amb-store .amb-fp-card .fp-cat{font-size:.64rem;color:var(--muted);margin-top:3px;display:block}
+#amb-store .amb-fp-card .fp-meta{font-size:.62rem;color:var(--gold-d);margin-top:5px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+#amb-store .amb-fp-card .fp-badge-svc{display:inline-block;font-size:.55rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--teal,#0e7c6b);color:#fff;padding:2px 9px;border-radius:100px;margin-top:6px}
+#amb-store .amb-fp-foot{padding:12px 20px;border-top:1px solid var(--line,#eee);flex-shrink:0;display:flex;gap:10px}
+#amb-store .amb-fp-shopbtn{flex:1;background:var(--wine);color:#fff;font-weight:700;font-size:.82rem;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr)}
+#amb-store .amb-fp-shopbtn:hover{background:var(--wine-d);transform:translateY(-1px)}
+#amb-store .amb-fp-dirbtn{background:var(--wine-tint);color:var(--wine-d);font-weight:700;font-size:.82rem;padding:12px 16px;border-radius:12px;border:1px solid rgba(138,20,80,.16);cursor:pointer;transition:var(--tr)}
+#amb-store .amb-fp-dirbtn:hover{background:var(--wine);color:#fff}
+
+/* ── BUILDING DIRECTORY (all offices, grouped by floor) ── */
+#amb-store .amb-dir-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+#amb-store .amb-dir-search{position:relative;flex:1;min-width:220px;max-width:420px}
+#amb-store .amb-dir-search i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.8rem;pointer-events:none}
+#amb-store .amb-dir-search input{width:100%;padding:11px 14px 11px 38px;border-radius:100px;border:1.5px solid var(--line,#eee);background:#fff;font-size:.85rem;color:var(--ink);outline:none;transition:var(--tr)}
+#amb-store .amb-dir-search input:focus{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-tint)}
+#amb-store .amb-dir-tabs{display:flex;gap:6px;flex-wrap:wrap}
+#amb-store .amb-dir-tab{font-size:.7rem;font-weight:700;padding:8px 14px;border-radius:100px;background:#fff;border:1.5px solid var(--line,#eee);color:var(--mid);cursor:pointer;transition:var(--tr)}
+#amb-store .amb-dir-tab:hover{border-color:var(--wine-l);color:var(--wine)}
+#amb-store .amb-dir-tab.active{background:var(--wine);border-color:var(--wine);color:#fff}
+#amb-store .amb-dir-floor{margin-bottom:22px}
+#amb-store .amb-dir-floorhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#amb-store .amb-dir-floorbar{width:5px;height:26px;border-radius:4px;background:var(--fc,var(--wine))}
+#amb-store .amb-dir-floorhead h4{font-size:1rem;font-weight:800;color:var(--ink);margin:0}
+#amb-store .amb-dir-floorhead .amh-inline{font-size:.74rem;color:var(--wine);font-weight:600}
+#amb-store .amb-dir-floorhead .dir-ct{margin-left:auto;font-size:.66rem;font-weight:700;color:var(--wine-d);background:var(--wine-tint);padding:4px 11px;border-radius:100px}
+#amb-store .amb-dir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:9px}
+#amb-store .amb-dir-card{display:flex;align-items:center;gap:11px;background:#fff;border:1.5px solid var(--line,#eee);border-radius:13px;padding:10px 12px;cursor:pointer;transition:var(--tr);text-align:left}
+#amb-store .amb-dir-card:hover{border-color:var(--uc,var(--wine));box-shadow:0 8px 18px rgba(40,11,26,.1);transform:translateY(-2px)}
+#amb-store .amb-dir-card .dir-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.86rem;flex-shrink:0}
+#amb-store .amb-dir-card .dir-txt{min-width:0;flex:1}
+#amb-store .amb-dir-card .dir-name{font-size:.8rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#amb-store .amb-dir-card .dir-sub{font-size:.63rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+#amb-store .amb-dir-card .dir-unit{font-size:.58rem;font-weight:800;letter-spacing:.4px;background:var(--ink,#241318);color:var(--gold);padding:3px 8px;border-radius:100px;flex-shrink:0}
+#amb-store .amb-dir-card .dir-arrow{color:var(--muted);font-size:.62rem;flex-shrink:0;transition:var(--tr)}
+#amb-store .amb-dir-card:hover .dir-arrow{color:var(--wine);transform:translateX(2px)}
+#amb-store .amb-dir-card.svc .dir-unit{background:var(--teal,#0e7c6b);color:#fff}
+#amb-store .amb-dir-empty{padding:36px 18px;text-align:center;color:var(--muted);font-size:.85rem}
+#amb-store .amb-dir-empty i{display:block;font-size:1.6rem;margin-bottom:10px;opacity:.5}
+
+/* ── PRODUCT FILTER BAR ── */
+#amb-store .amb-fbar{background:#fff;border:1.5px solid var(--line,#eee);border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:var(--sm)}
+#amb-store .amb-fbar-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#amb-store .amb-fbar-title{font-size:.78rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px}
+#amb-store .amb-fbar-title i{color:var(--wine)}
+#amb-store .amb-fbar-ct{font-size:.6rem;font-weight:800;background:var(--wine);color:#fff;min-width:18px;height:18px;border-radius:100px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+#amb-store .amb-fbar-reset{margin-left:auto;font-size:.68rem;font-weight:700;color:var(--wine);background:var(--wine-tint);border:none;padding:7px 13px;border-radius:100px;cursor:pointer;transition:var(--tr);display:flex;align-items:center;gap:5px}
+#amb-store .amb-fbar-reset:hover{background:var(--wine);color:#fff}
+#amb-store .amb-fbar-toggle{display:none;font-size:.68rem;font-weight:700;color:var(--mid);background:none;border:1.5px solid var(--line,#eee);padding:7px 12px;border-radius:100px;cursor:pointer}
+#amb-store .amb-fbar-body{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
+#amb-store .amb-fgroup{display:flex;flex-direction:column;gap:6px;min-width:0}
+#amb-store .amb-fgroup-l{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);display:flex;align-items:center;gap:5px}
+#amb-store .amb-fgroup-l i{color:var(--gold-d)}
+#amb-store .amb-fsel{appearance:none;-webkit-appearance:none;font-size:.76rem;font-weight:600;color:var(--ink);background:var(--surface2,#faf6f8) url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='6'%3E%3Cpath d='M0 0l4.5 6L9 0z' fill='%238a1450'/%3E%3C/svg%3E") no-repeat right 12px center;border:1.5px solid var(--line,#eee);border-radius:10px;padding:9px 30px 9px 12px;cursor:pointer;outline:none;transition:var(--tr)}
+#amb-store .amb-fsel:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-tint)}
+#amb-store .amb-fprice{display:flex;align-items:center;gap:8px}
+#amb-store .amb-fprice input[type=number]{width:84px;font-size:.74rem;font-weight:600;color:var(--ink);background:var(--surface2,#faf6f8);border:1.5px solid var(--line,#eee);border-radius:10px;padding:9px 10px;outline:none;transition:var(--tr);-moz-appearance:textfield}
+#amb-store .amb-fprice input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+#amb-store .amb-fprice input[type=number]:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-tint)}
+#amb-store .amb-fprice .dash{color:var(--muted);font-size:.72rem}
+#amb-store .amb-frange{width:170px;accent-color:var(--wine);cursor:pointer}
+#amb-store .amb-fchips{display:flex;gap:6px;flex-wrap:wrap}
+#amb-store .amb-fchip{font-size:.68rem;font-weight:700;padding:8px 13px;border-radius:100px;background:var(--surface2,#faf6f8);border:1.5px solid var(--line,#eee);color:var(--mid);cursor:pointer;transition:var(--tr);display:flex;align-items:center;gap:5px}
+#amb-store .amb-fchip i{font-size:.6rem}
+#amb-store .amb-fchip:hover{border-color:var(--wine-l);color:var(--wine)}
+#amb-store .amb-fchip.active{background:var(--wine);border-color:var(--wine);color:#fff}
+#amb-store .amb-fchip.active i{color:var(--gold)}
+
+/* ── MOBILE SEARCH ── */
+#amb-store .amb-msearch-btn{display:none}
+#amb-store .amb-msearch{position:fixed;inset:0;z-index:660;background:var(--paper,#fff);flex-direction:column;opacity:0;pointer-events:none;transition:opacity .25s;display:flex}
+#amb-store .amb-msearch.on{opacity:1;pointer-events:all}
+#amb-store .amb-msearch-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line,#eee);flex-shrink:0}
+#amb-store .amb-msearch-inwrap{position:relative;flex:1}
+#amb-store .amb-msearch-inwrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem}
+#amb-store .amb-msearch-in{width:100%;padding:12px 14px 12px 38px;border-radius:100px;border:1.5px solid var(--line,#eee);background:var(--surface2,#faf6f8);font-size:.9rem;color:var(--ink);outline:none}
+#amb-store .amb-msearch-in:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 4px var(--gold-tint)}
+#amb-store .amb-msearch-x{width:38px;height:38px;border-radius:50%;background:var(--wine-tint);color:var(--wine-d);border:none;font-size:.9rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#amb-store .amb-msearch-body{flex:1;overflow-y:auto;padding:10px 12px 30px}
+#amb-store .amb-msearch-hint{padding:34px 20px;text-align:center;color:var(--muted);font-size:.85rem}
+#amb-store .amb-msearch-hint i{display:block;font-size:1.6rem;margin-bottom:10px;opacity:.45}
+
+/* ── responsive ── */
+@media(max-width:900px){
+  #amb-store .amb-msearch-btn{display:flex}
+}
+@media(max-width:768px){
+  #amb-store .amb-fbar-toggle{display:flex;align-items:center;gap:5px;margin-left:auto}
+  #amb-store .amb-fbar-reset{margin-left:0}
+  #amb-store .amb-fbar-body{display:none}
+  #amb-store .amb-fbar.expanded .amb-fbar-body{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+  #amb-store .amb-fbar.expanded .amb-fgroup{width:100%}
+  #amb-store .amb-fbar.expanded .amb-fsel{width:100%}
+  #amb-store .amb-frange{width:100%}
+  #amb-store .amb-fprice{flex-wrap:wrap}
+  #amb-store .amb-dir-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  #amb-store .amb-floor-panel{width:100vw}
+  #amb-store .amb-fp-grid{grid-template-columns:1fr 1fr}
+  #amb-store .amb-dir-grid{grid-template-columns:1fr}
+  #amb-store .amb-dir-tools{flex-direction:column;align-items:stretch}
+  #amb-store .amb-dir-search{max-width:none}
+}
+@media(max-width:380px){
+  #amb-store .amb-fp-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -1111,11 +1326,15 @@
     </div>
     <ul class="amb-nav-links">
       <li><a onclick="ambScrollTo('ambTenants')" data-i18n="navTenants">Sellers</a></li>
+      <li><a onclick="ambScrollTo('ambDirectory')" data-i18n="navDirectory">Directory</a></li>
       <li><a onclick="ambScrollTo('ambShop')" data-i18n="navShop">Shop</a></li>
       <li><a onclick="ambScrollTo('ambServices')" data-i18n="navServices">Services</a></li>
       <li><a onclick="ambScrollTo('ambHow')" data-i18n="navHow">How It Works</a></li>
     </ul>
     <div class="amb-nav-actions">
+      <button class="amb-icon-btn amb-msearch-btn" onclick="ambOpenMSearch()" title="Search">
+        <i class="fas fa-search"></i>
+      </button>
       <button class="amb-lang-btn" id="ambLangBtn" onclick="ambToggleLang()" title="ቋንቋ / Language"><i class="fas fa-language"></i> አማ</button>
       <button class="amb-icon-btn" onclick="ambOpenOrders()" title="My Orders">
         <i class="fas fa-receipt"></i>
@@ -1137,7 +1356,7 @@
   <section class="amb-hero">
     <div class="amb-hero-bg"></div>
     <div class="amb-hero-veil"></div>
-    <div class="amb-hero-inner">
+    <div class="amb-hero-inner amb-hero-split">
       <div class="amb-hero-copy">
         <div class="amb-eyebrow"><i class="fas fa-shield-halved"></i> <span id="ambHeroEyebrow" data-i18n="tagline">Addis Ababa's Trust-First Marketplace</span></div>
         <h2 data-i18n-html="heroTitle">Shop from sellers with a <em>real address</em>.</h2>
@@ -1148,6 +1367,7 @@
         </div>
         <div class="amb-hero-stats" id="ambHeroStats"></div>
       </div>
+      <div class="amb-hero-visual" id="ambHeroVisual"></div>
     </div>
   </section>
 
@@ -1194,6 +1414,25 @@
     </div>
   </section>
 
+  <!-- building directory — every office, floor by floor -->
+  <section class="amb-section alt" id="ambDirectory">
+    <div class="amb-container">
+      <div class="amb-head">
+        <div class="amb-eyebrow2" data-i18n="dirEyebrow">Building Directory</div>
+        <h3 class="amb-title" data-i18n="dirTitle">Every Office, Floor by Floor</h3>
+        <p class="amb-sub" data-i18n="dirSub">The complete Ambassador Mall directory — find any shop, office or service by unit number, floor or name.</p>
+      </div>
+      <div class="amb-dir-tools">
+        <div class="amb-dir-search">
+          <i class="fas fa-search"></i>
+          <input id="ambDirSearch" placeholder="Search unit, shop, category…" autocomplete="off" oninput="ambDirSearchInput()">
+        </div>
+        <div class="amb-dir-tabs" id="ambDirTabs"></div>
+      </div>
+      <div id="ambDirList"></div>
+    </div>
+  </section>
+
   <!-- about / building -->
   <section class="amb-section alt">
     <div class="amb-container">
@@ -1212,9 +1451,9 @@
       <div class="amb-filter" style="position:static;border:none;padding:0;margin-bottom:1.4rem;background:none">
         <div class="amb-filter-inner" id="ambFilterChips"></div>
       </div>
+      <div class="amb-fbar" id="ambFilterBar"></div>
       <div class="amb-prod-toolbar">
         <div class="amb-prod-count" id="ambProdCount"></div>
-        <div class="amb-prod-controls" id="ambProdControls"></div>
       </div>
       <div class="amb-prod-grid" id="ambProdGrid"></div>
     </div>
@@ -1272,12 +1511,17 @@
           <a class="amb-soc-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a class="amb-soc-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
         </div>
+        <button class="amb-foot-verified-btn" onclick="ambShowVerifiedInfo()" style="margin-top:14px;display:inline-flex;align-items:center;gap:7px;background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.4);color:var(--gold-d,#b8941f);padding:8px 13px;border-radius:10px;font-size:.76rem;font-weight:700;cursor:pointer">
+          <i class="fas fa-shield-halved"></i> What "Verified" means
+        </button>
+        <p style="margin-top:8px;font-size:.72rem;opacity:.7;max-width:38ch">Bisinka never holds your money — every payment goes straight to the seller's own bank account.</p>
       </div>
       <div class="amb-footer-col"><h4>Shop</h4><ul>
         <li><a onclick="ambScrollTo('ambTenants')">Our Sellers</a></li>
         <li><a onclick="ambScrollTo('ambShop')">All Products</a></li>
         <li><a onclick="ambScrollTo('ambServices')">Services</a></li>
         <li><a onclick="ambOpenCart()">My Cart</a></li>
+        <li><a onclick="ambOpenOrders()">My Orders</a></li>
       </ul></div>
       <div class="amb-footer-col"><h4>Visit</h4><ul>
         <li><a id="ambFooterPhone"></a></li>
@@ -1302,6 +1546,34 @@
   </footer>
 
   <!-- scroll top -->
+  <!-- floor panel — all offices on a floor -->
+  <div class="amb-floor-scrim" id="ambFloorScrim" onclick="ambCloseFloorPanel()"></div>
+  <aside class="amb-floor-panel" id="ambFloorPanel" role="dialog" aria-modal="true">
+    <div class="amb-fp-head">
+      <div class="amb-fp-head-ic"><i class="fas fa-building"></i></div>
+      <div>
+        <h3 id="ambFpTitle">Floor</h3>
+        <div class="amb-fp-sub" id="ambFpSub"></div>
+      </div>
+      <button class="amb-fp-x" onclick="ambCloseFloorPanel()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="amb-fp-stats" id="ambFpStats"></div>
+    <div class="amb-fp-body" id="ambFpBody"></div>
+    <div class="amb-fp-foot" id="ambFpFoot"></div>
+  </aside>
+
+  <!-- mobile search overlay -->
+  <div class="amb-msearch" id="ambMSearch">
+    <div class="amb-msearch-head">
+      <div class="amb-msearch-inwrap">
+        <i class="fas fa-search"></i>
+        <input class="amb-msearch-in" id="ambMSearchIn" placeholder="Search…" autocomplete="off" oninput="ambMSearchInput()">
+      </div>
+      <button class="amb-msearch-x" onclick="ambCloseMSearch()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="amb-msearch-body" id="ambMSearchBody"></div>
+  </div>
+
   <button class="amb-scrolltop" id="ambScrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
   <!-- cart panel -->
@@ -1691,7 +1963,19 @@ var SERVICES = [
 var I18N = {
   en: {
     navTenants:'Tenants', navShop:'Shop', navServices:'Services', navHow:'How It Works',
-    searchPh:'Search products, tenants, categories…',
+    navDirectory:'Directory',
+    searchPh:'Search products, shops, units, floors…',
+    dirEyebrow:'Building Directory', dirTitle:'Every Office, Floor by Floor',
+    dirSub:'The complete Ambassador Mall directory — find any shop, office or service by unit number, floor or name.',
+    dirSearchPh:'Search unit, shop, category…', allFloors:'All Floors',
+    dirNoMatch:'No offices match your search.', unitsLbl:'units', shopsLbl:'shops', svcLbl:'Service',
+    fpShops:'shops', fpServices:'services', fpProducts:'products',
+    shopThisFloor:'Shop This Floor', fullDirectory:'Full Directory', tapUnit:'Tap any unit for details',
+    filters:'Filters', sortBy:'Sort', priceRange:'Price (ETB)', availability:'Availability',
+    floorLblF:'Floor', ratingF:'Rating', anyRating:'Any rating', top4:'4★ & up',
+    availAll:'All', availIn:'In stock', availSale:'On sale', availMade:'Made to order',
+    resetFilters:'Reset', minPh:'Min', maxPh:'Max', close:'Close',
+    floorsGroup:'Floors', unitsFound:'{n} units',
     startShopping:'Start Shopping', meetTenants:'Meet the Sellers',
     heroTitle:"Shop from sellers with a <em>real address</em>.",
     heroSub:'Every product here is sold by a verified tenant inside Ambassador Shopping Center. Visit them in person or buy online — your choice.',
@@ -1732,7 +2016,19 @@ var I18N = {
   },
   am: {
     navTenants:'ተከራዮች', navShop:'ሱቅ', navServices:'አገልግሎቶች', navHow:'እንዴት እንደሚሰራ',
-    searchPh:'ምርቶችን፣ ተከራዮችን፣ ምድቦችን ይፈልጉ…',
+    navDirectory:'ማውጫ',
+    searchPh:'ምርቶችን፣ ሱቆችን፣ ክፍሎችን ይፈልጉ…',
+    dirEyebrow:'የህንፃው ማውጫ', dirTitle:'እያንዳንዱ ቢሮ፣ በየፎቁ',
+    dirSub:'ሙሉው የአምባሳደር ሞል ማውጫ — ማንኛውንም ሱቅ፣ ቢሮ ወይም አገልግሎት በክፍል ቁጥር፣ በፎቅ ወይም በስም ያግኙ።',
+    dirSearchPh:'ክፍል፣ ሱቅ፣ ምድብ ይፈልጉ…', allFloors:'ሁሉም ፎቆች',
+    dirNoMatch:'ከፍለጋዎ ጋር የሚዛመድ ቢሮ አልተገኘም።', unitsLbl:'ክፍሎች', shopsLbl:'ሱቆች', svcLbl:'አገልግሎት',
+    fpShops:'ሱቆች', fpServices:'አገልግሎቶች', fpProducts:'ምርቶች',
+    shopThisFloor:'በዚህ ፎቅ ይግዙ', fullDirectory:'ሙሉ ማውጫ', tapUnit:'ዝርዝር ለማየት ማንኛውንም ክፍል ይንኩ',
+    filters:'ማጣሪያዎች', sortBy:'ደርድር', priceRange:'ዋጋ (ብር)', availability:'መገኘት',
+    floorLblF:'ፎቅ', ratingF:'ደረጃ', anyRating:'ማንኛውም ደረጃ', top4:'4★ እና በላይ',
+    availAll:'ሁሉም', availIn:'በመጋዘን ያለ', availSale:'በቅናሽ', availMade:'በትዕዛዝ የሚሰራ',
+    resetFilters:'አጽዳ', minPh:'ዝቅ', maxPh:'ከፍ', close:'ዝጋ',
+    floorsGroup:'ፎቆች', unitsFound:'{n} ክፍሎች',
     startShopping:'ግዢ ይጀምሩ', meetTenants:'ሻጮችን ይዩ',
     heroTitle:'<em>እውነተኛ አድራሻ</em> ካላቸው ሻጮች ይግዙ።',
     heroSub:'እዚህ ያለ እያንዳንዱ ምርት በአምባሳደር የገበያ ማዕከል ውስጥ ባለ የተረጋገጠ ተከራይ ይሸጣል። በአካል ይጎብኙ ወይም በመስመር ላይ ይግዙ — ምርጫው የእርስዎ ነው።',
@@ -1809,6 +2105,12 @@ var state = {
   search: '',
   sort: 'featured',       // featured | priceLow | priceHigh | rating
   priceMax: 0,            // 0 = no cap
+  priceMin: 0,            // 0 = no floor
+  stockF: 'all',          // all | in | sale | made
+  ratingMin: 0,           // 0 | 4
+  floorF: 'all',          // 'all' | floor name
+  dirFloor: 'all',        // directory floor tab
+  dirQ: '',               // directory search query
   lang: load('amb-lang', 'en'),   // 'en' | 'am'
   cart: load('amb-cart', []),     // [{pid, qty, variant}]
   wish: load('amb-wish', []),     // [pid]
@@ -1821,6 +2123,7 @@ var state = {
   coStep: 1,
   coData: {},
   coBank: null,
+  coPayMethod: 'bank_transfer',
   lastOrder: null
 };
 
@@ -1918,7 +2221,7 @@ function api(path, opts){
 function applyCatalog(cat){
   if (!cat || !cat.building) return;
   var b = cat.building;
-  ['name','nameAm','tagline','taglineAm','location','phone','logo','stats','geo','tax','areas','delivery','admin','policy','legal','quickLinks','tenants'].forEach(function(k){
+  ['name','nameAm','tagline','taglineAm','location','phone','logo','stats','geo','tax','areas','delivery','admin','policy','legal','quickLinks','tenants','floorStats'].forEach(function(k){
     if (b[k] !== undefined) BUILDING[k] = b[k];
   });
   if (cat.services) { SERVICES.length = 0; cat.services.forEach(function(s){ SERVICES.push(s); }); }
@@ -1965,6 +2268,10 @@ var onSaleProducts=A.onSaleProducts;
 
 function initials(name){ return name.split(' ').slice(0,2).map(function(w){return w.charAt(0);}).join(''); }
 function nameFor(obj){ return state.lang==='am' && obj.nameAm ? obj.nameAm : obj.name; }
+function floorUnit(obj){ return obj && obj.unit ? obj.floor + ' - ' + obj.unit : (obj ? obj.floor : ''); }
+A.floorUnit = floorUnit;
+var FLOOR_AM = { 'Ground Floor':'መሬት ወለል', '1st Floor':'1ኛ ፎቅ', '2nd Floor':'2ኛ ፎቅ', '3rd Floor':'3ኛ ፎቅ', '4th Floor':'4ኛ ፎቅ', '5th Floor':'5ኛ ፎቅ', '6th Floor':'6ኛ ፎቅ' };
+function floorColor(floorName){ var t=BUILDING.tenants.filter(function(x){ return x.floor===floorName; })[0]; return (t&&t.color)||'var(--wine)'; }
 
 /* ── TOAST ── */
 window.ambToast = function (msg, kind) {
@@ -1997,7 +2304,7 @@ window.ambScrollTo = function (id) { var el=$(id); if(el) el.scrollIntoView({beh
 window.ambSetLang = function (lang) {
   state.lang = lang; save('amb-lang', lang);
   applyI18n();
-  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderProducts();
+  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderDirectory(); renderHeroVisual();
   var btn=$('ambLangBtn'); if(btn) btn.innerHTML = lang==='en' ? '<i class="fas fa-language"></i> አማ' : '<i class="fas fa-language"></i> EN';
 };
 window.ambToggleLang = function(){ ambSetLang(state.lang==='en'?'am':'en'); };
@@ -2122,24 +2429,37 @@ window.ambSearchInput = function(){
 window.ambSearchFocus = function(){ renderSearchDropdown(); };
 window.ambCloseSearch = function(){ var d=$('ambSearchDrop'); if(d) d.classList.remove('on'); };
 
-function renderSearchDropdown(){
-  var d=$('ambSearchDrop'); if(!d) return;
-  var q=state.search.toLowerCase();
-  if(!q){ d.classList.remove('on'); d.innerHTML=''; return; }
-
-  var tenants = BUILDING.tenants.filter(function(x){ return (x.name+' '+x.cat+' '+(x.nameAm||'')).toLowerCase().indexOf(q)>=0; }).slice(0,4);
+function buildSearchHTML(q){
+  var tenants = BUILDING.tenants.filter(function(x){
+    return ((x.unit||'')+' '+x.name+' '+x.cat+' '+(x.nameAm||'')+' '+(x.owner||'')+' '+x.floor).toLowerCase().indexOf(q)>=0;
+  }).slice(0,5);
+  var floors = floorsList().filter(function(fl){
+    return (fl+' '+(FLOOR_AM[fl]||'')).toLowerCase().indexOf(q)>=0;
+  }).slice(0,3);
+  var floorsHTML='';
+  if(floors.length){
+    floorsHTML = '<div class="amb-sd-group"><div class="amb-sd-head"><i class="fas fa-layer-group"></i> '+esc(t('floorsGroup'))+'</div>'+
+      floors.map(function(fl){
+        var ct = BUILDING.tenants.filter(function(x){return x.floor===fl;}).length;
+        var flEsc = esc(fl).replace(/'/g,"\\'");
+        return '<button class="amb-sd-item" onclick="ambSearchPickFloor(\''+flEsc+'\')">'+
+          '<span class="amb-sd-ic" style="background:'+floorColor(fl)+'"><i class="fas fa-layer-group"></i></span>'+
+          '<span class="amb-sd-txt"><b>'+esc(fl)+' '+esc(FLOOR_AM[fl]||'')+'</b><span>'+t('unitsFound',{n:ct})+'</span></span></button>';
+      }).join('')+'</div>';
+  }
   var cats = {};
   ALL_PRODUCTS.forEach(function(p){ if(p.cat.toLowerCase().indexOf(q)>=0) cats[p.cat]=(cats[p.cat]||0)+1; });
   var catList = Object.keys(cats).slice(0,4);
-  var prods = ALL_PRODUCTS.filter(function(p){ return p.name.toLowerCase().indexOf(q)>=0; }).slice(0,6);
+  var prods = ALL_PRODUCTS.filter(function(p){ return (p.name+' '+p.cat+' '+(p.desc||'')).toLowerCase().indexOf(q)>=0; }).slice(0,6);
+  var svcs = (SERVICES||[]).filter(function(s){ return (s.name+' '+(s.nameAm||'')+' '+s.type+' '+(s.blurb||'')).toLowerCase().indexOf(q)>=0; }).slice(0,4);
 
-  var html='';
+  var html = floorsHTML;
   if(tenants.length){
     html += '<div class="amb-sd-group"><div class="amb-sd-head"><i class="fas fa-store"></i> '+(state.lang==='am'?'ሻጮች':'Sellers')+'</div>';
     html += tenants.map(function(x){
       return '<button class="amb-sd-item" onclick="ambSearchPick(\'tenant\',\''+x.id+'\')">'+
         '<span class="amb-sd-ic" style="background:'+x.color+'"><i class="fas '+x.icon+'"></i></span>'+
-        '<span class="amb-sd-txt"><b>'+esc(nameFor(x))+'</b><span>'+esc(x.cat)+' · '+esc(x.floor)+'</span></span></button>';
+        '<span class="amb-sd-txt"><b>'+esc(nameFor(x))+'</b><span>'+esc(x.cat)+' · '+esc(floorUnit(x))+'</span></span></button>';
     }).join('')+'</div>';
   }
   if(catList.length){
@@ -2158,6 +2478,14 @@ function renderSearchDropdown(){
         '<span class="amb-sd-txt"><b>'+esc(p.name)+'</b><span>'+fmt(p.price)+' · '+esc(tenant(p.tenantId).name)+'</span></span></button>';
     }).join('')+'</div>';
   }
+  if(svcs.length){
+    html += '<div class="amb-sd-group"><div class="amb-sd-head"><i class="fas fa-concierge-bell"></i> '+(state.lang==='am'?'አገልግሎቶች':'Services')+'</div>';
+    html += svcs.map(function(s){
+      return '<button class="amb-sd-item" onclick="ambSearchPick(\'service\',\''+s.id+'\')">'+
+        '<span class="amb-sd-ic" style="background:'+s.color+'"><i class="fas '+s.icon+'"></i></span>'+
+        '<span class="amb-sd-txt"><b>'+esc(s.name)+'</b><span>'+esc(s.type)+' · '+esc(s.floor)+'</span></span></button>';
+    }).join('')+'</div>';
+  }
   if(!html){
     // graceful empty state: friendly message + popular categories + clear action
     var popCats = {};
@@ -2165,7 +2493,7 @@ function renderSearchDropdown(){
     var top = Object.keys(popCats).sort(function(a,b){return popCats[b]-popCats[a];}).slice(0,6);
     html = '<div class="amb-sd-empty">'+
         '<div class="amb-sd-empty-ic"><i class="fas fa-magnifying-glass"></i></div>'+
-        '<div class="amb-sd-empty-t">'+t('noResults')+' "<b>'+esc(state.search)+'</b>"</div>'+
+        '<div class="amb-sd-empty-t">'+t('noResults')+' "<b>'+esc(q)+'</b>"</div>'+
         '<div class="amb-sd-empty-s">'+t('noResultsTip')+'</div>'+
         '<div class="amb-sd-pop-h">'+t('popular')+'</div>'+
         '<div class="amb-sd-pop">'+ top.map(function(c){
@@ -2174,21 +2502,61 @@ function renderSearchDropdown(){
         '<button class="amb-sd-clear" onclick="ambClearSearch()"><i class="fas fa-xmark"></i> '+t('clearSearch')+'</button>'+
       '</div>';
   }
-  d.innerHTML = html; d.classList.add('on');
+  return html;
 }
+function renderSearchDropdown(){
+  var d=$('ambSearchDrop'); if(!d) return;
+  var q=state.search.toLowerCase();
+  if(!q){ d.classList.remove('on'); d.innerHTML=''; return; }
+  d.innerHTML = buildSearchHTML(q); d.classList.add('on');
+}
+window.ambSearchPickFloor = function(fl){
+  ambCloseSearch(); ambCloseMSearch();
+  var inp=$('ambSearch'); if(inp) inp.value='';
+  state.search=''; renderProducts();
+  ambOpenFloorPanel(fl);
+};
+
+/* ── MOBILE SEARCH OVERLAY ── */
+function mSearchHint(){
+  return '<div class="amb-msearch-hint"><i class="fas fa-magnifying-glass"></i>'+esc(t('searchPh'))+'</div>';
+}
+window.ambOpenMSearch = function(){
+  var o=$('ambMSearch'); if(!o) return;
+  o.classList.add('on');
+  document.body.style.overflow='hidden';
+  var inp=$('ambMSearchIn');
+  if(inp){ inp.placeholder=t('searchPh'); inp.value=state.search||''; setTimeout(function(){ inp.focus(); },80); }
+  ambMSearchInput();
+};
+window.ambCloseMSearch = function(){
+  var o=$('ambMSearch'); if(!o) return;
+  o.classList.remove('on');
+  var modalOpen = document.querySelector('#amb-store .amb-modal.on, #amb-store .amb-cart.open, #amb-store .amb-floor-panel.open');
+  if(!modalOpen) document.body.style.overflow='';
+};
+window.ambMSearchInput = function(){
+  var inp=$('ambMSearchIn'), body=$('ambMSearchBody'); if(!body) return;
+  var q = inp ? inp.value.trim() : '';
+  state.search = q; renderProducts();
+  body.innerHTML = q ? buildSearchHTML(q.toLowerCase()) : mSearchHint();
+};
 window.ambClearSearch = function(){
   var inp=$('ambSearch'); if(inp) inp.value='';
+  var mi=$('ambMSearchIn'); if(mi) mi.value='';
   state.search=''; renderProducts(); ambCloseSearch();
+  var mb=$('ambMSearchBody'); if(mb && $('ambMSearch') && $('ambMSearch').classList.contains('on')) mb.innerHTML=mSearchHint();
 };
 window.ambSearchPick = function(kind, id){
-  ambCloseSearch();
+  ambCloseSearch(); ambCloseMSearch();
   var inp=$('ambSearch'); if(inp) inp.value='';
   state.search='';
   if(kind==='tenant'){ ambFilter(id); renderProducts(); ambScrollTo('ambShop'); }
   else if(kind==='product'){ ambOpenProduct(id); }
+  else if(kind==='service'){ ambOpenService(id); }
 };
 window.ambSearchPickCat = function(cat){
-  ambCloseSearch();
+  ambCloseSearch(); ambCloseMSearch();
   var inp=$('ambSearch'); if(inp) inp.value='';
   state.search=''; renderProducts();
   // jump to first tenant offering this category, else just scroll shop
@@ -2233,7 +2601,7 @@ function tenantCardHTML(tn){
         '<img src="'+esc(tn.photo)+'" alt="'+esc(tn.name)+'" loading="lazy" onerror="this.style.display=\'none\'">'+
         '<div class="amb-kiosk-glare"></div>'+
         '<span class="amb-kiosk-verified" onclick="event.stopPropagation();ambShowVerifiedInfo()" style="cursor:pointer"><i class="fas fa-circle-check"></i> '+esc(t('statVerified'))+'</span>'+
-        '<span class="amb-kiosk-floor">'+esc(tn.floor)+'</span>'+
+        '<span class="amb-kiosk-floor">'+esc(floorUnit(tn))+'</span>'+
       '</div>'+
       '<div class="amb-kiosk-sign" style="background:linear-gradient(150deg,'+tn.color+','+dark+')">'+esc(initials(tn.name))+'</div>'+
       '<div class="amb-kiosk-interior">'+
@@ -2263,7 +2631,7 @@ window.ambOpenTenant = function(tid){
     ['fa-user', t('owner'), tn.owner],
     ['fa-phone', t('mobile'), tn.mobile],
     ['fa-id-card', t('tin'), tn.tin],
-    ['fa-building', t('floorLbl'), tn.floor],
+    ['fa-building', t('floorLbl'), floorUnit(tn)],
     ['fab fa-whatsapp', 'WhatsApp', '+'+tn.whatsapp]
   ].map(function(r){
     var fa=r[0].indexOf('fab')===0?r[0]:'fas '+r[0];
@@ -2278,7 +2646,7 @@ window.ambOpenTenant = function(tid){
       '<div class="amb-tp-head">'+
         '<div class="amb-tp-av" style="background:linear-gradient(135deg,'+tn.color+','+shade(tn.color,-25)+')">'+esc(initials(tn.name))+'</div>'+
         '<div><div class="amb-tp-name">'+esc(nameFor(tn))+' <i class="fas fa-circle-check" style="color:var(--success);font-size:.7rem;cursor:pointer" onclick="ambShowVerifiedInfo()" title="What does Verified mean?"></i></div>'+
-        '<div class="amb-tp-cat"><i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+' · '+esc(tn.floor)+'</div></div>'+
+        '<div class="amb-tp-cat"><i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+' · '+esc(floorUnit(tn))+'</div></div>'+
       '</div>'+
       '<div class="amb-tp-body">'+
         '<p class="amb-tp-blurb">'+esc(tn.blurb)+'</p>'+
@@ -2374,6 +2742,216 @@ window.ambOpenService = function(sid){
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
 };
 
+/* ── HERO VISUAL: Jump to Floor list + phone mockup + image carousel ── */
+var exploreIdx = 0, exploreTotal = 0, exploreInterval;
+function renderHeroVisual(){
+  var el = $('ambHeroVisual'); if(!el) return;
+  var floorList = [];
+  BUILDING.tenants.forEach(function(t){ if(floorList.indexOf(t.floor)<0) floorList.push(t.floor); });
+  var order = {'Ground Floor':0,'1st Floor':1,'2nd Floor':2,'3rd Floor':3,'4th Floor':4,'5th Floor':5,'6th Floor':6};
+  floorList.sort(function(a,b){ return (order[a]!=null?order[a]:99)-(order[b]!=null?order[b]:99); });
+
+  var floorsHTML = floorList.map(function(fl){
+    var c = floorColor(fl);
+    var am = FLOOR_AM[fl] || '';
+    var onFloor = BUILDING.tenants.filter(function(t){ return t.floor===fl; });
+    var stat = (BUILDING.floorStats && BUILDING.floorStats[fl]) || null;
+    var count = stat ? stat.total : onFloor.length;
+    var occ = stat ? stat.active : onFloor.filter(function(t){ return t.active!==false; }).length;
+    return '<div class="floor-vertical-item" style="--fc:'+c+'" onclick="ambOpenFloorPanel(\''+esc(fl).replace(/'/g,"\\'")+'\')">'+
+      '<span>'+esc(fl)+' <span class="amh-inline">'+esc(am)+'</span></span>'+
+      '<span class="floor-occ">'+occ+'/'+count+' <i class="fas fa-circle-check"></i></span>'+
+      '<i class="fas fa-chevron-right floor-arrow"></i>'+
+      '</div>';
+  }).join('');
+
+  var carouselImages = [
+    { src:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ይግዙና ይመገቡ':'Shop & Dine'), sub:(state.lang==='am'?'ከ200 በላይ ሱቆችና ምግብ ቤቶች':'Verified sellers across every floor') },
+    { src:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ፋሽንና ስታይል':'Fashion & Style'), sub:(state.lang==='am'?'የቅርብ ጊዜ ስታይሎች':'The latest from local and imported brands') },
+    { src:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ምግብና መጠጥ':'Food & Dining'), sub:(state.lang==='am'?'ጣፋጭ ምግብና ልዩ ዕይታ':'Exquisite views and cuisine') },
+    { src:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1200&h=500&fit=crop', label:(state.lang==='am'?'የቤት ማስዋቢያ':'Home Decor'), sub:(state.lang==='am'?'ለቤትዎ ውበት':'Furnish and decorate your space') },
+    { src:'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ጤናና እንክብካቤ':'Wellness & Spa'), sub:(state.lang==='am'?'የመዝናኛ ጊዜ':'Rejuvenate at Zen Spa') }
+  ];
+  var carouselHTML = carouselImages.map(function(img,idx){
+    return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy">'+
+      '<div class="slide-overlay"><div class="slide-label">'+esc(img.label)+'</div><div class="slide-sub">'+esc(img.sub)+'</div></div></div>';
+  }).join('');
+
+  var qrUrl = (typeof location!=='undefined') ? (location.origin+location.pathname) : '';
+  el.innerHTML =
+    '<div class="welcome-left">'+
+      '<div class="mobile-frame-container"><div class="mobile-screen">'+
+        '<div class="mobile-header"><h3>Ambassador Mall</h3><p>Digital Directory</p></div>'+
+        '<div class="mobile-body">'+
+          '<div class="qr-code-container"><a href="'+esc(qrUrl)+'" target="_blank"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(qrUrl)+'&color=7a1a44&bgcolor=ffffff" alt="QR Code"></a></div>'+
+          '<div class="nfc-tag"><i class="fas fa-wifi"></i><span>NFC Tag</span><i class="fas fa-chevron-right" style="font-size:.55rem;opacity:.5"></i><span class="nfc-highlight">'+(state.lang==='am'?'በአጭሩ ይንኩ':'short scan & tap it')+'</span></div>'+
+          '<p class="qr-instruction">'+(state.lang==='am'?'ሙሉውን ማውጫ ለማየት QR ኮዱን ይቃኙ ወይም ስልክዎን ይንኩ።':'Scan the QR code or tap your phone to access the full mall directory.')+'</p>'+
+        '</div>'+
+      '</div></div>'+
+    '</div>'+
+    '<div class="welcome-right">'+
+      '<div><div class="floor-list-title">'+(state.lang==='am'?'ወደ ፎቅ ዝለል':'Jump to Floor')+'</div><div class="floor-vertical-list">'+floorsHTML+'</div></div>'+
+      '<div class="explore-carousel-wrap">'+
+        '<div class="explore-track" id="exploreTrack">'+carouselHTML+'</div>'+
+        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1)"><i class="fas fa-chevron-left"></i></button>'+
+        '<button class="explore-arrow next" onclick="ambExploreSlide(1)"><i class="fas fa-chevron-right"></i></button>'+
+      '</div>'+
+      '<div class="explore-dots" id="exploreDots"></div>'+
+    '</div>';
+  initExploreCarousel();
+}
+function initExploreCarousel(){
+  var track=$('exploreTrack'), dots=$('exploreDots'); if(!track) return;
+  var slides = track.querySelectorAll('.explore-slide');
+  exploreTotal = slides.length; if(!exploreTotal) return;
+  dots.innerHTML='';
+  for(var i=0;i<exploreTotal;i++){
+    var dot=document.createElement('span');
+    dot.className='explore-dot'+(i===0?' active':'');
+    dot.dataset.index=i;
+    dot.addEventListener('click', (function(idx){ return function(){ ambGoToExploreSlide(idx); }; })(i));
+    dots.appendChild(dot);
+  }
+  clearInterval(exploreInterval);
+  exploreInterval = setInterval(function(){ ambExploreSlide(1); }, 5500);
+  ambGoToExploreSlide(0);
+}
+window.ambGoToExploreSlide = function(idx){
+  var track=$('exploreTrack'), dots=$('exploreDots'); if(!track) return;
+  var slides=track.querySelectorAll('.explore-slide'); if(!slides.length) return;
+  idx = Math.max(0, Math.min(exploreTotal-1, idx));
+  exploreIdx = idx;
+  track.style.transform = 'translateX(-'+(idx*100)+'%)';
+  if(dots) dots.querySelectorAll('.explore-dot').forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+};
+window.ambExploreSlide = function(dir){
+  var n = exploreIdx+dir;
+  if(n<0) n=exploreTotal-1; if(n>=exploreTotal) n=0;
+  ambGoToExploreSlide(n);
+};
+window.ambFilterByFloor = function(floorName){
+  state.filter = 'floor:'+floorName;
+  renderFilterChips(); renderTenants(); renderProducts();
+  ambScrollTo('ambShop');
+};
+
+/* ── FLOOR PANEL — every office on a floor, tap for details ── */
+var FLOOR_ORDER = {'Ground Floor':0,'1st Floor':1,'2nd Floor':2,'3rd Floor':3,'4th Floor':4,'5th Floor':5,'6th Floor':6};
+function floorsList(){
+  var fl=[];
+  BUILDING.tenants.forEach(function(t){ if(fl.indexOf(t.floor)<0) fl.push(t.floor); });
+  (SERVICES||[]).forEach(function(s){ if(s.floor && fl.indexOf(s.floor)<0) fl.push(s.floor); });
+  fl.sort(function(a,b){ return (FLOOR_ORDER[a]!=null?FLOOR_ORDER[a]:99)-(FLOOR_ORDER[b]!=null?FLOOR_ORDER[b]:99); });
+  return fl;
+}
+function unitSort(a,b){
+  var ua=(a.unit||''), ub=(b.unit||'');
+  var na=parseInt(ua.replace(/\D/g,''),10)||0, nb=parseInt(ub.replace(/\D/g,''),10)||0;
+  return na-nb || ua.localeCompare(ub);
+}
+function fpCardHTML(tn){
+  return '<button class="amb-fp-card" style="--uc:'+tn.color+'" onclick="ambOpenTenant(\''+tn.id+'\')">'+
+    (tn.unit?'<span class="fp-unit">'+esc(tn.unit)+'</span>':'')+
+    '<span class="fp-ic" style="background:linear-gradient(135deg,'+tn.color+','+shade(tn.color,-28)+')"><i class="fas '+tn.icon+'"></i></span>'+
+    '<span class="fp-name">'+esc(tn.name)+(state.lang==='am'&&tn.nameAm&&tn.nameAm!==tn.name?'<span class="amh-inline">'+esc(tn.nameAm)+'</span>':'')+'</span>'+
+    '<span class="fp-cat">'+esc(tn.cat)+'</span>'+
+    '<span class="fp-meta"><span>★ '+tn.rating+'</span><span>'+(tn.products?tn.products.length:0)+' '+t('fpProducts')+'</span></span>'+
+  '</button>';
+}
+function fpSvcCardHTML(sv){
+  return '<button class="amb-fp-card svc" style="--uc:'+sv.color+'" onclick="ambCloseFloorPanel();ambOpenService(\''+sv.id+'\')">'+
+    '<span class="fp-ic" style="background:linear-gradient(135deg,'+sv.color+','+shade(sv.color,-28)+')"><i class="fas '+sv.icon+'"></i></span>'+
+    '<span class="fp-name">'+esc(nameFor(sv))+'</span>'+
+    '<span class="fp-cat">'+esc(sv.type)+'</span>'+
+    '<span class="fp-badge-svc">'+esc(t('svcLbl'))+'</span>'+
+  '</button>';
+}
+window.ambOpenFloorPanel = function(floorName){
+  var shops = BUILDING.tenants.filter(function(x){ return x.floor===floorName; }).sort(unitSort);
+  var svcs = (SERVICES||[]).filter(function(s){ return s.floor===floorName; });
+  if(!shops.length && !svcs.length) return;
+  var am = FLOOR_AM[floorName]||'';
+  var title=$('ambFpTitle'); if(title) title.innerHTML = esc(floorName)+(am?'<span class="amh-inline">'+esc(am)+'</span>':'');
+  var sub=$('ambFpSub'); if(sub) sub.textContent = t('tapUnit');
+  var prodCt = shops.reduce(function(s,x){ return s+(x.products?x.products.length:0); },0);
+  var stats=$('ambFpStats');
+  if(stats) stats.innerHTML =
+    '<span class="amb-fp-stat"><i class="fas fa-store"></i> '+shops.length+' '+t('fpShops')+'</span>'+
+    (svcs.length?'<span class="amb-fp-stat"><i class="fas fa-concierge-bell"></i> '+svcs.length+' '+t('fpServices')+'</span>':'')+
+    '<span class="amb-fp-stat"><i class="fas fa-box"></i> '+prodCt+' '+t('fpProducts')+'</span>';
+  var body=$('ambFpBody');
+  if(body) body.innerHTML = '<div class="amb-fp-grid">'+
+    shops.map(fpCardHTML).join('') + svcs.map(fpSvcCardHTML).join('') +
+    '</div>';
+  var foot=$('ambFpFoot');
+  var flEsc = esc(floorName).replace(/'/g,"\\'");
+  if(foot) foot.innerHTML =
+    '<button class="amb-fp-shopbtn" onclick="ambCloseFloorPanel();ambFilterByFloor(\''+flEsc+'\')"><i class="fas fa-bag-shopping"></i> '+esc(t('shopThisFloor'))+'</button>'+
+    '<button class="amb-fp-dirbtn" onclick="ambCloseFloorPanel();ambScrollTo(\'ambDirectory\')"><i class="fas fa-list"></i> '+esc(t('fullDirectory'))+'</button>';
+  var p=$('ambFloorPanel'), sc=$('ambFloorScrim');
+  if(p) p.classList.add('open'); if(sc) sc.classList.add('on');
+  document.body.style.overflow='hidden';
+  if(history.replaceState) history.replaceState(null,'','#floor='+encodeURIComponent(floorName));
+};
+window.ambCloseFloorPanel = function(){
+  var p=$('ambFloorPanel'), sc=$('ambFloorScrim');
+  if(p) p.classList.remove('open'); if(sc) sc.classList.remove('on');
+  // keep page scroll locked if a modal is still open on top
+  var modalOpen = document.querySelector('#amb-store .amb-modal.on, #amb-store .amb-cart.open');
+  if(!modalOpen) document.body.style.overflow='';
+  if(location.hash.indexOf('#floor=')===0 && history.replaceState) history.replaceState(null,'',location.pathname+location.search);
+};
+
+/* ── BUILDING DIRECTORY — all offices listed, searchable ── */
+function dirMatches(x, q){
+  if(!q) return true;
+  var hay = ((x.unit||'')+' '+x.name+' '+(x.nameAm||'')+' '+(x.cat||x.type||'')+' '+(x.owner||'')+' '+x.floor).toLowerCase();
+  return hay.indexOf(q)>=0;
+}
+function dirCardHTML(x, isSvc){
+  var open = isSvc ? 'ambOpenService(\''+x.id+'\')' : 'ambOpenTenant(\''+x.id+'\')';
+  return '<button class="amb-dir-card'+(isSvc?' svc':'')+'" style="--uc:'+x.color+'" onclick="'+open+'">'+
+    '<span class="dir-ic" style="background:linear-gradient(135deg,'+x.color+','+shade(x.color,-28)+')"><i class="fas '+x.icon+'"></i></span>'+
+    '<span class="dir-txt"><span class="dir-name">'+esc(nameFor(x))+'</span>'+
+    '<span class="dir-sub">'+esc(x.cat||x.type||'')+(x.owner?' · '+esc(x.owner):'')+'</span></span>'+
+    '<span class="dir-unit">'+esc(x.unit||t('svcLbl'))+'</span>'+
+    '<i class="fas fa-chevron-right dir-arrow"></i>'+
+  '</button>';
+}
+function renderDirectory(){
+  var tabs=$('ambDirTabs'), list=$('ambDirList');
+  if(!tabs || !list) return;
+  var fls = floorsList();
+  tabs.innerHTML = '<button class="amb-dir-tab'+(state.dirFloor==='all'?' active':'')+'" onclick="ambDirSetFloor(\'all\')">'+esc(t('allFloors'))+'</button>'+
+    fls.map(function(fl){
+      var flEsc = esc(fl).replace(/'/g,"\\'");
+      return '<button class="amb-dir-tab'+(state.dirFloor===fl?' active':'')+'" onclick="ambDirSetFloor(\''+flEsc+'\')">'+esc(fl)+'</button>';
+    }).join('');
+  var inp=$('ambDirSearch'); if(inp) inp.placeholder = t('dirSearchPh');
+  var q = state.dirQ.toLowerCase();
+  var html='', total=0;
+  fls.forEach(function(fl){
+    if(state.dirFloor!=='all' && state.dirFloor!==fl) return;
+    var shops = BUILDING.tenants.filter(function(x){ return x.floor===fl && dirMatches(x,q); }).sort(unitSort);
+    var svcs = (SERVICES||[]).filter(function(s){ return s.floor===fl && dirMatches(s,q); });
+    if(!shops.length && !svcs.length) return;
+    total += shops.length + svcs.length;
+    var am = FLOOR_AM[fl]||'';
+    html += '<div class="amb-dir-floor">'+
+      '<div class="amb-dir-floorhead"><span class="amb-dir-floorbar" style="--fc:'+floorColor(fl)+'"></span>'+
+      '<h4>'+esc(fl)+' <span class="amh-inline">'+esc(am)+'</span></h4>'+
+      '<span class="dir-ct">'+(shops.length+svcs.length)+' '+t('unitsLbl')+'</span></div>'+
+      '<div class="amb-dir-grid">'+shops.map(function(x){return dirCardHTML(x,false);}).join('')+svcs.map(function(s){return dirCardHTML(s,true);}).join('')+'</div>'+
+    '</div>';
+  });
+  if(!total){
+    html = '<div class="amb-dir-empty"><i class="fas fa-building-circle-xmark"></i>'+esc(t('dirNoMatch'))+'</div>';
+  }
+  list.innerHTML = html;
+}
+window.ambDirSetFloor = function(fl){ state.dirFloor=fl; renderDirectory(); };
+window.ambDirSearchInput = function(){ var i=$('ambDirSearch'); state.dirQ = i?i.value.trim():''; renderDirectory(); };
+
 /* ── ON-SALE CAROUSEL ── */
 function renderOnSale(){
   var el=$('ambOnSaleStrip'); if(!el) return;
@@ -2400,11 +2978,26 @@ window.ambFilter = function (key) {
 /* ── PRODUCT GRID ── */
 function visibleProducts() {
   var list = ALL_PRODUCTS.filter(function(p){
-    if (state.filter!=='all' && p.tenantId!==state.filter) return false;
+    if (state.filter!=='all') {
+      if (('' + state.filter).indexOf('floor:') === 0) {
+        var fl = state.filter.slice(6);
+        var tn0 = tenant(p.tenantId);
+        if (!tn0 || tn0.floor !== fl) return false;
+      } else if (p.tenantId !== state.filter) return false;
+    }
     if (state.priceMax && p.price>state.priceMax) return false;
+    if (state.priceMin && p.price<state.priceMin) return false;
+    if (state.ratingMin && p.rating<state.ratingMin) return false;
+    if (state.stockF==='in'   && (!p.stock || (p.stock.state!=='in' && p.stock.state!=='low'))) return false;
+    if (state.stockF==='sale' && !(p.old && p.old>p.price)) return false;
+    if (state.stockF==='made' && (!p.stock || p.stock.state!=='made')) return false;
+    if (state.floorF!=='all') {
+      var tnF = tenant(p.tenantId);
+      if (!tnF || tnF.floor!==state.floorF) return false;
+    }
     if (state.search) {
       var tn = tenant(p.tenantId);
-      var hay = (p.name+' '+p.cat+' '+(tn?tn.name+' '+tn.cat:'')).toLowerCase();
+      var hay = (p.name+' '+p.cat+' '+(p.desc||'')+' '+(tn?tn.name+' '+tn.cat+' '+(tn.unit||'')+' '+tn.floor:'')).toLowerCase();
       if (hay.indexOf(state.search.toLowerCase())<0) return false;
     }
     return true;
@@ -2441,7 +3034,7 @@ function productCard(p, saleMode) {
         '<button class="amb-pcard-tool" onclick="event.stopPropagation();ambOpenProduct(\''+p.id+'\')" title="'+esc(t('viewQuick'))+'"><i class="far fa-eye"></i></button>'+
         '<button class="amb-pcard-tool" onclick="event.stopPropagation();ambShareProduct(\''+p.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
       '</div>'+
-      '<span class="amb-pcard-tenant" onclick="event.stopPropagation();ambOpenTenant(\''+tn.id+'\')"><i class="fas fa-building"></i> '+esc(tn.floor)+' · '+esc(nameFor(tn))+'</span>'+
+      '<span class="amb-pcard-tenant" onclick="event.stopPropagation();ambOpenTenant(\''+tn.id+'\')"><i class="fas fa-building"></i> '+esc(floorUnit(tn))+' · '+esc(nameFor(tn))+'</span>'+
     '</div>'+
     '<div class="amb-pcard-body">'+
       '<div class="amb-pcard-cat">'+esc(p.cat)+'</div>'+
@@ -2455,20 +3048,77 @@ function productCard(p, saleMode) {
     '</div>'+
   '</article>';
 }
+/* ── FILTER BAR — sort · floor · price range · availability · rating ── */
+function maxProductPrice(){
+  var m=0; ALL_PRODUCTS.forEach(function(p){ if(p.price>m) m=p.price; });
+  return Math.ceil(m/1000)*1000 || 100000;
+}
+function activeFilterCount(){
+  var n=0;
+  if(state.sort!=='featured') n++;
+  if(state.priceMin) n++;
+  if(state.priceMax) n++;
+  if(state.stockF!=='all') n++;
+  if(state.ratingMin) n++;
+  if(state.floorF!=='all') n++;
+  return n;
+}
+function renderFilterBar(){
+  var bar=$('ambFilterBar'); if(!bar) return;
+  var expanded = bar.classList.contains('expanded');
+  var sortOpts=[['featured',t('sortFeatured')],['priceLow',t('sortPriceLow')],['priceHigh',t('sortPriceHigh')],['rating',t('sortRating')]];
+  var fls = floorsList();
+  var maxP = maxProductPrice();
+  var sliderVal = state.priceMax || maxP;
+  var n = activeFilterCount();
+  var stockChips = [['all',t('availAll'),'fa-grip'],['in',t('availIn'),'fa-circle-check'],['sale',t('availSale'),'fa-tag'],['made',t('availMade'),'fa-screwdriver-wrench']];
+  bar.innerHTML =
+    '<div class="amb-fbar-top">'+
+      '<span class="amb-fbar-title"><i class="fas fa-sliders"></i> '+esc(t('filters'))+(n?' <span class="amb-fbar-ct">'+n+'</span>':'')+'</span>'+
+      '<button class="amb-fbar-toggle" onclick="ambToggleFBar()"><i class="fas fa-chevron-'+(expanded?'up':'down')+'"></i> '+esc(t(expanded?'close':'filters'))+'</button>'+
+      '<button class="amb-fbar-reset" onclick="ambResetShop()"><i class="fas fa-rotate-left"></i> '+esc(t('resetFilters'))+'</button>'+
+    '</div>'+
+    '<div class="amb-fbar-body">'+
+      '<div class="amb-fgroup"><span class="amb-fgroup-l"><i class="fas fa-arrow-down-wide-short"></i> '+esc(t('sortBy'))+'</span>'+
+        '<select class="amb-fsel" onchange="ambSetSort(this.value)">'+
+          sortOpts.map(function(o){return '<option value="'+o[0]+'"'+(state.sort===o[0]?' selected':'')+'>'+esc(o[1])+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="amb-fgroup"><span class="amb-fgroup-l"><i class="fas fa-layer-group"></i> '+esc(t('floorLblF'))+'</span>'+
+        '<select class="amb-fsel" onchange="ambSetFloorF(this.value)">'+
+          '<option value="all"'+(state.floorF==='all'?' selected':'')+'>'+esc(t('allFloors'))+'</option>'+
+          fls.map(function(fl){return '<option value="'+esc(fl)+'"'+(state.floorF===fl?' selected':'')+'>'+esc(fl)+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="amb-fgroup"><span class="amb-fgroup-l"><i class="fas fa-coins"></i> '+esc(t('priceRange'))+' · '+t('under')+' '+fmtN(sliderVal)+'</span>'+
+        '<div class="amb-fprice">'+
+          '<input type="number" min="0" placeholder="'+esc(t('minPh'))+'" value="'+(state.priceMin||'')+'" onchange="ambSetPriceMin(this.value)">'+
+          '<span class="dash">—</span>'+
+          '<input type="number" min="0" placeholder="'+esc(t('maxPh'))+'" value="'+(state.priceMax||'')+'" onchange="ambSetPriceMax(this.value)">'+
+          '<input type="range" class="amb-frange" min="500" max="'+maxP+'" step="500" value="'+sliderVal+'" oninput="ambSetPriceMax(this.value)">'+
+        '</div></div>'+
+      '<div class="amb-fgroup"><span class="amb-fgroup-l"><i class="fas fa-box"></i> '+esc(t('availability'))+'</span>'+
+        '<div class="amb-fchips">'+
+          stockChips.map(function(c){return '<button class="amb-fchip'+(state.stockF===c[0]?' active':'')+'" onclick="ambSetStockF(\''+c[0]+'\')"><i class="fas '+c[2]+'"></i> '+esc(c[1])+'</button>';}).join('')+
+        '</div></div>'+
+      '<div class="amb-fgroup"><span class="amb-fgroup-l"><i class="fas fa-star"></i> '+esc(t('ratingF'))+'</span>'+
+        '<div class="amb-fchips">'+
+          '<button class="amb-fchip'+(!state.ratingMin?' active':'')+'" onclick="ambSetRatingMin(0)">'+esc(t('anyRating'))+'</button>'+
+          '<button class="amb-fchip'+(state.ratingMin===4?' active':'')+'" onclick="ambSetRatingMin(4)"><i class="fas fa-star"></i> '+esc(t('top4'))+'</button>'+
+        '</div></div>'+
+    '</div>';
+}
+window.ambToggleFBar = function(){
+  var bar=$('ambFilterBar'); if(!bar) return;
+  bar.classList.toggle('expanded');
+  renderFilterBar();
+};
+window.ambSetFloorF = function(v){ state.floorF=v; renderFilterBar(); renderProducts(); };
+window.ambSetStockF = function(v){ state.stockF=v; renderFilterBar(); renderProducts(); };
+window.ambSetRatingMin = function(v){ state.ratingMin=Number(v)||0; renderFilterBar(); renderProducts(); };
+window.ambSetPriceMin = function(v){ state.priceMin=parseInt(v,10)||0; renderFilterBar(); renderProducts(); };
+
 function renderProducts() {
   var grid=$('ambProdGrid'); if(!grid) return;
   var list = visibleProducts();
-  // sort + price controls
-  var tb=$('ambProdControls');
-  if(tb){
-    var sortOpts=[['featured',t('sortFeatured')],['priceLow',t('sortPriceLow')],['priceHigh',t('sortPriceHigh')],['rating',t('sortRating')]];
-    var priceOpts=[[0,t('allPrices')],[1500,t('under')+' '+fmtN(1500)],[5000,t('under')+' '+fmtN(5000)],[20000,t('under')+' '+fmtN(20000)],[100000,t('over')+' '+fmtN(20000)]];
-    tb.innerHTML =
-      '<div class="amb-ctrl"><i class="fas fa-arrow-down-wide-short"></i><select class="amb-ctrl-sel" onchange="ambSetSort(this.value)">'+
-        sortOpts.map(function(o){return '<option value="'+o[0]+'"'+(state.sort===o[0]?' selected':'')+'>'+esc(o[1])+'</option>';}).join('')+'</select></div>'+
-      '<div class="amb-ctrl"><i class="fas fa-coins"></i><select class="amb-ctrl-sel" onchange="ambSetPriceMax(this.value)">'+
-        priceOpts.map(function(o){return '<option value="'+o[0]+'"'+(state.priceMax===o[0]?' selected':'')+'>'+esc(o[1])+'</option>';}).join('')+'</select></div>';
-  }
   var cnt=$('ambProdCount');
   if (cnt) {
     var label = state.filter==='all' ? (state.lang==='am'?'ሁሉም ሻጮች':'all sellers') : (tenant(state.filter)?nameFor(tenant(state.filter)):'');
@@ -2483,9 +3133,9 @@ function renderProducts() {
   }
   grid.innerHTML = list.map(function(p){return productCard(p,false);}).join('');
 }
-window.ambSetSort = function(v){ state.sort=v; renderProducts(); };
-window.ambSetPriceMax = function(v){ state.priceMax=parseInt(v,10)||0; renderProducts(); };
-window.ambResetShop = function(){ state.filter='all'; state.priceMax=0; state.sort='featured'; state.search=''; var i=$('ambSearch'); if(i) i.value=''; renderFilterChips(); renderProducts(); };
+window.ambSetSort = function(v){ state.sort=v; renderFilterBar(); renderProducts(); };
+window.ambSetPriceMax = function(v){ state.priceMax=parseInt(v,10)||0; renderFilterBar(); renderProducts(); };
+window.ambResetShop = function(){ state.filter='all'; state.priceMax=0; state.priceMin=0; state.stockF='all'; state.ratingMin=0; state.floorF='all'; state.sort='featured'; state.search=''; var i=$('ambSearch'); if(i) i.value=''; var mi=$('ambMSearchIn'); if(mi) mi.value=''; renderFilterChips(); renderFilterBar(); renderProducts(); };
 
 /* ── SEARCH (legacy entry, now feeds dropdown) ── */
 window.ambSearch = function () { window.ambSearchInput(); };
@@ -2554,7 +3204,7 @@ window.ambOpenProduct = function (pid) {
         '<div class="amb-pm-seller" onclick="ambOpenTenant(\''+tn.id+'\')" style="cursor:pointer">'+
           '<div class="amb-pm-seller-av" style="background:linear-gradient(135deg,'+tn.color+','+shade(tn.color,-25)+')">'+esc(initials(tn.name))+'</div>'+
           '<div><div class="amb-pm-seller-nm">'+esc(nameFor(tn))+' <i class="fas fa-circle-check" style="color:var(--success);font-size:.66rem"></i></div>'+
-          '<div class="amb-pm-seller-mt"><i class="fas fa-building"></i> '+esc(tn.floor)+' · '+esc(BUILDING.name)+'</div></div>'+
+          '<div class="amb-pm-seller-mt"><i class="fas fa-building"></i> '+esc(floorUnit(tn))+' · '+esc(BUILDING.name)+'</div></div>'+
           '<i class="fas fa-chevron-right" style="margin-left:auto;color:var(--muted);font-size:.7rem"></i>'+
         '</div>'+
         '<div class="amb-pm-price">'+fmt(p.price)+(p.old?' <span class="old">'+fmtN(p.old)+'</span>':'')+'</div>'+
@@ -2608,6 +3258,7 @@ function ambOpenFromHash(){
   var kind = h.slice(0, eq), id = decodeURIComponent(h.slice(eq + 1));
   if (kind === 'product' && P(id)) window.ambOpenProduct(id);
   else if (kind === 'tenant' && tenant(id)) window.ambOpenTenant(id);
+  else if (kind === 'floor' && window.ambOpenFloorPanel) window.ambOpenFloorPanel(id);
 }
 window.ambOpenFromHash = ambOpenFromHash;
 
@@ -2639,7 +3290,7 @@ window.ambShareProduct = function(pid){
 };
 window.ambShareTenant = function(tid){
   var tn=tenant(tid); if(!tn) return;
-  ambShareSheet(nameFor(tn), tn.cat+' · '+tn.floor+' · '+BUILDING.name, 'tenant', tid);
+  ambShareSheet(nameFor(tn), tn.cat+' · '+floorUnit(tn)+' · '+BUILDING.name, 'tenant', tid);
 };
 function ambShareSheet(title, sub, kind, id){
   var s=buildShareText(title, sub, kind, id);
@@ -2720,7 +3371,8 @@ function updateWishBadge() {
 /* expose render fns for init + cart module */
 A.render = {
   ribbon:renderRibbon, chrome:renderChrome, tenants:renderTenants, services:renderServices,
-  onSale:renderOnSale, filterChips:renderFilterChips, products:renderProducts,
+  onSale:renderOnSale, filterChips:renderFilterChips, products:renderProducts, heroVisual:renderHeroVisual,
+  directory:renderDirectory, filterBar:renderFilterBar,
   wishBadge:updateWishBadge, i18n:applyI18n, langBtn:function(){ ambSetLang(state.lang); }
 };
 A.shade = shade;
@@ -2736,7 +3388,7 @@ A.socialIcons = socialIcons;
 'use strict';
 var A = window.__AMB;
 var BUILDING=A.BUILDING, state=A.state;
-var save=A.save, $=A.$, esc=A.esc, fmt=A.fmt, fmtN=A.fmtN, P=A.P, tenant=A.tenant, shade=A.shade;
+var save=A.save, $=A.$, esc=A.esc, fmt=A.fmt, fmtN=A.fmtN, P=A.P, tenant=A.tenant, shade=A.shade, floorUnit=A.floorUnit;
 var sendOrderToTenant=A.sendOrderToTenant;
 var saveCart=A.saveCart, computeTotals=A.computeTotals, nearestArea=A.nearestArea;
 var L=A.t;                 // i18n label fn (note: local `t` = tenant in this module)
@@ -2814,7 +3466,7 @@ function renderCart(){
     return '<div class="amb-cgroup">'+
       '<div class="amb-cgroup-head">'+
         '<div class="amb-cgroup-av" style="background:linear-gradient(135deg,'+t.color+','+shade(t.color,-25)+')">'+esc(initials(t.name))+'</div>'+
-        '<div class="amb-cgroup-info"><div class="amb-cgroup-name">'+esc(nameFor(t))+'</div><div class="amb-cgroup-floor">'+esc(t.floor)+'</div></div>'+
+        '<div class="amb-cgroup-info"><div class="amb-cgroup-name">'+esc(nameFor(t))+'</div><div class="amb-cgroup-floor">'+esc(floorUnit(t))+'</div></div>'+
       '</div>'+
       '<div class="amb-cgroup-items">'+items+'</div>'+
       '<div class="amb-cgroup-foot">'+
@@ -2835,6 +3487,7 @@ window.ambStartCheckout = function (tid) {
   state.coTenant = tid;
   state.coStep = 1;
   state.coBank = null;
+  state.coPayMethod = 'bank_transfer';
   ambCloseCart();
   renderCheckout();
   $('ambCoModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
@@ -2874,7 +3527,7 @@ function renderCheckout(){
     '<div class="amb-co-tenant-main">'+
       '<div class="amb-co-tenant-av" style="background:linear-gradient(135deg,'+t.color+','+shade(t.color,-25)+')">'+esc(initials(t.name))+'</div>'+
       '<div class="amb-co-tenant-info"><div class="amb-co-tenant-nm">'+esc(nameFor(t))+' <i class="fas fa-circle-check" style="color:var(--success);font-size:.66rem"></i></div>'+
-      '<div class="amb-co-tenant-mt">'+esc(t.floor)+' · '+esc(BUILDING.name)+'</div>'+
+      '<div class="amb-co-tenant-mt">'+esc(floorUnit(t))+' · '+esc(BUILDING.name)+'</div>'+
       '<div class="amb-co-tenant-contact"><i class="fas fa-user"></i> '+esc(t.owner)+' · <a href="tel:'+esc((t.mobile||'').replace(/\s/g,''))+'"><i class="fas fa-phone"></i> '+esc(t.mobile||'')+'</a></div></div>'+
       '<a class="amb-co-tenant-wa" href="https://wa.me/'+t.whatsapp+'" target="_blank" rel="noopener" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>'+
     '</div>'+
@@ -2936,7 +3589,7 @@ function renderCoStep2(t){
   $('ambCoBody').innerHTML =
     '<div class="amb-dlv-opts">'+
       '<div class="amb-dlv'+(!isPickup?' sel':'')+'" onclick="ambSelDlv(\'delivery\')"><i class="fas fa-truck-fast"></i><div class="amb-dlv-t">'+L('delivery')+'</div><div class="amb-dlv-s">'+L('deliveryAddisOnly')+'</div></div>'+
-      '<div class="amb-dlv'+(isPickup?' sel':'')+'" onclick="ambSelDlv(\'pickup\')"><i class="fas fa-store"></i><div class="amb-dlv-t">'+L('pickup')+'</div><div class="amb-dlv-s">'+(state.lang==='am'?'በ':'Collect at ')+esc(t.floor)+'</div></div>'+
+      '<div class="amb-dlv'+(isPickup?' sel':'')+'" onclick="ambSelDlv(\'pickup\')"><i class="fas fa-store"></i><div class="amb-dlv-t">'+L('pickup')+'</div><div class="amb-dlv-s">'+(state.lang==='am'?'በ':'Collect at ')+esc(floorUnit(t))+'</div></div>'+
     '</div>'+
     '<div class="amb-frow">'+
       '<div class="amb-fld"><label class="amb-fld-l">'+L('fullName')+' *</label><input class="amb-inp" id="ambFn" placeholder="'+(state.lang==='am'?'ስምዎ':'Your name')+'" value="'+esc(d.name||'')+'"></div>'+
@@ -3016,6 +3669,7 @@ function renderCoStep3(t){
   var fee=deliveryFee();
   var tt=computeTotals(total, fee);
   var grand=tt.gross;
+  var method = state.coPayMethod || 'bank_transfer';
   var banks = t.banks.map(function(b){
     var sel = state.coBank===b.key;
     var acctType = b.key==='telebirr' ? 'Telebirr number' : 'Account number';
@@ -3034,6 +3688,35 @@ function renderCoStep3(t){
   }).join('');
   var feeRow = fee ? '<div class="amb-co-row"><span>'+L('deliveryFee')+'</span><span>'+fmt(fee)+'</span></div>' :
     '<div class="amb-co-row"><span>'+L('deliveryFee')+'</span><span style="color:var(--success)">'+(state.coData.dlv==='pickup'?L('pickup'):L('free'))+'</span></div>';
+
+  var methodTabs =
+    '<div class="amb-pay-tabs">'+
+      '<button class="amb-pay-tab'+(method==='bank_transfer'?' on':'')+'" onclick="ambSelPayMethod(\'bank_transfer\')"><i class="fas fa-building-columns"></i> '+(state.lang==='am'?'ባንክ':'Bank Transfer')+'</button>'+
+      '<button class="amb-pay-tab'+(method==='chapa'?' on':'')+'" onclick="ambSelPayMethod(\'chapa\')"><img class="amb-pay-tab-logo" src="https://ethiopianlogos.com/logos/chapa/chapa.svg" alt="Chapa" onerror="this.replaceWith(Object.assign(document.createElement(\'i\'),{className:\'fas fa-credit-card\'}))"> Chapa</button>'+
+      '<button class="amb-pay-tab'+(method==='ussd'?' on':'')+'" onclick="ambSelPayMethod(\'ussd\')"><i class="fas fa-mobile-screen-button"></i> USSD</button>'+
+    '</div>';
+
+  var payBody;
+  if (method === 'chapa') {
+    payBody =
+      '<div class="amb-pay-panel">'+
+        '<div class="amb-pay-panel-ic amb-pay-panel-ic-logo"><img src="https://ethiopianlogos.com/logos/chapa/chapa.svg" alt="Chapa" onerror="this.parentNode.style.background=\'#0EA5A5\';this.replaceWith(Object.assign(document.createElement(\'i\'),{className:\'fas fa-credit-card\',style:\'color:#fff\'}))"></div>'+
+        '<h4>'+(state.lang==='am'?'በ Chapa ይክፈሉ':'Pay with Chapa')+'</h4>'+
+        '<p>'+(state.lang==='am'?'ካርድ፣ ሞባይል ገንዘብ ወይም ባንክ በመጠቀም ደህንነቱ በተጠበቀ በChapa ገፅ ላይ ይክፈሉ። ትዕዛዝዎን ካስገቡ በኋላ ወደ ቼክ አውት ገፅ ይዛወራሉ።':'Pay securely on Chapa\'s checkout page using a card, mobile money, or bank. You\'ll be redirected there right after placing your order.')+'</p>'+
+      '</div>';
+  } else if (method === 'ussd') {
+    payBody =
+      '<div class="amb-pay-panel">'+
+        '<div class="amb-pay-panel-ic" style="background:#7C3AED"><i class="fas fa-mobile-screen-button"></i></div>'+
+        '<h4>'+(state.lang==='am'?'በ USSD ይክፈሉ':'Pay via USSD push')+'</h4>'+
+        '<p>'+(state.lang==='am'?'ትዕዛዝ ካስገቡ በኋላ ክፍያውን ለማጽደቅ የ USSD መልእክት ወደ ስልክዎ ይላካል። ስልክዎ ዝግጁ መሆኑን ያረጋግጡ።':'After placing your order, a USSD prompt is sent to your phone to approve the payment. Make sure your phone is reachable.')+'</p>'+
+        '<div class="amb-pay-note"><i class="fas fa-circle-info"></i> '+(state.lang==='am'?'ይህ ባህሪ በዚህ ማከማቻ ላይ ገና ካልተዋቀረ፣ ካስገቡ በኋላ አማራጭ የክፍያ መንገድ ይነገርዎታል።':'If this isn\'t configured on this store yet, you\'ll be told right after ordering and can pay by bank transfer or WhatsApp instead.')+'</div>'+
+      '</div>';
+  } else {
+    payBody = '<label class="amb-fld-l" style="margin-bottom:8px;display:block">'+L('payVia')+' — '+esc(nameFor(t))+'</label>'+
+      '<div class="amb-banks">'+banks+'</div>';
+  }
+
   $('ambCoBody').innerHTML =
     '<div class="amb-co-sum" style="margin-bottom:14px">'+
       '<div class="amb-co-row"><span>'+L('subtotal')+'</span><span>'+fmt(total)+'</span></div>'+
@@ -3041,15 +3724,16 @@ function renderCoStep3(t){
       (tt.tax?'<div class="amb-co-row"><span>'+L('vat')+' ('+Math.round(taxRate()*100)+'%)</span><span>'+fmt(tt.tax)+'</span></div>':'')+
       '<div class="amb-co-row tot"><span>'+(state.lang==='am'?'ጠቅላላ ክፍያ':'Total to pay')+' '+esc(nameFor(t))+'</span><b>'+fmt(grand)+'</b></div>'+
     '</div>'+
-    '<label class="amb-fld-l" style="margin-bottom:8px;display:block">'+L('payVia')+' — '+esc(nameFor(t))+'</label>'+
-    '<div class="amb-banks">'+banks+'</div>'+
+    methodTabs+
+    payBody+
     '<div class="amb-note"><i class="fas fa-shield-halved"></i><span>'+(state.lang==='am'
         ? 'ትክክለኛውን መጠን ወደ የተመረጠው ሂሳብ ያስተላልፉ፣ ከዚያ ትዕዛዝ ይስጡ። ቢሲንካ ገንዘብዎን አይዝም — በቀጥታ ለሻጩ ይከፍላሉ።'
-        : 'Transfer the exact amount to the selected account, then place your order. Bisinka never holds your money — you pay '+esc(nameFor(t))+' directly. Confirm the account name before sending.')+'</span></div>'+
+        : 'Bisinka never holds your money — bank transfer and USSD both pay '+esc(nameFor(t))+' directly; Chapa settles to the marketplace operator on the seller\'s behalf.')+'</span></div>'+
     '<div class="amb-co-nav"><button class="amb-co-back" onclick="ambCoBack()"><i class="fas fa-arrow-left"></i> '+L('back')+'</button>'+
     '<button class="amb-co-next" onclick="ambPlaceOrder()"><i class="fas fa-circle-check"></i> '+L('placeOrder')+'</button></div>';
 }
 window.ambSelBank = function(key){ state.coBank=key; renderCoStep3(tenant(state.coTenant)); };
+window.ambSelPayMethod = function(method){ state.coPayMethod=method; state.coBank=null; renderCoStep3(tenant(state.coTenant)); };
 
 window.ambCoNext = function(){
   if(state.coStep===1){ state.coStep=2; renderCheckout(); }
@@ -3060,11 +3744,29 @@ window.ambCoBack = function(){ if(state.coStep>1){ state.coStep--; renderCheckou
 var placingOrder = false;
 window.ambPlaceOrder = function(){
   var t=tenant(state.coTenant);
-  if(!state.coBank){ window.ambToast(state.lang==='am'?'እባክዎ የመክፈያ ባንክ ይምረጡ':'Please select a bank to pay with','err'); return; }
+  var method = state.coPayMethod || 'bank_transfer';
+  if(method==='bank_transfer' && !state.coBank){ window.ambToast(state.lang==='am'?'እባክዎ የመክፈያ ባንክ ይምረጡ':'Please select a bank to pay with','err'); return; }
   if(placingOrder) return;
   placingOrder = true;
   var items=tenantCartItems(t.id);
   var total=tenantTotal(t.id);
+
+  function afterPayment(order){
+    if (method === 'chapa' && typeof fetch !== 'undefined') {
+      A.api('/api/orders/'+order.ref+'/pay/chapa', { method:'POST', body:{} }).then(function(d){
+        if (d && d.checkoutUrl) { location.href = d.checkoutUrl; return; }
+        window.ambToast(state.lang==='am'?'Chapa አሁን አይገኝም — በWhatsApp ላይ ከሻጩ ጋር ይክፈሉ':'Chapa isn\'t available right now — arrange payment with the seller on WhatsApp.', 'err');
+      }).catch(function(err){
+        window.ambToast((err && err.message) || 'Chapa isn\'t set up on this store yet — pay via WhatsApp with the seller.', 'err');
+      });
+    } else if (method === 'ussd' && typeof fetch !== 'undefined') {
+      A.api('/api/orders/'+order.ref+'/pay/ussd', { method:'POST', body:{} }).then(function(d){
+        window.ambToast((d && d.message) || 'USSD prompt sent — check your phone.', 'suc');
+      }).catch(function(err){
+        window.ambToast((err && err.message) || 'USSD push isn\'t set up on this store yet — pay via WhatsApp with the seller.', 'err');
+      });
+    }
+  }
 
   function finalize(order){
     placingOrder = false;
@@ -3076,20 +3778,21 @@ window.ambPlaceOrder = function(){
     saveCart();
     updateBadges();
     state.coStep=4; renderCheckout();
+    afterPayment(order);
   }
   function localOrder(){
-    var bank = t.banks.filter(function(b){return b.key===state.coBank;})[0];
+    var bank = method==='bank_transfer' ? t.banks.filter(function(b){return b.key===state.coBank;})[0] : null;
     var ref = 'AMB-'+t.id.toUpperCase().slice(0,3)+'-'+(''+Date.now()).slice(-6);
     var fee = deliveryFee();
     var tt = computeTotals(total, fee);
     return {
       ref: ref, date: new Date().toISOString(), building: BUILDING.name,
-      tenant: { id:t.id, name:t.name, floor:t.floor, whatsapp:t.whatsapp, owner:t.owner, mobile:t.mobile },
+      tenant: { id:t.id, name:t.name, floor:t.floor, unit:t.unit, whatsapp:t.whatsapp, owner:t.owner, mobile:t.mobile },
       buyer: { name:state.coData.name, phone:state.coData.phone, method:state.coData.dlv, area:state.coData.area, addr:state.coData.addr, geo:state.coData.geo||'' },
       items: items.map(function(it){ return { name:it.product.name, variant:it.variant||'', qty:it.qty, price:it.product.price, line:it.product.price*it.qty }; }),
-      bank: { name:bank.name, acct:bank.acct, holder:bank.holder },
+      bank: bank ? { name:bank.name, acct:bank.acct, holder:bank.holder } : null,
       subtotal: total, deliveryFee: fee, tax: tt.tax, taxLabel:(BUILDING.tax&&BUILDING.tax.label)||'VAT', taxRate:taxRate(), total: tt.gross,
-      status: 'placed', offline: true
+      paymentMethod: method, status: 'placed', offline: true
     };
   }
 
@@ -3099,7 +3802,8 @@ window.ambPlaceOrder = function(){
     tenantId: t.id,
     items: items.map(function(it){ return { pid:it.pid, qty:it.qty, variant:it.variant||'' }; }),
     buyer: { name:state.coData.name, phone:state.coData.phone, method:state.coData.dlv, area:state.coData.area, addr:state.coData.addr, geo:state.coData.geo||'' },
-    bankKey: state.coBank,
+    paymentMethod: method,
+    bankKey: method==='bank_transfer' ? state.coBank : undefined,
     gpsKm: state.coData.gpsKm != null ? state.coData.gpsKm : undefined
   }}).then(function(d){
     finalize(d.order);
@@ -3123,7 +3827,7 @@ function buildWaMessage(o){
     '\nSubtotal: '+fmt(o.subtotal)+feeLine+vatLine+
     '\n\n*Total: '+fmt(o.total)+'*'+
     '\n\nBuyer: '+o.buyer.name+'\nPhone: '+o.buyer.phone+
-    '\n'+(o.buyer.method==='pickup'?'Pickup at '+o.tenant.floor:'Deliver to: '+o.buyer.area+(o.buyer.addr?' - '+o.buyer.addr:''))+
+    '\n'+(o.buyer.method==='pickup'?'Pickup at '+floorUnit(o.tenant):'Deliver to: '+o.buyer.area+(o.buyer.addr?' - '+o.buyer.addr:''))+
     (o.buyer.geo?'\nMap: '+o.buyer.geo:'')+
     '\nPaid to: '+o.bank.name+' ('+o.bank.acct+')'+
     '\n\nI have made the transfer - sending proof now.';
@@ -3150,7 +3854,7 @@ function renderCoStep4(t){
         '</div>')+
       // on-screen receipt
       '<div class="amb-receipt">'+
-        '<div class="amb-rcp-seller"><i class="fas fa-store"></i> '+esc(nameFor(t))+' · '+esc(t.floor)+'</div>'+
+        '<div class="amb-rcp-seller"><i class="fas fa-store"></i> '+esc(nameFor(t))+' · '+esc(floorUnit(t))+'</div>'+
         '<div class="amb-rcp-items">'+itemRows+'</div>'+
         '<div class="amb-rcp-tot">'+
           '<div class="amb-rcp-row"><span>'+L('subtotal')+'</span><span>'+fmt(o.subtotal)+'</span></div>'+
@@ -3202,11 +3906,11 @@ window.ambDownloadInvoice = function(){
     doc.text('SOLD BY', m, y); doc.text('BILLED TO', W/2, y);
     doc.setTextColor(ink[0],ink[1],ink[2]); doc.setFont('helvetica','normal'); doc.setFontSize(10);
     doc.text(o.tenant.name, m, y+16);
-    doc.text(o.tenant.floor+', '+BUILDING.name, m, y+30);
+    doc.text(floorUnit(o.tenant)+', '+BUILDING.name, m, y+30);
     doc.text('WhatsApp: +'+o.tenant.whatsapp, m, y+44);
     doc.text(o.buyer.name, W/2, y+16);
     doc.text(o.buyer.phone, W/2, y+30);
-    var dlvTxt = o.buyer.method==='pickup' ? 'Pickup at '+o.tenant.floor : 'Delivery: '+(o.buyer.area||'')+(o.buyer.addr?' — '+o.buyer.addr:'')+(o.buyer.geo?' (map: '+o.buyer.geo+')':'');
+    var dlvTxt = o.buyer.method==='pickup' ? 'Pickup at '+floorUnit(o.tenant) : 'Delivery: '+(o.buyer.area||'')+(o.buyer.addr?' — '+o.buyer.addr:'')+(o.buyer.geo?' (map: '+o.buyer.geo+')':'');
     doc.text(doc.splitTextToSize(dlvTxt, W/2-m-10), W/2, y+44);
     doc.setFontSize(8); doc.setTextColor(mid[0],mid[1],mid[2]);
     doc.text('Date: '+new Date(o.date).toLocaleString(), m, y+62);
@@ -3279,7 +3983,8 @@ window.ambCloseAll = function(){
   $('ambProdModal').classList.remove('on');
   $('ambCoModal').classList.remove('on');
   $('ambOverlay').classList.remove('on');
-  document.body.style.overflow='';
+  var fp=$('ambFloorPanel');
+  document.body.style.overflow = (fp && fp.classList.contains('open')) ? 'hidden' : '';
   if (location.hash && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
 };
 
@@ -3301,7 +4006,7 @@ function ordersListHtml(list){
     return '<div class="amb-order-card">'+
       '<div class="amb-order-top"><span class="amb-order-ref">'+esc(o.ref)+'</span>'+
         '<span class="amb-order-status '+esc(o.status||'placed')+'">'+esc(statusLabel(o.status))+'</span></div>'+
-      '<div class="amb-order-seller"><i class="fas fa-store"></i> '+esc(o.tenant.name)+(o.tenant.floor?' · '+esc(o.tenant.floor):'')+'</div>'+
+      '<div class="amb-order-seller"><i class="fas fa-store"></i> '+esc(o.tenant.name)+(o.tenant.floor?' · '+esc(floorUnit(o.tenant)):'')+'</div>'+
       '<div class="amb-order-items">'+items+'</div>'+
       '<div class="amb-order-foot"><span class="amb-order-date">'+L('orderOn')+' '+d.toLocaleDateString()+'</span>'+
         '<span class="amb-order-total">'+fmt(o.total)+'</span></div>'+
@@ -3337,7 +4042,7 @@ window.ambOpenOrders = function(){
     // append server orders this device hasn't seen (e.g. ordered on another phone with same account)
     Object.keys(byRef).forEach(function(ref){
       var r=byRef[ref]; var tn=tenant(r.tenant_id);
-      state.orders.push({ ref:r.ref, date:r.created_at, tenant:{ id:r.tenant_id, name:(tn?nameFor(tn):r.tenant_id), floor:(tn?tn.floor:'') },
+      state.orders.push({ ref:r.ref, date:r.created_at, tenant:{ id:r.tenant_id, name:(tn?nameFor(tn):r.tenant_id), floor:(tn?tn.floor:''), unit:(tn?tn.unit:'') },
         items:r.items||[], total:r.total, status:r.status, buyer:r.buyer||{} });
     });
     save('amb-orders', state.orders);
@@ -3547,7 +4252,10 @@ function boot(){
   A.render.services();
   A.render.onSale();
   A.render.filterChips();
+  A.render.filterBar();
   A.render.products();
+  A.render.heroVisual();
+  A.render.directory();
   A.render.wishBadge();
   A.renderCart();
   A.updateBadges();
@@ -3567,7 +4275,7 @@ function boot(){
     A.applyCatalog(cat);
     // re-render everything that shows catalog data
     A.render.ribbon(); A.render.chrome(); A.render.tenants(); A.render.services();
-    A.render.onSale(); A.render.filterChips(); A.render.products(); A.render.i18n();
+    A.render.onSale(); A.render.filterChips(); A.render.filterBar(); A.render.products(); A.render.heroVisual(); A.render.directory(); A.render.i18n();
     if (window.ambOpenFromHash) window.ambOpenFromHash();
   }).catch(function(){});
   A.api('/api/auth/me').then(function(d){
@@ -3589,6 +4297,28 @@ function boot(){
   document.addEventListener('click', function(e){
     var wrap=A.$('ambSearchWrap');
     if(wrap && !wrap.contains(e.target)) window.ambCloseSearch();
+  });
+  // Escape closes floor panel / mobile search / search dropdown; Enter picks first result
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){
+      var ms=A.$('ambMSearch');
+      if(ms && ms.classList.contains('on')){ window.ambCloseMSearch(); return; }
+      var fp=A.$('ambFloorPanel');
+      if(fp && fp.classList.contains('open')){ window.ambCloseFloorPanel(); return; }
+      window.ambCloseSearch();
+    }
+    if(e.key==='Enter'){
+      var tgt=e.target||{};
+      if(tgt.id==='ambSearch'){
+        var d=A.$('ambSearchDrop');
+        var first = d && d.classList.contains('on') && d.querySelector('.amb-sd-item');
+        if(first){ e.preventDefault(); first.click(); }
+      } else if(tgt.id==='ambMSearchIn'){
+        var mb=A.$('ambMSearchBody');
+        var mf = mb && mb.querySelector('.amb-sd-item');
+        if(mf){ e.preventDefault(); mf.click(); }
+      }
+    }
   });
   // carousel arrow controls
   window.ambSlide = function(id, dir){

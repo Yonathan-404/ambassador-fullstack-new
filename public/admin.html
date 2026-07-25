@@ -33,7 +33,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Ambassador Store <span>ADMIN</span></h1>
+  <h1>Ambassador Store <span>ADMIN</span> <a href="/bms.html" style="font-size:.7rem;color:#8a1450;margin-left:10px">→ Building Management (BMS)</a></h1>
   <div class="bar">
     <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
     <button onclick="show('orders')">Orders</button>
@@ -77,21 +77,15 @@ async function show(view){
     }
     else if(view==='sellers'){
       const c=await api('/api/admin/catalog'); const ts=c.building.tenants||[]; out.className='';
+      window.__sellers = ts;
       out.innerHTML =
-        ts.map(t=>`<div class="card row ${t.active===false?'is-off':''}">
-          <div><b>${esc(t.name)}</b> <span class="muted">(${esc(t.id)})</span>${t.active===false?'<span class="offpill">OFF</span>':''}<div class="muted">${esc(t.floor)} · ${esc(t.cat)} · ${(t.products||[]).length} products · mobile ${esc(t.mobile||'—')}</div></div>
-          <span>
-            <input id="ph-${esc(t.id)}" placeholder="Seller login phone" value="${esc((t.mobile||'').replace(/\\s/g,''))}" style="width:170px">
-            <button class="alt" onclick="genCode('${esc(t.id)}')">Generate access code</button>
-            <button class="${t.active===false?'toggle-on':'toggle-off'}" onclick="toggleTenant('${esc(t.id)}',${t.active===false})">${t.active===false?'Turn ON':'Turn OFF'}</button>
-            <button class="danger" onclick="delTenant('${esc(t.id)}')">Delete</button>
-          </span>
-          <div id="code-${esc(t.id)}" style="width:100%"></div>
-        </div>`).join('') +
-        `<h3>Add a new seller</h3><div class="card">
+        `<div class="bar"><input id="sellerSearch" class="key" placeholder="Search by name, unit, floor, or category…" oninput="renderSellerList()"></div>
+         <div id="sellerList"></div>
+         <h3>Add a new seller</h3><div class="card">
           <div class="formgrid">
             <input id="nt-id" placeholder="id (e.g. bluecafe)"><input id="nt-name" placeholder="Shop name">
-            <input id="nt-floor" placeholder="Floor (e.g. 2nd Floor)"><input id="nt-cat" placeholder="Category (e.g. Café)">
+            <input id="nt-unit" placeholder="Unit (e.g. 607)"><input id="nt-floor" placeholder="Floor (e.g. 6th Floor)">
+            <input id="nt-cat" placeholder="Category (e.g. Café)">
             <input id="nt-wa" placeholder="WhatsApp (2519…)"><input id="nt-mobile" placeholder="Mobile (+251 …)">
             <input id="nt-owner" placeholder="Owner name"><input id="nt-acct" placeholder="CBE account number">
             <input id="nt-holder" placeholder="Account holder name">
@@ -99,6 +93,7 @@ async function show(view){
           <div style="margin-top:10px;text-align:right"><button onclick="addTenant()">Add seller</button></div>
           <div class="muted" style="margin-top:6px">New sellers get safe defaults (color, icon, empty products) and start turned ON. Generate their access code after adding, then add products in the Products tab.</div>
         </div>`;
+      renderSellerList();
     }
     else if(view==='products'){
       const c=await api('/api/admin/catalog'); const ts=c.building.tenants||[]; out.className='';
@@ -173,7 +168,7 @@ async function genCode(tid){
 async function addTenant(){
   try{
     await api('/api/admin/tenant',{method:'PUT',body:{tenant:{
-      id:v('nt-id'),name:v('nt-name'),floor:v('nt-floor'),cat:v('nt-cat'),
+      id:v('nt-id'),name:v('nt-name'),unit:v('nt-unit'),floor:v('nt-floor'),cat:v('nt-cat'),
       whatsapp:v('nt-wa'),mobile:v('nt-mobile'),owner:v('nt-owner'),
       bank:{acct:v('nt-acct'),holder:v('nt-holder')}
     }}});
@@ -207,6 +202,7 @@ async function delProd(pid){
   try{ await api('/api/admin/product/'+pid,{method:'DELETE'}); show('products'); }catch(e){ alert(e.message); }
 }
 async function toggleTenant(tid, turnOn){
+  if (!turnOn && !confirm('Terminate this tenant?\n\nThis removes them from the storefront immediately (Our Sellers, Shop All Products, On Sale Now) — but it is NOT a delete. Restore any time from the "Currently OFF" list.')) return;
   try{ await api('/api/admin/tenant/'+tid+'/toggle',{method:'POST',body:{active:turnOn}}); show('sellers'); }catch(e){ alert(e.message); }
 }
 async function toggleProd(pid, turnOn){
@@ -228,6 +224,47 @@ async function addService(){
 async function delService(sid){
   if(!confirm('Delete this service?')) return;
   try{ await api('/api/admin/service/'+sid,{method:'DELETE'}); show('services'); }catch(e){ alert(e.message); }
+}
+const FLOOR_ORDER = ['Ground Floor','1st Floor','2nd Floor','3rd Floor','4th Floor','5th Floor','6th Floor'];
+function sellerRow(t){
+  const unitLabel = t.unit ? `${esc(t.floor)} - ${esc(t.unit)}` : esc(t.floor);
+  return `<div class="card row ${t.active===false?'is-off':''}">
+    <div><b>${esc(t.name)}</b> <span class="muted">(${esc(t.id)})</span>${t.active===false?'<span class="offpill">OFF</span>':''}<div class="muted">${unitLabel} · ${esc(t.cat)} · ${(t.products||[]).length} products · mobile ${esc(t.mobile||'—')}</div></div>
+    <span>
+      <input id="ph-${esc(t.id)}" placeholder="Seller login phone" value="${esc((t.mobile||'').replace(/\s/g,''))}" style="width:170px">
+      <button class="alt" onclick="genCode('${esc(t.id)}')">Generate access code</button>
+      <button class="${t.active===false?'toggle-on':'toggle-off'}" onclick="toggleTenant('${esc(t.id)}',${t.active===false})">${t.active===false?'Restore':'Terminate'}</button>
+      <button class="danger" onclick="delTenant('${esc(t.id)}')">Delete</button>
+    </span>
+    <div id="code-${esc(t.id)}" style="width:100%"></div>
+  </div>`;
+}
+function renderSellerList(){
+  const q = (document.getElementById('sellerSearch').value || '').trim().toLowerCase();
+  const all = (window.__sellers || []).filter(t => !q ||
+    [t.name, t.id, t.unit, t.floor, t.cat].some(v => ('' + (v||'')).toLowerCase().includes(q)));
+  const offList = all.filter(t => t.active === false);
+  const onList = all.filter(t => t.active !== false);
+
+  let html = '';
+  if (offList.length) {
+    html += `<h3><i style="color:#c2185b">●</i> Currently OFF — hidden from the storefront (${offList.length})</h3>
+      <p class="muted" style="margin-bottom:8px">Not deleted — a tenant here can be restored any time and reappears on the store instantly.</p>` +
+      offList.map(sellerRow).join('');
+  }
+  html += `<h3>All sellers${offList.length ? ' — currently ON' : ''} (${onList.length})</h3>`;
+  const byFloor = {};
+  onList.forEach(t => { (byFloor[t.floor] = byFloor[t.floor] || []).push(t); });
+  const floors = Object.keys(byFloor).sort((a,b) => {
+    const ia = FLOOR_ORDER.indexOf(a), ib = FLOOR_ORDER.indexOf(b);
+    return (ia<0?99:ia) - (ib<0?99:ib);
+  });
+  if (!floors.length) html += `<div class="empty">No sellers match "${esc(q)}".</div>`;
+  floors.forEach(fl => {
+    html += `<h4 style="margin:14px 0 6px;color:#8a1450;font-size:.82rem;text-transform:uppercase;letter-spacing:.4px">${esc(fl)} (${byFloor[fl].length})</h4>`;
+    html += byFloor[fl].map(sellerRow).join('');
+  });
+  document.getElementById('sellerList').innerHTML = html;
 }
 const v = id => document.getElementById(id).value.trim();
 </script>

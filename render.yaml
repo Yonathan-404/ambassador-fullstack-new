@@ -32,6 +32,14 @@ services:
         sync: false        # optional: order notifications
       - key: TELEGRAM_CHAT_ID
         sync: false        # optional
+      - key: CHAPA_SECRET_KEY
+        sync: false        # optional: enables "Pay with Chapa" at checkout
+      - key: USSD_PROVIDER
+        sync: false        # optional: enables USSD push at checkout (needs a bank/aggregator agreement)
+      - key: USSD_API_URL
+        sync: false
+      - key: USSD_API_KEY
+        sync: false
 databases:
   - name: ambassador-db
     plan: free

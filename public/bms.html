@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambassador BMS · Building Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{--wine:#8a1450;--wine-d:#5e0e38;--gold:#d4af37;--teal:#0D7A6F;--ink:#221820;--mid:#7d6e76;--line:#e8e2e5;--bg:#f6f3f4}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:0}
+  .top{background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .top h1{font-size:1.15rem;margin:0;display:flex;align-items:center;gap:9px}
+  .top h1 span{background:var(--gold);color:var(--wine-d);border-radius:8px;padding:3px 10px;font-size:.7rem;font-weight:800}
+  .top input.key{padding:8px 12px;border:0;border-radius:9px;font-size:.82rem;min-width:200px}
+  .top a.back{color:#fff;opacity:.85;font-size:.8rem;text-decoration:underline;margin-left:auto}
+  .tabs{display:flex;gap:6px;padding:12px 22px;background:#fff;border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;z-index:10}
+  .tabs button{padding:9px 15px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-size:.82rem;font-weight:700;color:var(--mid);cursor:pointer}
+  .tabs button.on{border-color:var(--wine);color:var(--wine);background:#faf2f6}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .kpi .n{font-size:1.5rem;font-weight:800;color:var(--wine)}
+  .kpi .l{font-size:.72rem;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+  .kpi.warn .n{color:#c2185b}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-bottom:12px;font-size:.86rem}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  h3{margin:20px 0 10px;font-size:1rem;color:var(--wine)}
+  .muted{color:var(--mid);font-size:.78rem}
+  input,select,textarea{padding:9px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:.85rem;font-family:inherit;background:#fff}
+  button.btn{background:var(--wine);color:#fff;border:0;border-radius:9px;padding:9px 15px;font-weight:700;cursor:pointer;font-size:.8rem}
+  button.btn.alt{background:var(--teal)}
+  button.btn.gray{background:#888}
+  button.btn.danger{background:#c2185b}
+  button.btn.ghost{background:#fff;color:var(--wine);border:1.5px solid var(--wine)}
+  button.btn:disabled{opacity:.45;cursor:not-allowed}
+  .pill{border-radius:99px;padding:3px 10px;font-size:.66rem;font-weight:800;text-transform:uppercase}
+  .pill.due{background:#eee;color:#666}.pill.paid{background:#e9f8ee;color:#1d9e54}.pill.overdue{background:#fdeaf0;color:#c2185b}
+  .pill.open{background:#fff7e0;color:#9a6b00}.pill.prog{background:#e6f4ff;color:#1769aa}.pill.done{background:#e9f8ee;color:#1d9e54}
+  .pill.off{background:#eee;color:#999}
+  .formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:8px}
+  .empty{text-align:center;color:#aaa;padding:40px}
+  .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .kancol h4{font-size:.82rem;color:var(--mid);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+  .tkcard{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:8px;font-size:.82rem}
+  .tkcard .pri{font-size:.62rem;font-weight:800;text-transform:uppercase;padding:2px 8px;border-radius:99px}
+  .pri.low{background:#eee;color:#777}.pri.normal{background:#e6f4ff;color:#1769aa}.pri.high{background:#fff1e0;color:#c2410c}.pri.urgent{background:#fdeaf0;color:#c2185b}
+  .tkacts{display:flex;gap:6px;margin-top:8px}
+  @media(max-width:900px){.kanban{grid-template-columns:1fr}}
+  .offpill{border-radius:99px;padding:2px 9px;font-size:.62rem;font-weight:800;text-transform:uppercase;background:#eee;color:#999;margin-left:6px}
+  .card.is-off{opacity:.55;background:#fafafa}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1><i class="fas fa-building-shield"></i> Ambassador BMS <span>BUILDING MGMT</span></h1>
+  <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
+  <button class="btn" onclick="boot()">Connect</button>
+  <a class="back" href="/admin.html">← Store admin</a>
+</div>
+<div class="tabs" id="tabs">
+  <button class="on" onclick="show('dashboard')"><i class="fas fa-gauge"></i> Dashboard</button>
+  <button onclick="show('tenants')"><i class="fas fa-store"></i> Tenants</button>
+  <button onclick="show('leases')"><i class="fas fa-file-signature"></i> Leases</button>
+  <button onclick="show('billing')"><i class="fas fa-file-invoice-dollar"></i> Billing</button>
+  <button onclick="show('finance')"><i class="fas fa-sack-dollar"></i> Finance</button>
+  <button onclick="show('maintenance')"><i class="fas fa-screwdriver-wrench"></i> Maintenance</button>
+  <button onclick="show('announcements')"><i class="fas fa-bullhorn"></i> Announcements</button>
+  <button onclick="show('settings')"><i class="fas fa-gear"></i> Settings</button>
+</div>
+<div class="wrap"><div id="out" class="empty">Enter your ADMIN_KEY and press Connect.</div></div>
+
+<script>
+const out = document.getElementById('out');
+const esc = s => (''+(s==null?'':s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = n => 'ETB ' + Number(n||0).toLocaleString();
+const K = () => document.getElementById('key').value.trim();
+let view = 'dashboard';
+let __tenants = [], __leases = [], __invoices = [], __finance = [], __tickets = [], __announcements = [];
+
+async function api(path, opts){
+  const o = opts||{};
+  const r = await fetch(path, { method:o.method||'GET', headers:Object.assign({'x-admin-key':K()}, o.body?{'Content-Type':'application/json'}:{}), body:o.body?JSON.stringify(o.body):undefined });
+  const d = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||('HTTP '+r.status));
+  return d;
+}
+function fail(e){ out.className='empty'; out.textContent='Error: '+e.message; }
+function v(id){ return document.getElementById(id).value.trim(); }
+
+function show(view_){
+  view = view_;
+  document.querySelectorAll('#tabs button').forEach((b,i)=>b.classList.toggle('on', b.getAttribute('onclick')===`show('${view}')`));
+  render();
+}
+async function boot(){
+  if(!K()){ out.className='empty'; out.textContent='Please enter the ADMIN_KEY.'; return; }
+  await render();
+}
+
+async function render(){
+  out.className='empty'; out.textContent='Loading…';
+  try{
+    if(view==='dashboard') await renderDashboard();
+    else if(view==='tenants') await renderTenants();
+    else if(view==='leases') await renderLeases();
+    else if(view==='billing') await renderBilling();
+    else if(view==='finance') await renderFinance();
+    else if(view==='maintenance') await renderMaintenance();
+    else if(view==='announcements') await renderAnnouncements();
+    else if(view==='settings') await renderSettings();
+  }catch(e){ fail(e); }
+}
+
+/* ═══ DASHBOARD ═══ */
+async function renderDashboard(){
+  const d = await api('/api/admin/bms/dashboard');
+  out.className='';
+  out.innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><div class="n">${d.totalUnits}</div><div class="l">Total units</div></div>
+      <div class="kpi"><div class="n">${d.occupiedUnits}</div><div class="l">Occupied</div></div>
+      <div class="kpi"><div class="n">${d.vacantUnits}</div><div class="l">Off / vacant</div></div>
+      <div class="kpi"><div class="n">${d.activeLeases}</div><div class="l">Active leases</div></div>
+      <div class="kpi ${d.arrears?'warn':''}"><div class="n">${fmt(d.arrears)}</div><div class="l">Arrears (${d.overdueCount} overdue)</div></div>
+      <div class="kpi"><div class="n">${fmt(d.incomeThisMonth)}</div><div class="l">Income this month</div></div>
+      <div class="kpi"><div class="n">${fmt(d.expenseThisMonth)}</div><div class="l">Expense this month</div></div>
+      <div class="kpi"><div class="n">${fmt(d.netThisMonth)}</div><div class="l">Net this month</div></div>
+      <div class="kpi"><div class="n">${d.ordersToday}</div><div class="l">Store orders today</div></div>
+      <div class="kpi"><div class="n">${fmt(d.revenueToday)}</div><div class="l">Store revenue today</div></div>
+      <div class="kpi ${d.openTickets?'warn':''}"><div class="n">${d.openTickets}</div><div class="l">Open tickets</div></div>
+      <div class="kpi"><div class="n">${d.inProgressTickets}</div><div class="l">In-progress tickets</div></div>
+    </div>
+    <h3><i class="fas fa-triangle-exclamation"></i> Top arrears</h3>
+    ${d.topArrears.length ? d.topArrears.map(a=>`<div class="card row"><span><b>${esc(a.tenant)}</b> <span class="muted">(${esc(a.unit)})</span></span><span>${fmt(a.amount)} <span class="muted">· ${a.daysLate}d late</span></span></div>`).join('') : '<div class="empty">No overdue rent right now.</div>'}
+  `;
+}
+
+/* ═══ TENANTS (shares real data with the storefront's admin.html) ═══ */
+const FLOOR_ORDER = ['Ground Floor','1st Floor','2nd Floor','3rd Floor','4th Floor','5th Floor','6th Floor'];
+async function renderTenants(){
+  const d = await api('/api/admin/bms/tenants');
+  __tenants = d.tenants;
+  out.className='';
+  out.innerHTML = `<div class="row" style="margin-bottom:10px"><input id="tenSearch" style="flex:1;min-width:220px" placeholder="Search by name, unit, floor, category…" oninput="renderTenantList()"><span class="muted">${__tenants.length} units total</span></div><div id="tenList"></div>`;
+  renderTenantList();
+}
+function tenRow(t){
+  const unitLabel = t.unit ? `${esc(t.floor)} - ${esc(t.unit)}` : esc(t.floor);
+  const leaseInfo = t.lease ? `Rent ${fmt(t.lease.rent)} · next due ${esc(t.lease.next_due)}` : '<span class="muted">No lease on file</span>';
+  return `<div class="card row ${t.active===false?'is-off':''}">
+    <div><b>${esc(t.name)}</b> <span class="muted">(${esc(t.id)})</span>${t.active===false?'<span class="offpill">OFF</span>':''}
+      <div class="muted">${unitLabel} · ${esc(t.cat)} · ${leaseInfo}</div></div>
+    <span>
+      <button class="btn ghost" onclick="jumpToLease('${esc(t.unit||t.id.toUpperCase())}')">Manage lease</button>
+      <button class="btn ${t.active===false?'alt':'danger'}" onclick="terminateFromTenants('${esc(t.id)}',${t.active===false})">${t.active===false?'Restore':'Terminate'}</button>
+    </span>
+  </div>`;
+}
+function renderTenantList(){
+  const q = (document.getElementById('tenSearch').value||'').trim().toLowerCase();
+  const all = __tenants.filter(t => !q || [t.name,t.id,t.unit,t.floor,t.cat].some(x=>(''+(x||'')).toLowerCase().includes(q)));
+  const off = all.filter(t=>t.active===false), on = all.filter(t=>t.active!==false);
+  let html = '';
+  if(off.length) html += `<h3>Currently OFF (${off.length})</h3><p class="muted" style="margin-bottom:8px">Not deleted — restore any time.</p>` + off.map(tenRow).join('');
+  html += `<h3>All tenants${off.length?' — ON':''} (${on.length})</h3>`;
+  const byFloor = {}; on.forEach(t=>{ (byFloor[t.floor]=byFloor[t.floor]||[]).push(t); });
+  const floors = Object.keys(byFloor).sort((a,b)=>{const ia=FLOOR_ORDER.indexOf(a),ib=FLOOR_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
+  if(!floors.length) html += '<div class="empty">No matches.</div>';
+  floors.forEach(fl=>{ html += `<h4 style="margin:14px 0 6px;color:var(--wine);font-size:.8rem;text-transform:uppercase">${esc(fl)} (${byFloor[fl].length})</h4>` + byFloor[fl].map(tenRow).join(''); });
+  document.getElementById('tenList').innerHTML = html;
+}
+async function terminateFromTenants(tid, turnOn){
+  if(!turnOn && !confirm('Terminate this tenant?\n\nThis removes them from the storefront immediately and ends their lease as of today. Not a delete — restore any time.')) return;
+  try{ await api('/api/admin/tenant/'+tid+'/toggle',{method:'POST',body:{active:turnOn}}); renderTenants(); }catch(e){ alert(e.message); }
+}
+function jumpToLease(unit){ show('leases'); setTimeout(()=>{ const el=document.getElementById('lsUnit'); if(el){ el.value=unit; el.dispatchEvent(new Event('change')); } }, 300); }
+
+/* ═══ LEASES ═══ */
+async function renderLeases(){
+  const [leasesRes] = await Promise.all([api('/api/admin/bms/leases')]);
+  if(!__tenants.length){ const t = await api('/api/admin/bms/tenants'); __tenants = t.tenants; }
+  __leases = leasesRes.leases;
+  const opts = __tenants.map(t=>`<option value="${esc(t.unit||t.id.toUpperCase())}">${esc(t.name)} — ${esc(t.unit||t.id.toUpperCase())}</option>`).join('');
+  out.className='';
+  out.innerHTML = `
+    <h3>Active leases (${__leases.length})</h3>
+    ${__leases.length ? __leases.map(l=>{
+      const t = __tenants.find(x=>(x.unit||x.id.toUpperCase())===l.unit);
+      return `<div class="card row"><div><b>${esc(t?t.name:l.unit)}</b> <span class="muted">(${esc(l.unit)})</span><div class="muted">Rent ${fmt(l.rent)} · cycle ${l.cycle_months}mo · next due ${esc(l.next_due)} · ends ${esc(l.end_date||'—')}</div></div>
+        <button class="btn danger" onclick="deleteLease('${esc(l.unit)}')">Remove lease</button></div>`;
+    }).join('') : '<div class="empty">No leases yet — add one below.</div>'}
+    <h3>Add / update a lease</h3>
+    <div class="card">
+      <div class="formgrid">
+        <select id="lsUnit" onchange="fillLeaseForm()">${opts}</select>
+        <input id="lsRent" type="number" placeholder="Monthly rent (ETB)">
+        <input id="lsCycle" type="number" placeholder="Billing cycle (months)" value="1">
+        <input id="lsFirst" type="number" placeholder="First period (months)" value="1">
+        <input id="lsDeposit" type="number" placeholder="Deposit (ETB)">
+        <input id="lsStart" type="date">
+        <input id="lsEnd" type="date">
+      </div>
+      <div style="margin-top:10px;text-align:right"><button class="btn" onclick="saveLease()">Save lease</button></div>
+    </div>`;
+  fillLeaseForm();
+}
+function fillLeaseForm(){
+  const unit = document.getElementById('lsUnit').value;
+  const l = __leases.find(x=>x.unit===unit);
+  document.getElementById('lsRent').value = l ? l.rent : '';
+  document.getElementById('lsCycle').value = l ? l.cycle_months : 1;
+  document.getElementById('lsFirst').value = l ? l.first_period_months : 1;
+  document.getElementById('lsDeposit').value = l ? l.deposit : '';
+  document.getElementById('lsStart').value = l ? l.start_date : new Date().toISOString().slice(0,10);
+  document.getElementById('lsEnd').value = l ? l.end_date : '';
+}
+async function saveLease(){
+  try{
+    await api('/api/admin/bms/lease',{method:'PUT',body:{lease:{
+      unit:v('lsUnit'), rent:+v('lsRent')||0, cycleMonths:+v('lsCycle')||1, firstPeriodMonths:+v('lsFirst')||1,
+      deposit:+v('lsDeposit')||0, start:v('lsStart'), end:v('lsEnd')
+    }}});
+    renderLeases();
+  }catch(e){ alert(e.message); }
+}
+async function deleteLease(unit){
+  if(!confirm('Remove this lease record? (Does not affect the tenant or the store.)')) return;
+  try{ await api('/api/admin/bms/lease/'+unit,{method:'DELETE'}); renderLeases(); }catch(e){ alert(e.message); }
+}
+
+/* ═══ BILLING ═══ */
+async function renderBilling(){
+  const d = await api('/api/admin/bms/invoices');
+  __invoices = d.invoices;
+  out.className='';
+  out.innerHTML = `
+    <div class="row" style="margin-bottom:10px"><button class="btn alt" onclick="runSweep()"><i class="fas fa-rotate"></i> Run billing sweep now</button><span class="muted">Generates any invoices leases are behind on, and ages overdue ones.</span></div>
+    ${__invoices.length ? __invoices.map(i=>`<div class="card row">
+      <div><b>${esc(i.unit)}</b> <span class="pill ${esc(i.status)}">${esc(i.status)}</span><div class="muted">${esc(i.period_start)} → ${esc(i.period_end)} · due ${esc(i.due_date)}${i.daysLate?` · ${i.daysLate}d late`:''}${i.penaltyDue?` · penalty ${fmt(i.penaltyDue)}`:''}</div></div>
+      <span><b>${fmt(i.amount)}</b> ${i.status!=='paid'?`<button class="btn" onclick="payInvoice('${esc(i.id)}')">Mark paid</button>`:`<span class="muted">paid ${esc(i.paid_at||'')}</span>`}</span>
+    </div>`).join('') : '<div class="empty">No invoices yet. Add a lease, then run the sweep.</div>'}
+  `;
+}
+async function runSweep(){
+  try{ const d = await api('/api/admin/bms/sweep',{method:'POST',body:{}}); alert(`Created ${d.invoicesCreated} invoice(s), marked ${d.markedOverdue} overdue.`); renderBilling(); }catch(e){ alert(e.message); }
+}
+async function payInvoice(id){
+  try{ await api('/api/admin/bms/invoice/'+id+'/pay',{method:'POST',body:{method:'bank_transfer'}}); renderBilling(); }catch(e){ alert(e.message); }
+}
+
+/* ═══ FINANCE ═══ */
+async function renderFinance(){
+  const d = await api('/api/admin/bms/finance');
+  __finance = d.entries;
+  const income = __finance.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const expense = __finance.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  out.className='';
+  out.innerHTML = `
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi"><div class="n">${fmt(income)}</div><div class="l">Total income</div></div>
+      <div class="kpi"><div class="n">${fmt(expense)}</div><div class="l">Total expense</div></div>
+      <div class="kpi"><div class="n">${fmt(income-expense)}</div><div class="l">Net</div></div>
+    </div>
+    <h3>Record a transaction</h3>
+    <div class="card">
+      <div class="formgrid">
+        <select id="finType"><option value="income">Income</option><option value="expense">Expense</option></select>
+        <input id="finCat" placeholder="Category (e.g. Rent, Maintenance)">
+        <input id="finAmt" type="number" placeholder="Amount (ETB)">
+        <input id="finDate" type="date" value="${new Date().toISOString().slice(0,10)}">
+        <input id="finNote" placeholder="Note (optional)">
+      </div>
+      <div style="margin-top:10px;text-align:right"><button class="btn" onclick="addFinance()">Add entry</button></div>
+    </div>
+    <h3>Recent entries (${__finance.length})</h3>
+    ${__finance.length ? __finance.map(e=>`<div class="card row"><div><b>${e.type==='income'?'+':'−'} ${fmt(e.amount)}</b> <span class="muted">${esc(e.category)}${e.note?' — '+esc(e.note):''}</span><div class="muted">${esc(e.date)}${e.unit?' · '+esc(e.unit):''}</div></div><button class="btn danger" onclick="delFinance('${esc(e.id)}')">Delete</button></div>`).join('') : '<div class="empty">No entries yet.</div>'}
+  `;
+}
+async function addFinance(){
+  try{
+    await api('/api/admin/bms/finance',{method:'PUT',body:{entry:{type:v('finType'),category:v('finCat')||'Other',amount:+v('finAmt')||0,date:v('finDate'),note:v('finNote')}}});
+    renderFinance();
+  }catch(e){ alert(e.message); }
+}
+async function delFinance(id){
+  if(!confirm('Delete this entry?')) return;
+  try{ await api('/api/admin/bms/finance/'+id,{method:'DELETE'}); renderFinance(); }catch(e){ alert(e.message); }
+}
+
+/* ═══ MAINTENANCE (kanban) ═══ */
+async function renderMaintenance(){
+  const d = await api('/api/admin/bms/tickets');
+  __tickets = d.tickets;
+  out.className='';
+  const col = (status,label) => {
+    const items = __tickets.filter(t=>t.status===status);
+    return `<div class="kancol"><h4>${label} (${items.length})</h4>${items.map(tkCard).join('') || '<div class="empty">None</div>'}</div>`;
+  };
+  out.innerHTML = `
+    <div class="row" style="margin-bottom:10px"><h3 style="margin:0">Maintenance tickets</h3><button class="btn" onclick="openTicketForm()"><i class="fas fa-plus"></i> New ticket</button></div>
+    <div id="ticketForm"></div>
+    <div class="kanban">${col('open','Open')}${col('prog','In progress')}${col('done','Done')}</div>
+  `;
+}
+function tkCard(t){
+  const next = {open:'prog', prog:'done'}[t.status];
+  const prev = {prog:'open', done:'prog'}[t.status];
+  return `<div class="tkcard"><b>${esc(t.title)}</b><div class="muted">${esc(t.loc)} · ${esc(t.cat||'General')}</div>
+    <span class="pri ${esc(t.pri)}">${esc(t.pri)}</span>
+    <div class="tkacts">${prev?`<button class="btn ghost" onclick="moveTicket('${esc(t.id)}','${prev}')">← Back</button>`:''}${next?`<button class="btn alt" onclick="moveTicket('${esc(t.id)}','${next}')">${next==='done'?'Complete':'Start'} →</button>`:''}</div>
+  </div>`;
+}
+function openTicketForm(){
+  document.getElementById('ticketForm').innerHTML = `<div class="card">
+    <div class="formgrid">
+      <input id="tkTitle" placeholder="Issue title"><input id="tkLoc" placeholder="Location / unit">
+      <select id="tkPri"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option><option value="urgent">Urgent</option></select>
+      <input id="tkAsg" placeholder="Assigned to (optional)">
+    </div>
+    <div style="margin-top:10px;text-align:right"><button class="btn" onclick="saveTicket()">Create ticket</button></div>
+  </div>`;
+}
+async function saveTicket(){
+  try{ await api('/api/admin/bms/ticket',{method:'PUT',body:{ticket:{title:v('tkTitle'),loc:v('tkLoc'),pri:v('tkPri'),asg:v('tkAsg')}}}); renderMaintenance(); }catch(e){ alert(e.message); }
+}
+async function moveTicket(id, status){
+  try{ await api('/api/admin/bms/ticket/'+id+'/status',{method:'POST',body:{status}}); renderMaintenance(); }catch(e){ alert(e.message); }
+}
+
+/* ═══ ANNOUNCEMENTS ═══ */
+async function renderAnnouncements(){
+  const d = await api('/api/admin/bms/announcements');
+  __announcements = d.announcements;
+  out.className='';
+  out.innerHTML = `
+    <h3>Post an announcement</h3>
+    <div class="card">
+      <div class="formgrid">
+        <input id="anTitle" placeholder="Title"><select id="anAud"><option value="all">All tenants</option><option value="occupied">Occupied units only</option></select>
+      </div>
+      <textarea id="anBody" placeholder="Message" rows="3" style="width:100%;margin-top:8px"></textarea>
+      <div style="margin-top:10px;text-align:right"><button class="btn" onclick="saveAnnouncement()">Post</button></div>
+    </div>
+    <h3>Recent (${__announcements.length})</h3>
+    ${__announcements.length ? __announcements.map(a=>`<div class="card row"><div><b>${esc(a.title)}</b> <span class="muted">${esc(a.aud)} · ${esc(a.at)}</span><div>${esc(a.body)}</div></div><button class="btn danger" onclick="delAnnouncement('${esc(a.id)}')">Delete</button></div>`).join('') : '<div class="empty">None yet.</div>'}
+  `;
+}
+async function saveAnnouncement(){
+  try{ await api('/api/admin/bms/announcement',{method:'PUT',body:{announcement:{title:v('anTitle'),aud:v('anAud'),body:document.getElementById('anBody').value.trim()}}}); renderAnnouncements(); }catch(e){ alert(e.message); }
+}
+async function delAnnouncement(id){
+  if(!confirm('Delete this announcement?')) return;
+  try{ await api('/api/admin/bms/announcement/'+id,{method:'DELETE'}); renderAnnouncements(); }catch(e){ alert(e.message); }
+}
+
+/* ═══ SETTINGS ═══ */
+async function renderSettings(){
+  const d = await api('/api/admin/bms/config');
+  const c = d.config;
+  out.className='';
+  out.innerHTML = `
+    <h3>Late-payment penalty</h3>
+    <div class="card">
+      <div class="formgrid">
+        <input id="cfgPenAmt" type="number" placeholder="Amount (ETB)" value="${c.penalty.amount}">
+        <select id="cfgPenPer"><option value="day" ${c.penalty.per==='day'?'selected':''}>Per day late</option><option value="week" ${c.penalty.per==='week'?'selected':''}>Per week late</option></select>
+      </div>
+      <div style="margin-top:10px;text-align:right"><button class="btn" onclick="saveConfig()">Save</button></div>
+    </div>
+    <h3>Collection bank accounts</h3>
+    <div class="card"><div class="muted" style="margin-bottom:8px">Shown to tenants for rent payment (read-only display here — edit via the accounts array).</div>
+      ${c.accounts.map(a=>`<div class="row"><span><b>${esc(a.bank)}</b></span><span>${esc(a.number)} — ${esc(a.holder)}</span></div>`).join('')}
+    </div>`;
+}
+async function saveConfig(){
+  try{ await api('/api/admin/bms/config',{method:'PUT',body:{config:{penalty:{amount:+v('cfgPenAmt')||0, per:v('cfgPenPer')}}}}); renderSettings(); }catch(e){ alert(e.message); }
+}
+</script>
+</body>
+</html>
