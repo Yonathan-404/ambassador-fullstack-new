@@ -61,7 +61,7 @@
 
 /* ════ TOP RIBBON ════ */
 #amb-store .amb-ribbon{
-  background:linear-gradient(90deg,var(--teal-d),var(--teal) 40%,var(--wine) 100%);
+  background:linear-gradient(90deg,var(--teal-d)10%,var(--teal) 20%,var(--wine) 100%);
   color:#fff;height:38px;overflow:hidden;position:relative;
   display:flex;align-items:center;border-bottom:2px solid var(--gold)
 }
@@ -94,7 +94,7 @@
 #amb-store .amb-search-wrap{flex:1;max-width:440px;position:relative}
 #amb-store .amb-search{
   width:100%;padding:10px 16px 10px 40px;background:var(--surface2);
-  border:1.5px solid transparent;border-radius:100px;color:var(--ink);font-size:.86rem;outline:none;transition:var(--tr)
+  border:1.5px solid transparent;border-color:gold;border-radius:100px;color:var(--ink2);font-size:.86rem;outline:none;transition:var(--tr)
 }
 #amb-store .amb-search::placeholder{color:var(--muted)}
 #amb-store .amb-search:focus{background:#fff;border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-tint)}
@@ -338,18 +338,18 @@
 #amb-store .amb-step-d{font-size:.8rem;color:var(--mid);line-height:1.6}
 
 /* ════ FOOTER ════ */
-#amb-store .amb-footer{background:linear-gradient(165deg,var(--footer) 0%,var(--footer-d) 100%);color:rgba(255,255,255,.62);padding:3.5rem clamp(1.2rem,4vw,2rem) 1.8rem;position:relative}
+#amb-store .amb-footer{background:linear-gradient(165deg,var(--wine-d) 0%,var(--footer-d) 100%);color:var(--gold);padding:3.5rem clamp(1.2rem,4vw,2rem) 1.8rem;position:relative}
 #amb-store .amb-footer::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--gold),var(--wine))}
 #amb-store .amb-footer-grid{max-width:1340px;margin:0 auto 2.5rem;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2.5rem}
 #amb-store .amb-footer-brand .amb-flogo{display:flex;align-items:center;gap:11px;margin-bottom:.9rem}
 #amb-store .amb-footer-brand .amb-flogo img{height:42px;width:42px;border-radius:10px;box-shadow:0 0 0 2px var(--teal-bright)}
-#amb-store .amb-flogo-txt{font-family:'Cormorant Garamond',serif;color:#fff;font-size:1.2rem;font-weight:700}
+#amb-store .amb-flogo-txt{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:1.2rem;font-weight:700}
 #amb-store .amb-flogo-txt span{color:var(--teal-bright)}
 #amb-store .amb-footer-brand p{font-size:.8rem;line-height:1.7;margin-bottom:1rem;max-width:340px}
 #amb-store .amb-footer-soc{display:flex;gap:.55rem}
 #amb-store .amb-soc-btn{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);transition:var(--tr)}
 #amb-store .amb-soc-btn:hover{background:var(--teal);color:#fff}
-#amb-store .amb-footer-col h4{color:#fff;font-size:.84rem;font-weight:700;margin-bottom:1rem}
+#amb-store .amb-footer-col h4{color:var(--gold);font-size:.84rem;font-weight:700;margin-bottom:1rem}
 #amb-store .amb-footer-col h4{position:relative;padding-bottom:.5rem}
 #amb-store .amb-footer-col h4::after{content:'';position:absolute;bottom:0;left:0;width:24px;height:2px;background:var(--teal-bright);border-radius:2px}
 #amb-store .amb-footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
@@ -904,9 +904,9 @@
 
 /* footer quick links */
 #amb-store .amb-quicklinks{display:flex;flex-direction:column;gap:.6rem}
-#amb-store .amb-quicklinks a{display:flex;align-items:center;gap:9px;font-size:.78rem;color:rgba(255,255,255,.62);transition:var(--tr);padding:7px 11px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+#amb-store .amb-quicklinks a{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--gold);transition:var(--tr);padding:7px 11px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
 #amb-store .amb-quicklinks a:hover{color:var(--teal-bright);background:rgba(20,163,148,.12);border-color:rgba(94,234,212,.35)}
-#amb-store .amb-quicklinks a i{color:var(--teal-bright);width:16px;text-align:center}
+#amb-store .amb-quicklinks a i{color:var(--gold);width:16px;text-align:center}
 #amb-store .amb-footer-grid{grid-template-columns:2fr 1fr 1fr 1.2fr}
 
 /* v2 responsive */
@@ -1120,8 +1120,8 @@
 #amb-store .amb-legal-n{flex:none;width:24px;height:24px;border-radius:7px;background:var(--wine-tint);color:var(--wine);font-size:.74rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 #amb-store .amb-legal-foot{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:.72rem;color:var(--muted);text-align:center}
 #amb-store .amb-footer-legal{display:flex;align-items:center;gap:10px;font-size:.8rem}
-#amb-store .amb-footer-legal a{color:var(--footer-link,#cbb8c2);cursor:pointer;transition:var(--tr)}
-#amb-store .amb-footer-legal a:hover{color:var(--gold)}
+#amb-store .amb-footer-legal a:hover{color:var(--footer-link,#cbb8c2);cursor:pointer;transition:var(--tr)}
+#amb-store .amb-footer-legal a{color:var(--gold)}
 #amb-store .amb-footer-legal span{opacity:.4}
 
 /* account / sign-in modal + nav pill */
@@ -1327,7 +1327,7 @@
   <!-- nav -->
   <nav class="amb-nav" id="ambNav">
     <div class="amb-brand">
-      <img class="amb-logo" id="ambLogo" alt="Ambassador Shopping Center">
+      <img class="amb-logo" id="ambLogo" alt="Ambassador Shopping Center" src="https://instagram.fadd3-1.fna.fbcdn.net/v/t51.2885-19/323081796_2079552408920428_157356835011925909_n.jpg?stp=dst-jpg_s320x320_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fadd3-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2gF7UjaPMiAjFbOm6eh-anQ2rea7shO2F3Q2odFJyCQYsw0mDSvV7YBXsTCPgzWtwTs&_nc_ohc=-DzY9WJFFY4Q7kNvwEpn72j&_nc_gid=Tcd4PxQJu3Bjii2HUlKbqg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AQDR5jmLHafeiBJP_YFdoMNTmtDktDYIDrNJCUbrQmLavA&oe=6A6D7FEC&_nc_sid=8b3546">
       <div class="amb-brand-txt">
         <h1 id="ambBrandName">Ambassador Shopping Center</h1>
       </div>
@@ -1370,14 +1370,14 @@
     <div class="amb-hero-veil"></div>
     <div class="amb-hero-inner amb-hero-split">
       <div class="amb-hero-copy">
-        <div class="amb-eyebrow"><i class="fas fa-shield-halved"></i> <span id="ambHeroEyebrow" data-i18n="tagline">Addis Ababa's Trust-First Marketplace</span></div>
+        <!-- <div class="amb-eyebrow"><i class="fas fa-shield-halved"></i> <span id="ambHeroEyebrow" data-i18n="tagline">Addis Ababa's Trust-First Marketplace</span></div> -->
         <h2 data-i18n-html="heroTitle">Shop from sellers with a <em>real address</em>.</h2>
-        <p id="ambHeroSub" data-i18n="heroSub">Every product here is sold by a verified tenant inside Ambassador Shopping Center. Visit them in person or buy online — your choice.</p>
+        <!-- <p id="ambHeroSub" data-i18n="heroSub">Every product here is sold by a verified tenant inside Ambassador Shopping Center. Visit them in person or buy online — your choice.</p> -->
         <div class="amb-hero-ctas">
           <button class="amb-cta amb-cta-gold" onclick="ambScrollTo('ambShop')"><i class="fas fa-bag-shopping"></i> <span data-i18n="startShopping">Start Shopping</span></button>
           <button class="amb-cta amb-cta-ghost" onclick="ambScrollTo('ambTenants')"><i class="fas fa-store"></i> <span data-i18n="meetTenants">Meet the Sellers</span></button>
         </div>
-        <div class="amb-hero-stats" id="ambHeroStats"></div>
+        <!-- <div class="amb-hero-stats" id="ambHeroStats"></div> -->
         <div class="amb-hero-carousel-slot" id="ambHeroCarouselSlot"></div>
       </div>
       <div class="amb-hero-visual" id="ambHeroVisual"></div>
