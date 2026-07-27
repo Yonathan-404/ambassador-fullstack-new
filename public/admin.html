@@ -29,6 +29,18 @@
   .offpill{border-radius:99px;padding:2px 9px;font-size:.62rem;font-weight:800;text-transform:uppercase;background:#eee;color:#999;margin-left:6px}
   button.toggle-on{background:#2f9e44}
   button.toggle-off{background:#c2185b}
+  button.hide-btn{background:#b8860b}
+  button.unhide-btn{background:#5b2d8e}
+  button.edit-btn{background:#1769aa}
+  .hidpill{border-radius:99px;padding:2px 9px;font-size:.62rem;font-weight:800;text-transform:uppercase;background:#fff3d6;color:#9a6b00;margin-left:6px;border:1px solid #e8c96a}
+  .editbox{width:100%;background:#f8f5f7;border:1px dashed #d7c4cd;border-radius:11px;padding:12px;margin-top:10px}
+  .editbox textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:9px;font-family:inherit;font-size:.85rem;margin-top:8px;box-sizing:border-box}
+  .imgslots{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .imgslot{width:96px}
+  .imgslot .thumb{width:96px;height:72px;border:1.5px dashed #cbb;border-radius:9px;background:#fff center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:#bba;font-size:1.1rem;cursor:pointer;overflow:hidden}
+  .imgslot .thumb.filled{border-style:solid;border-color:#8a1450}
+  .imgslot .rm{display:block;width:100%;margin-top:4px;background:#eee;color:#a55;font-size:.62rem;padding:3px 0;border-radius:6px}
+  .secgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
 </style>
 </head>
 <body>
@@ -40,6 +52,7 @@
     <button class="alt" onclick="show('sellers')">Sellers</button>
     <button class="alt" onclick="show('products')">Products</button>
     <button class="alt" onclick="show('services')">Services</button>
+    <button class="alt" style="background:#5b2d8e" onclick="show('storefront')">Storefront</button>
     <button class="gray" onclick="show('notify')">Notify</button>
     <button class="gray" onclick="show('sms')">SMS log</button>
   </div>
@@ -104,25 +117,54 @@ async function show(view){
     }
     else if(view==='services'){
       const c=await api('/api/admin/catalog'); const list=c.building.services||[]; out.className='';
+      window.__svcs = list;
       out.innerHTML =
         list.map(s=>`<div class="card row ${s.active===false?'is-off':''}">
-          <div><b>${esc(s.name)}</b> <span class="muted">(${esc(s.id)})</span>${s.active===false?'<span class="offpill">OFF</span>':''}<div class="muted">${esc(s.floor)} · ${esc(s.type)} · ${esc(s.mobile||'—')}</div></div>
+          <div><b>${esc(s.name)}</b> <span class="muted">(${esc(s.id)})</span>${s.active===false?'<span class="offpill">OFF</span>':''}${s.hidden?'<span class="hidpill">HIDDEN</span>':''}<div class="muted">${esc(s.floor)} · ${esc(s.type)} · ${esc(s.mobile||'—')}</div></div>
           <span>
+            <button class="edit-btn" onclick="editService('${esc(s.id)}')">Edit</button>
+            <button class="${s.hidden?'unhide-btn':'hide-btn'}" onclick="hideService('${esc(s.id)}',${!s.hidden})">${s.hidden?'Unhide':'Hide'}</button>
             <button class="${s.active===false?'toggle-on':'toggle-off'}" onclick="toggleService('${esc(s.id)}',${s.active===false})">${s.active===false?'Turn ON':'Turn OFF'}</button>
             <button class="danger" onclick="delService('${esc(s.id)}')">Delete</button>
           </span>
+          <div id="sedit-${esc(s.id)}" style="width:100%"></div>
         </div>`).join('') +
         `<h3>Add a new service</h3><div class="card">
           <div class="formgrid">
             <input id="ns-name" placeholder="Service name"><input id="ns-floor" placeholder="Floor (e.g. 3rd Floor)">
             <input id="ns-type" placeholder="Type (e.g. Banking, Health)"><input id="ns-icon" placeholder="Icon (fa-store)">
             <input id="ns-mobile" placeholder="Mobile (+251 …)"><input id="ns-owner" placeholder="Owner name">
-            <input id="ns-hours" placeholder="Hours (e.g. 9:00–19:00 daily)"><input id="ns-photo" placeholder="Photo URL">
+            <input id="ns-hours" placeholder="Hours (e.g. 9:00–19:00 daily)"><input id="ns-photo" placeholder="Photo URL (optional if uploading)">
           </div>
+          <div class="muted" style="margin-top:8px"><b>Service photos (up to 2)</b></div>
+          ${imgSlots('ns',2,[])}
           <textarea id="ns-blurb" placeholder="Short description" style="width:100%;margin-top:8px;padding:9px 12px;border:1.5px solid #ddd;border-radius:9px;font-family:inherit;font-size:.85rem" rows="2"></textarea>
           <div style="margin-top:10px;text-align:right"><button onclick="addService()">Add service</button></div>
           <div class="muted" style="margin-top:6px">New services start turned ON and appear immediately under Building Services on the storefront.</div>
         </div>`;
+    }
+    else if(view==='storefront'){
+      const d=await api('/api/admin/sections'); const sec=d.sections||{}; out.className='';
+      const shop=sec.shop||{visible:true}, sellers=sec.sellers||{visible:true};
+      const card=(key,o,label,hint)=>`<div class="card">
+        <div class="row"><b>${label}</b>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.8rem">
+            <input type="checkbox" id="sec-${key}-vis" ${o.visible!==false?'checked':''}> Visible on storefront
+          </label></div>
+        <div class="muted" style="margin:6px 0">${hint}</div>
+        <div class="grid">
+          <input id="sec-${key}-title" value="${esc(o.title||'')}" placeholder="Custom section title (blank = default)">
+          <input id="sec-${key}-sub" value="${esc(o.sub||'')}" placeholder="Custom subtitle (blank = default)">
+        </div>
+      </div>`;
+      out.innerHTML =
+        `<h3>Storefront sections</h3>
+        <p class="muted">Control the two big storefront sections. Unchecking "Visible" hides the whole section from shoppers — the items inside stay untouched and can still be reached via search and the floor panel. The items themselves (edit / hide / on-off / delete) are managed in the <b>Sellers</b>, <b>Products</b> and <b>Services</b> tabs.</p>
+        <div class="secgrid">
+          ${card('shop', shop, 'Marketplace — “Shop All Products”', 'The main product grid with filters. Hiding it also hides the On-Sale strip.')}
+          ${card('sellers', sellers, '“Our Sellers — Verified Sellers You Can Visit”', 'The seller showcase gallery near the top of the page.')}
+        </div>
+        <div style="margin-top:12px;text-align:right"><button onclick="saveSections()">Save storefront settings</button></div>`;
     }
     else if(view==='notify'){
       const d=await api('/api/admin/notify'); const list=d.requests||[]; out.className='';
@@ -134,27 +176,115 @@ async function show(view){
     }
   }catch(e){ fail(e); }
 }
+/* image slot helpers — click a slot to pick a file; it is downscaled to a
+   data-URL client-side (max 900px, JPEG). Slots also accept nothing = keep as is. */
+window.__img = {};
+function imgSlots(prefix, n, existing){
+  let h='<div class="imgslots">';
+  for(let i=0;i<n;i++){
+    const key=prefix+'-'+i, cur=(existing&&existing[i])||'';
+    window.__img[key]=cur;
+    h+=`<div class="imgslot">
+      <div class="thumb ${cur?'filled':''}" id="th-${key}" style="${cur?`background-image:url('${esc(cur)}')`:''}" onclick="pickImg('${key}')">${cur?'':'+'}</div>
+      <button class="rm" onclick="clearImg('${key}')">clear</button>
+    </div>`;
+  }
+  return h+'</div><div class="muted" style="margin-top:4px">Tap a box to upload — images are compressed automatically.</div>';
+}
+function pickImg(key){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=()=>{
+    const f=inp.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const im=new Image();
+      im.onload=()=>{
+        const mx=900, sc=Math.min(1, mx/Math.max(im.width,im.height));
+        const cv=document.createElement('canvas');
+        cv.width=Math.round(im.width*sc); cv.height=Math.round(im.height*sc);
+        cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+        const url=cv.toDataURL('image/jpeg',.82);
+        window.__img[key]=url;
+        const th=document.getElementById('th-'+key);
+        th.classList.add('filled'); th.style.backgroundImage=`url('${url}')`; th.textContent='';
+      };
+      im.src=rd.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  inp.click();
+}
+function clearImg(key){
+  window.__img[key]='';
+  const th=document.getElementById('th-'+key);
+  if(th){ th.classList.remove('filled'); th.style.backgroundImage=''; th.textContent='+'; }
+}
+function slotData(prefix,n){
+  const out=[];
+  for(let i=0;i<n;i++){ const v=window.__img[prefix+'-'+i]; if(v) out.push(v); }
+  return out;
+}
 function renderProds(){
   const tid=document.getElementById('ptid').value;
   const t=(window.__cat.building.tenants||[]).find(x=>x.id===tid);
   document.getElementById('prods').innerHTML =
     (t.products||[]).map(p=>`<div class="card row ${p.active===false?'is-off':''}">
-      <div style="flex:1"><b>${esc(p.name)}</b> <span class="muted">(${esc(p.id)} · ${esc(p.cat)})</span>${p.active===false?'<span class="offpill">OFF</span>':''}</div>
+      <div style="flex:1"><b>${esc(p.name)}</b> <span class="muted">(${esc(p.id)} · ${esc(p.cat)})</span>${p.active===false?'<span class="offpill">OFF</span>':''}${p.hidden?'<span class="hidpill">HIDDEN</span>':''}</div>
       <input type="number" id="prc-${esc(p.id)}" value="${p.price}" style="width:100px">
       <select id="stk-${esc(p.id)}">
         ${['in','low','made','out'].map(s=>`<option value="${s}" ${p.stock&&p.stock.state===s?'selected':''}>${s}</option>`).join('')}
       </select>
       <button class="alt" onclick="saveProd('${esc(tid)}','${esc(p.id)}')">Save</button>
+      <button class="edit-btn" onclick="editProd('${esc(tid)}','${esc(p.id)}')">Edit</button>
+      <button class="${p.hidden?'unhide-btn':'hide-btn'}" onclick="hideProd('${esc(p.id)}',${!p.hidden})">${p.hidden?'Unhide':'Hide'}</button>
       <button class="${p.active===false?'toggle-on':'toggle-off'}" onclick="toggleProd('${esc(p.id)}',${p.active===false})">${p.active===false?'Turn ON':'Turn OFF'}</button>
       <button class="danger" onclick="delProd('${esc(p.id)}')">Delete</button>
+      <div id="pedit-${esc(p.id)}" style="width:100%"></div>
     </div>`).join('') +
     `<h3>Add product to ${esc(t.name)}</h3><div class="card">
       <div class="formgrid">
         <input id="np-name" placeholder="Product name"><input id="np-cat" placeholder="Category">
-        <input id="np-price" type="number" placeholder="Price (ETB)"><input id="np-img" placeholder="Image URL">
+        <input id="np-price" type="number" placeholder="Price (ETB)"><input id="np-old" type="number" placeholder="Old price (optional, shows discount)">
       </div>
+      ${imgSlots('np',3,[])}
       <div style="margin-top:10px;text-align:right"><button onclick="addProd('${esc(tid)}')">Add product</button></div>
     </div>`;
+}
+function editProd(tid,pid){
+  const t=(window.__cat.building.tenants||[]).find(x=>x.id===tid);
+  const p=(t.products||[]).find(x=>x.id===pid); if(!p) return;
+  const box=document.getElementById('pedit-'+pid);
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const gal=(p.gallery&&p.gallery.length?p.gallery:[p.img]).filter(Boolean);
+  box.innerHTML=`<div class="editbox">
+    <div class="formgrid">
+      <input id="ep-name-${pid}" value="${esc(p.name)}" placeholder="Name">
+      <input id="ep-cat-${pid}" value="${esc(p.cat)}" placeholder="Category">
+      <input id="ep-price-${pid}" type="number" value="${p.price}" placeholder="Price">
+      <input id="ep-old-${pid}" type="number" value="${p.old||''}" placeholder="Old price (optional)">
+      <input id="ep-badge-${pid}" value="${esc(p.badge||'')}" placeholder="Badge (e.g. NEW)">
+    </div>
+    <textarea id="ep-desc-${pid}" rows="2" placeholder="Description">${esc(p.desc||'')}</textarea>
+    <div class="muted" style="margin-top:8px"><b>Product images (up to 3)</b> — the first one is the main image.</div>
+    ${imgSlots('ep-'+pid,3,gal)}
+    <div style="margin-top:10px;text-align:right"><button onclick="saveProdEdit('${esc(tid)}','${esc(pid)}')">Save changes</button></div>
+  </div>`;
+}
+async function saveProdEdit(tid,pid){
+  const g=id=>document.getElementById(id).value.trim();
+  try{
+    const gallery=slotData('ep-'+pid,3);
+    await api('/api/admin/product',{method:'PUT',body:{tenantId:tid,product:{
+      id:pid, name:g('ep-name-'+pid), cat:g('ep-cat-'+pid),
+      price:+g('ep-price-'+pid)||1, old:+g('ep-old-'+pid)||null,
+      badge:g('ep-badge-'+pid)||null, desc:document.getElementById('ep-desc-'+pid).value.trim(),
+      gallery
+    }}});
+    show('products');
+  }catch(e){ alert(e.message); }
+}
+async function hideProd(pid, hide){
+  try{ await api('/api/admin/product/'+pid+'/hide',{method:'POST',body:{hidden:hide}}); show('products'); }catch(e){ alert(e.message); }
 }
 async function genCode(tid){
   try{
@@ -187,8 +317,10 @@ async function saveProd(tid,pid){
 }
 async function addProd(tid){
   try{
+    const gallery=slotData('np',3);
     await api('/api/admin/product',{method:'PUT',body:{tenantId:tid,product:{
-      name:v('np-name'),cat:v('np-cat')||'General',price:+v('np-price')||1,img:v('np-img')
+      name:v('np-name'),cat:v('np-cat')||'General',price:+v('np-price')||1,
+      old:+v('np-old')||null, img:gallery[0]||'', gallery
     }}});
     show('products');
   }catch(e){ alert(e.message); }
@@ -215,7 +347,8 @@ async function addService(){
   try{
     await api('/api/admin/service',{method:'PUT',body:{service:{
       name:v('ns-name'), floor:v('ns-floor'), type:v('ns-type')||'Other', icon:v('ns-icon')||'fa-concierge-bell',
-      mobile:v('ns-mobile'), owner:v('ns-owner'), hours:v('ns-hours'), photo:v('ns-photo'),
+      mobile:v('ns-mobile'), owner:v('ns-owner'), hours:v('ns-hours'),
+      photo:slotData('ns',2)[0]||v('ns-photo'), photos:slotData('ns',2),
       blurb:document.getElementById('ns-blurb').value.trim()
     }}});
     show('services');
@@ -229,15 +362,58 @@ const FLOOR_ORDER = ['Ground Floor','1st Floor','2nd Floor','3rd Floor','4th Flo
 function sellerRow(t){
   const unitLabel = t.unit ? `${esc(t.floor)} - ${esc(t.unit)}` : esc(t.floor);
   return `<div class="card row ${t.active===false?'is-off':''}">
-    <div><b>${esc(t.name)}</b> <span class="muted">(${esc(t.id)})</span>${t.active===false?'<span class="offpill">OFF</span>':''}<div class="muted">${unitLabel} · ${esc(t.cat)} · ${(t.products||[]).length} products · mobile ${esc(t.mobile||'—')}</div></div>
+    <div><b>${esc(t.name)}</b> <span class="muted">(${esc(t.id)})</span>${t.active===false?'<span class="offpill">OFF</span>':''}${t.hidden?'<span class="hidpill">HIDDEN</span>':''}<div class="muted">${unitLabel} · ${esc(t.cat)} · ${(t.products||[]).length} products · mobile ${esc(t.mobile||'—')}</div></div>
     <span>
       <input id="ph-${esc(t.id)}" placeholder="Seller login phone" value="${esc((t.mobile||'').replace(/\s/g,''))}" style="width:170px">
       <button class="alt" onclick="genCode('${esc(t.id)}')">Generate access code</button>
+      <button class="edit-btn" onclick="editTenant('${esc(t.id)}')">Edit</button>
+      <button class="${t.hidden?'unhide-btn':'hide-btn'}" onclick="hideTenant('${esc(t.id)}',${!t.hidden})">${t.hidden?'Unhide':'Hide'}</button>
       <button class="${t.active===false?'toggle-on':'toggle-off'}" onclick="toggleTenant('${esc(t.id)}',${t.active===false})">${t.active===false?'Restore':'Terminate'}</button>
       <button class="danger" onclick="delTenant('${esc(t.id)}')">Delete</button>
     </span>
+    <div id="edit-${esc(t.id)}" style="width:100%"></div>
     <div id="code-${esc(t.id)}" style="width:100%"></div>
   </div>`;
+}
+function editTenant(tid){
+  const t=(window.__sellers||[]).find(x=>x.id===tid); if(!t) return;
+  const box=document.getElementById('edit-'+tid);
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  box.innerHTML=`<div class="editbox">
+    <div class="formgrid">
+      <input id="et-name-${tid}" value="${esc(t.name)}" placeholder="Shop name">
+      <input id="et-nameAm-${tid}" value="${esc(t.nameAm||'')}" placeholder="Amharic name">
+      <input id="et-unit-${tid}" value="${esc(t.unit||'')}" placeholder="Unit">
+      <input id="et-floor-${tid}" value="${esc(t.floor)}" placeholder="Floor">
+      <input id="et-cat-${tid}" value="${esc(t.cat)}" placeholder="Category">
+      <input id="et-owner-${tid}" value="${esc(t.owner||'')}" placeholder="Owner">
+      <input id="et-wa-${tid}" value="${esc(t.whatsapp||'')}" placeholder="WhatsApp (2519…)">
+      <input id="et-mobile-${tid}" value="${esc(t.mobile||'')}" placeholder="Mobile">
+      <input id="et-color-${tid}" value="${esc(t.color||'#8a1450')}" placeholder="Color (#hex)">
+      <input id="et-icon-${tid}" value="${esc(t.icon||'fa-store')}" placeholder="Icon (fa-…)">
+      <input id="et-photo-${tid}" value="${esc((t.photo||'').slice(0,80))}" placeholder="Photo URL">
+    </div>
+    <textarea id="et-blurb-${tid}" rows="2" placeholder="Short blurb">${esc(t.blurb||'')}</textarea>
+    <div style="margin-top:10px;text-align:right"><button onclick="saveTenantEdit('${tid}')">Save changes</button></div>
+  </div>`;
+}
+async function saveTenantEdit(tid){
+  const g=id=>document.getElementById(id).value.trim();
+  try{
+    const photoV=g('et-photo-'+tid);
+    const t=(window.__sellers||[]).find(x=>x.id===tid)||{};
+    await api('/api/admin/tenant',{method:'PUT',body:{tenant:{
+      id:tid, name:g('et-name-'+tid), nameAm:g('et-nameAm-'+tid), unit:g('et-unit-'+tid),
+      floor:g('et-floor-'+tid), cat:g('et-cat-'+tid), owner:g('et-owner-'+tid),
+      whatsapp:g('et-wa-'+tid), mobile:g('et-mobile-'+tid), color:g('et-color-'+tid),
+      icon:g('et-icon-'+tid), photo:photoV.startsWith('http')?photoV:(t.photo||''),
+      blurb:document.getElementById('et-blurb-'+tid).value.trim()
+    }}});
+    show('sellers');
+  }catch(e){ alert(e.message); }
+}
+async function hideTenant(tid, hide){
+  try{ await api('/api/admin/tenant/'+tid+'/hide',{method:'POST',body:{hidden:hide}}); show('sellers'); }catch(e){ alert(e.message); }
 }
 function renderSellerList(){
   const q = (document.getElementById('sellerSearch').value || '').trim().toLowerCase();
@@ -265,6 +441,55 @@ function renderSellerList(){
     html += byFloor[fl].map(sellerRow).join('');
   });
   document.getElementById('sellerList').innerHTML = html;
+}
+function editService(sid){
+  const sv=(window.__svcs||[]).find(x=>x.id===sid); if(!sv) return;
+  const box=document.getElementById('sedit-'+sid);
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const ph=[sv.photo,sv.photo2].filter(Boolean);
+  box.innerHTML=`<div class="editbox">
+    <div class="formgrid">
+      <input id="es-name-${sid}" value="${esc(sv.name)}" placeholder="Name">
+      <input id="es-nameAm-${sid}" value="${esc(sv.nameAm||'')}" placeholder="Amharic name">
+      <input id="es-floor-${sid}" value="${esc(sv.floor)}" placeholder="Floor">
+      <input id="es-type-${sid}" value="${esc(sv.type)}" placeholder="Type">
+      <input id="es-icon-${sid}" value="${esc(sv.icon||'')}" placeholder="Icon (fa-…)">
+      <input id="es-mobile-${sid}" value="${esc(sv.mobile||'')}" placeholder="Mobile">
+      <input id="es-owner-${sid}" value="${esc(sv.owner||'')}" placeholder="Owner">
+      <input id="es-hours-${sid}" value="${esc(sv.hours||'')}" placeholder="Hours">
+    </div>
+    <textarea id="es-blurb-${sid}" rows="2" placeholder="Description">${esc(sv.blurb||'')}</textarea>
+    <div class="muted" style="margin-top:8px"><b>Service photos (up to 2)</b> — first is the main photo.</div>
+    ${imgSlots('es-'+sid,2,ph)}
+    <div style="margin-top:10px;text-align:right"><button onclick="saveServiceEdit('${sid}')">Save changes</button></div>
+  </div>`;
+}
+async function saveServiceEdit(sid){
+  const g=id=>document.getElementById(id).value.trim();
+  try{
+    await api('/api/admin/service',{method:'PUT',body:{service:{
+      id:sid, name:g('es-name-'+sid), nameAm:g('es-nameAm-'+sid), floor:g('es-floor-'+sid),
+      type:g('es-type-'+sid), icon:g('es-icon-'+sid), mobile:g('es-mobile-'+sid),
+      owner:g('es-owner-'+sid), hours:g('es-hours-'+sid),
+      blurb:document.getElementById('es-blurb-'+sid).value.trim(),
+      photos:slotData('es-'+sid,2)
+    }}});
+    show('services');
+  }catch(e){ alert(e.message); }
+}
+async function hideService(sid, hide){
+  try{ await api('/api/admin/service/'+sid+'/hide',{method:'POST',body:{hidden:hide}}); show('services'); }catch(e){ alert(e.message); }
+}
+async function saveSections(){
+  const g=id=>document.getElementById(id).value.trim();
+  try{
+    await api('/api/admin/sections',{method:'PUT',body:{sections:{
+      shop:{ visible:document.getElementById('sec-shop-vis').checked, title:g('sec-shop-title'), sub:g('sec-shop-sub') },
+      sellers:{ visible:document.getElementById('sec-sellers-vis').checked, title:g('sec-sellers-title'), sub:g('sec-sellers-sub') }
+    }}});
+    alert('Saved — the storefront updates on next load.');
+    show('storefront');
+  }catch(e){ alert(e.message); }
 }
 const v = id => document.getElementById(id).value.trim();
 </script>

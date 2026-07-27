@@ -31,6 +31,24 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v14 — layout polish + full admin control
+
+Storefront: cleaner header (no subtitle), compact phone mockup, the photo
+carousel now sits under the hero copy (no captions/dots) so the floor list is
+fully visible without scrolling, "How Ordering Works" moved into a footer
+modal next to Privacy Policy, midnight-navy footer, and every modal closes on
+outside-click as well as its ✕.
+
+Admin: every Seller / Product / Service row now has **Edit** (full inline
+form), **Hide/Unhide**, on/off and Delete. *Hidden* is softer than *off*: the
+item leaves the main storefront sections but stays searchable, orderable, and
+listed in the floor/office panel. A new **Storefront** tab controls the
+Marketplace ("Shop All Products") and "Our Sellers" sections — visibility plus
+custom titles. Product forms take up to **3 uploaded images** (compressed
+client-side to data-URLs), services up to **2**; sellers can upload 3 product
+photos from their own portal. Also fixed: service toggles now actually reach
+the storefront (the public catalog's top-level services copy is kept in sync).
+
 ---
 
 ## Project layout

@@ -139,8 +139,11 @@ async function render(){
             <option value="out" ${p.stock&&p.stock.state==='out'?'selected':''}>Sold out</option>
           </select>
           <button class="btn" onclick="saveProd('${esc(p.id)}')">Save</button>
+          <button class="btn" style="background:#1769aa" onclick="editPhotos('${esc(p.id)}')"><i class="fas fa-image"></i> Photos</button>
           <button class="btn ${p.active===false?'':'wine'}" style="${p.active===false?'background:#2f9e44':''}" onclick="toggleActive('${esc(p.id)}',${p.active===false})">${p.active===false?'Turn ON':'Turn OFF'}</button>
+          <div id="ph-${esc(p.id)}" style="width:100%"></div>
         </div>`).join('');
+      window.__prods = t.products;
     }
   }catch(e){
     if((''+e.message).match(/sign in/i)){ me=null; loginView('Session expired — please sign in again.'); return; }
@@ -162,6 +165,67 @@ async function saveProd(pid){
 }
 async function toggleActive(pid, turnOn){
   try{ await api('/api/seller/product',{method:'POST',body:{pid, active:turnOn}}); render(); }catch(e){ alert(e.message); }
+}
+/* ── product photos: up to 3, uploaded as compressed data-URLs ── */
+window.__img = {};
+function editPhotos(pid){
+  const p=(window.__prods||[]).find(x=>x.id===pid); if(!p) return;
+  const box=document.getElementById('ph-'+pid);
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const gal=(p.gallery&&p.gallery.length?p.gallery:[p.img]).filter(Boolean);
+  let slots='';
+  for(let i=0;i<3;i++){
+    const key=pid+'-'+i, cur=gal[i]||'';
+    window.__img[key]=cur;
+    slots+=`<div style="width:96px">
+      <div id="th-${key}" onclick="pickImg('${key}')" style="width:96px;height:72px;border:1.5px ${cur?'solid #8a1450':'dashed #cbb'};border-radius:9px;background:#fff center/cover no-repeat ${cur?`url('${cur}')`:''};display:flex;align-items:center;justify-content:center;color:#bba;font-size:1.1rem;cursor:pointer">${cur?'':'+'}</div>
+      <button onclick="clearImg('${key}')" style="display:block;width:100%;margin-top:4px;background:#eee;color:#a55;font-size:.62rem;padding:3px 0;border:0;border-radius:6px;cursor:pointer">clear</button>
+    </div>`;
+  }
+  box.innerHTML=`<div style="background:#f8f5f7;border:1px dashed #d7c4cd;border-radius:11px;padding:12px;margin-top:10px">
+    <div class="muted" style="margin-bottom:8px"><b>Product photos (up to 3)</b> — the first is the main image. Tap a box to upload; photos are compressed automatically.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">${slots}</div>
+    <div style="margin-top:10px;text-align:right"><button class="btn" onclick="savePhotos('${pid}')">Save photos</button></div>
+  </div>`;
+}
+function pickImg(key){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=()=>{
+    const f=inp.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const im=new Image();
+      im.onload=()=>{
+        const mx=900, sc=Math.min(1, mx/Math.max(im.width,im.height));
+        const cv=document.createElement('canvas');
+        cv.width=Math.round(im.width*sc); cv.height=Math.round(im.height*sc);
+        cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+        const url=cv.toDataURL('image/jpeg',.82);
+        window.__img[key]=url;
+        const th=document.getElementById('th-'+key);
+        th.style.border='1.5px solid #8a1450';
+        th.style.background=`#fff center/cover no-repeat url('${url}')`;
+        th.textContent='';
+      };
+      im.src=rd.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  inp.click();
+}
+function clearImg(key){
+  window.__img[key]='';
+  const th=document.getElementById('th-'+key);
+  if(th){ th.style.border='1.5px dashed #cbb'; th.style.background='#fff'; th.textContent='+'; }
+}
+async function savePhotos(pid){
+  const gallery=[];
+  for(let i=0;i<3;i++){ const v=window.__img[pid+'-'+i]; if(v) gallery.push(v); }
+  if(!gallery.length){ alert('Add at least one photo, or close the editor.'); return; }
+  try{
+    await api('/api/seller/product',{method:'POST',body:{pid, gallery}});
+    render();
+  }catch(e){ alert(e.message); }
 }
 /* boot: restore session if cookie valid */
 api('/api/seller/me').then(d=>{ me=d.tenant; render(); }).catch(()=>loginView());

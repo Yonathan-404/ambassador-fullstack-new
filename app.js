@@ -604,10 +604,11 @@ function api(path, opts){
 function applyCatalog(cat){
   if (!cat || !cat.building) return;
   var b = cat.building;
-  ['name','nameAm','tagline','taglineAm','location','phone','logo','stats','geo','tax','areas','delivery','admin','policy','legal','quickLinks','tenants','floorStats'].forEach(function(k){
+  ['name','nameAm','tagline','taglineAm','location','phone','logo','stats','geo','tax','areas','delivery','admin','policy','legal','quickLinks','tenants','floorStats','sections'].forEach(function(k){
     if (b[k] !== undefined) BUILDING[k] = b[k];
   });
-  if (cat.services) { SERVICES.length = 0; cat.services.forEach(function(s){ SERVICES.push(s); }); }
+  var svcs = cat.services || b.services;
+  if (svcs) { SERVICES.length = 0; svcs.forEach(function(s){ SERVICES.push(s); }); }
   rebuildProducts();
 }
 
@@ -625,7 +626,7 @@ function tenant(tid) { for (var i=0;i<BUILDING.tenants.length;i++) if (BUILDING.
 function stars(r){ var n=Math.round(r), s=''; for(var i=0;i<5;i++) s += i<n?'★':'☆'; return s; }
 
 /* products that are on sale (have an old price) */
-function onSaleProducts(){ return ALL_PRODUCTS.filter(function(p){ return p.old && p.old>p.price; }); }
+function onSaleProducts(){ return ALL_PRODUCTS.filter(function(p){ return !p.hidden && p.old && p.old>p.price; }); }
 
 /* expose for inline handlers + later parts */
 window.__AMB = {
@@ -687,11 +688,26 @@ window.ambScrollTo = function (id) { var el=$(id); if(el) el.scrollIntoView({beh
 window.ambSetLang = function (lang) {
   state.lang = lang; save('amb-lang', lang);
   applyI18n();
-  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderDirectory(); renderHeroVisual();
+  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderHeroVisual();
   var btn=$('ambLangBtn'); if(btn) btn.innerHTML = lang==='en' ? '<i class="fas fa-language"></i> አማ' : '<i class="fas fa-language"></i> EN';
 };
 window.ambToggleLang = function(){ ambSetLang(state.lang==='en'?'am':'en'); };
 
+function applySections(){
+  var sec = BUILDING.sections || {};
+  var shopEl = $('ambShop'), sellersEl = $('ambTenants');
+  if(shopEl) shopEl.style.display = (sec.shop && sec.shop.visible===false) ? 'none' : '';
+  if(sellersEl) sellersEl.style.display = (sec.sellers && sec.sellers.visible===false) ? 'none' : '';
+  var onSaleEl = $('ambOnSaleSection');
+  if(onSaleEl && sec.shop && sec.shop.visible===false) onSaleEl.style.display='none';
+  function setTitle(rootId, o){
+    if(!o) return; var root=$(rootId); if(!root) return;
+    var h=root.querySelector('.amb-title'), p=root.querySelector('.amb-sub');
+    if(o.title && h) h.textContent = o.title;
+    if(o.sub && p) p.textContent = o.sub;
+  }
+  setTitle('ambShop', sec.shop); setTitle('ambTenants', sec.sellers);
+}
 function applyI18n(){
   // any element with data-i18n gets its text replaced; data-i18n-html allows <em>
   document.querySelectorAll('#amb-store [data-i18n]').forEach(function(el){
@@ -702,6 +718,7 @@ function applyI18n(){
   });
   var s=$('ambSearch'); if(s) s.placeholder = t('searchPh');
   document.documentElement.lang = state.lang;
+  applySections();   // section visibility + admin title overrides (must run after the i18n pass)
 }
 
 /* ── RIBBON ── */
@@ -949,7 +966,7 @@ window.ambSearchPickCat = function(cat){
 
 /* ── TENANT CAROUSEL (enhanced cards w/ profile) ── */
 function renderTenants() {
-  var cards = BUILDING.tenants.map(function(tn){ return tenantCardHTML(tn); }).join('');
+  var cards = BUILDING.tenants.filter(function(tn){ return !tn.hidden; }).map(function(tn){ return tenantCardHTML(tn); }).join('');
   var strip=$('ambTenantStrip'); if(strip) strip.innerHTML = cards;
   var gal=$('ambTenantGallery'); if(gal) gal.innerHTML = cards;
   var cnt=$('ambHeroSellerCount'); if(cnt) cnt.textContent = BUILDING.tenants.length;
@@ -1051,7 +1068,7 @@ window.ambOpenTenant = function(tid){
 /* ── SERVICES (non-retail info cards — dual photo + details + view) ── */
 function renderServices(){
   var el=$('ambServicesGrid'); if(!el) return;
-  el.innerHTML = SERVICES.map(function(sv){
+  el.innerHTML = SERVICES.filter(function(sv){ return !sv.hidden; }).map(function(sv){
     var g='linear-gradient(135deg,'+sv.color+','+shade(sv.color,-25)+')';
     return '<div class="amb-svc" onclick="ambOpenService(\''+sv.id+'\')">'+
       '<div class="amb-svc-photos">'+
@@ -1156,9 +1173,18 @@ function renderHeroVisual(){
     { src:'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ጤናና እንክብካቤ':'Wellness & Spa'), sub:(state.lang==='am'?'የመዝናኛ ጊዜ':'Rejuvenate at Zen Spa') }
   ];
   var carouselHTML = carouselImages.map(function(img,idx){
-    return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy">'+
-      '<div class="slide-overlay"><div class="slide-label">'+esc(img.label)+'</div><div class="slide-sub">'+esc(img.sub)+'</div></div></div>';
+    return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy"></div>';
   }).join('');
+  // carousel lives under the hero copy (left of the phone) — clean, no captions, no dots
+  var slot=$('ambHeroCarouselSlot');
+  if(slot){
+    slot.innerHTML =
+      '<div class="explore-carousel-wrap">'+
+        '<div class="explore-track" id="exploreTrack">'+carouselHTML+'</div>'+
+        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1)"><i class="fas fa-chevron-left"></i></button>'+
+        '<button class="explore-arrow next" onclick="ambExploreSlide(1)"><i class="fas fa-chevron-right"></i></button>'+
+      '</div>';
+  }
 
   var qrUrl = (typeof location!=='undefined') ? (location.origin+location.pathname) : '';
   el.innerHTML =
@@ -1174,27 +1200,13 @@ function renderHeroVisual(){
     '</div>'+
     '<div class="welcome-right">'+
       '<div><div class="floor-list-title">'+(state.lang==='am'?'ወደ ፎቅ ዝለል':'Jump to Floor')+'</div><div class="floor-vertical-list">'+floorsHTML+'</div></div>'+
-      '<div class="explore-carousel-wrap">'+
-        '<div class="explore-track" id="exploreTrack">'+carouselHTML+'</div>'+
-        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1)"><i class="fas fa-chevron-left"></i></button>'+
-        '<button class="explore-arrow next" onclick="ambExploreSlide(1)"><i class="fas fa-chevron-right"></i></button>'+
-      '</div>'+
-      '<div class="explore-dots" id="exploreDots"></div>'+
     '</div>';
   initExploreCarousel();
 }
 function initExploreCarousel(){
-  var track=$('exploreTrack'), dots=$('exploreDots'); if(!track) return;
+  var track=$('exploreTrack'); if(!track) return;
   var slides = track.querySelectorAll('.explore-slide');
   exploreTotal = slides.length; if(!exploreTotal) return;
-  dots.innerHTML='';
-  for(var i=0;i<exploreTotal;i++){
-    var dot=document.createElement('span');
-    dot.className='explore-dot'+(i===0?' active':'');
-    dot.dataset.index=i;
-    dot.addEventListener('click', (function(idx){ return function(){ ambGoToExploreSlide(idx); }; })(i));
-    dots.appendChild(dot);
-  }
   clearInterval(exploreInterval);
   exploreInterval = setInterval(function(){ ambExploreSlide(1); }, 5500);
   ambGoToExploreSlide(0);
@@ -1269,8 +1281,7 @@ window.ambOpenFloorPanel = function(floorName){
   var foot=$('ambFpFoot');
   var flEsc = esc(floorName).replace(/'/g,"\\'");
   if(foot) foot.innerHTML =
-    '<button class="amb-fp-shopbtn" onclick="ambCloseFloorPanel();ambFilterByFloor(\''+flEsc+'\')"><i class="fas fa-bag-shopping"></i> '+esc(t('shopThisFloor'))+'</button>'+
-    '<button class="amb-fp-dirbtn" onclick="ambCloseFloorPanel();ambScrollTo(\'ambDirectory\')"><i class="fas fa-list"></i> '+esc(t('fullDirectory'))+'</button>';
+    '<button class="amb-fp-shopbtn" onclick="ambCloseFloorPanel();ambFilterByFloor(\''+flEsc+'\')"><i class="fas fa-bag-shopping"></i> '+esc(t('shopThisFloor'))+'</button>';
   var p=$('ambFloorPanel'), sc=$('ambFloorScrim');
   if(p) p.classList.add('open'); if(sc) sc.classList.add('on');
   document.body.style.overflow='hidden';
@@ -1285,55 +1296,6 @@ window.ambCloseFloorPanel = function(){
   if(location.hash.indexOf('#floor=')===0 && history.replaceState) history.replaceState(null,'',location.pathname+location.search);
 };
 
-/* ── BUILDING DIRECTORY — all offices listed, searchable ── */
-function dirMatches(x, q){
-  if(!q) return true;
-  var hay = ((x.unit||'')+' '+x.name+' '+(x.nameAm||'')+' '+(x.cat||x.type||'')+' '+(x.owner||'')+' '+x.floor).toLowerCase();
-  return hay.indexOf(q)>=0;
-}
-function dirCardHTML(x, isSvc){
-  var open = isSvc ? 'ambOpenService(\''+x.id+'\')' : 'ambOpenTenant(\''+x.id+'\')';
-  return '<button class="amb-dir-card'+(isSvc?' svc':'')+'" style="--uc:'+x.color+'" onclick="'+open+'">'+
-    '<span class="dir-ic" style="background:linear-gradient(135deg,'+x.color+','+shade(x.color,-28)+')"><i class="fas '+x.icon+'"></i></span>'+
-    '<span class="dir-txt"><span class="dir-name">'+esc(nameFor(x))+'</span>'+
-    '<span class="dir-sub">'+esc(x.cat||x.type||'')+(x.owner?' · '+esc(x.owner):'')+'</span></span>'+
-    '<span class="dir-unit">'+esc(x.unit||t('svcLbl'))+'</span>'+
-    '<i class="fas fa-chevron-right dir-arrow"></i>'+
-  '</button>';
-}
-function renderDirectory(){
-  var tabs=$('ambDirTabs'), list=$('ambDirList');
-  if(!tabs || !list) return;
-  var fls = floorsList();
-  tabs.innerHTML = '<button class="amb-dir-tab'+(state.dirFloor==='all'?' active':'')+'" onclick="ambDirSetFloor(\'all\')">'+esc(t('allFloors'))+'</button>'+
-    fls.map(function(fl){
-      var flEsc = esc(fl).replace(/'/g,"\\'");
-      return '<button class="amb-dir-tab'+(state.dirFloor===fl?' active':'')+'" onclick="ambDirSetFloor(\''+flEsc+'\')">'+esc(fl)+'</button>';
-    }).join('');
-  var inp=$('ambDirSearch'); if(inp) inp.placeholder = t('dirSearchPh');
-  var q = state.dirQ.toLowerCase();
-  var html='', total=0;
-  fls.forEach(function(fl){
-    if(state.dirFloor!=='all' && state.dirFloor!==fl) return;
-    var shops = BUILDING.tenants.filter(function(x){ return x.floor===fl && dirMatches(x,q); }).sort(unitSort);
-    var svcs = (SERVICES||[]).filter(function(s){ return s.floor===fl && dirMatches(s,q); });
-    if(!shops.length && !svcs.length) return;
-    total += shops.length + svcs.length;
-    var am = FLOOR_AM[fl]||'';
-    html += '<div class="amb-dir-floor">'+
-      '<div class="amb-dir-floorhead"><span class="amb-dir-floorbar" style="--fc:'+floorColor(fl)+'"></span>'+
-      '<h4>'+esc(fl)+' <span class="amh-inline">'+esc(am)+'</span></h4>'+
-      '<span class="dir-ct">'+(shops.length+svcs.length)+' '+t('unitsLbl')+'</span></div>'+
-      '<div class="amb-dir-grid">'+shops.map(function(x){return dirCardHTML(x,false);}).join('')+svcs.map(function(s){return dirCardHTML(s,true);}).join('')+'</div>'+
-    '</div>';
-  });
-  if(!total){
-    html = '<div class="amb-dir-empty"><i class="fas fa-building-circle-xmark"></i>'+esc(t('dirNoMatch'))+'</div>';
-  }
-  list.innerHTML = html;
-}
-window.ambDirSetFloor = function(fl){ state.dirFloor=fl; renderDirectory(); };
-window.ambDirSearchInput = function(){ var i=$('ambDirSearch'); state.dirQ = i?i.value.trim():''; renderDirectory(); };
 
 /* ── ON-SALE CAROUSEL ── */
 function renderOnSale(){
@@ -1348,6 +1310,7 @@ function renderFilterChips() {
   var el=$('ambFilterChips'); if(!el) return;
   var chips = '<button class="amb-chip'+(state.filter==='all'?' active':'')+'" onclick="ambFilter(\'all\')"><i class="fas fa-grip"></i> '+(state.lang==='am'?'ሁሉም':'All')+' <span class="amb-chip-ct">('+ALL_PRODUCTS.length+')</span></button>';
   BUILDING.tenants.forEach(function(tn){
+    if(tn.hidden) return;
     chips += '<button class="amb-chip'+(state.filter===tn.id?' active':'')+'" onclick="ambFilter(\''+tn.id+'\')">'+
       '<i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+' <span class="amb-chip-ct">('+tn.products.length+')</span></button>';
   });
@@ -1361,6 +1324,7 @@ window.ambFilter = function (key) {
 /* ── PRODUCT GRID ── */
 function visibleProducts() {
   var list = ALL_PRODUCTS.filter(function(p){
+    if (p.hidden) return false;   // hidden: off the main grid, but still searchable, orderable & in floor listings
     if (state.filter!=='all') {
       if (('' + state.filter).indexOf('floor:') === 0) {
         var fl = state.filter.slice(6);
@@ -1755,7 +1719,7 @@ function updateWishBadge() {
 A.render = {
   ribbon:renderRibbon, chrome:renderChrome, tenants:renderTenants, services:renderServices,
   onSale:renderOnSale, filterChips:renderFilterChips, products:renderProducts, heroVisual:renderHeroVisual,
-  directory:renderDirectory, filterBar:renderFilterBar,
+  filterBar:renderFilterBar,
   wishBadge:updateWishBadge, i18n:applyI18n, langBtn:function(){ ambSetLang(state.lang); }
 };
 A.shade = shade;
@@ -2473,6 +2437,33 @@ function legalModal(title, items, updated){
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
 }
+window.ambOpenHow = function(){
+  var steps = state.lang==='am' ? [
+    ['fa-cart-plus','ወደ ጋሪ ያክሉ','ከማንኛውም ሻጭ ምርቶችን ይመልከቱና የሚወዱትን ያክሉ። ጋሪዎ ዕቃዎችን በሻጭ በራስ-ሰር ይመድባል።'],
+    ['fa-building-columns','ባንክ ይምረጡ','እያንዳንዱ ሻጭ የራሱን CBE፣ አዋሽ፣ አቢሲኒያ እና ቴሌብር አካውንት ይዘረዝራል። አንዱን መርጠው ጠቅላላውን ያስተላልፉ።'],
+    ['fab fa-whatsapp','ትዕዛዝ ያረጋግጡ','የክፍያ ማስረጃዎን በWhatsApp ለሻጩ ይላኩ — ወይም ደረሰኝዎን ብቻ ያውርዱ።'],
+    ['fa-box-open','ይረከቡ','ሻጩ አረጋግጦ መረከቢያ ወይም መላኪያ ያዘጋጃል። ትዕዛዙ በጀርባ ይመዘገባል።']
+  ] : [
+    ['fa-cart-plus','Add to Cart','Browse products from any seller and add what you like. Your cart groups items by tenant automatically.'],
+    ['fa-building-columns','Pick a Bank','Each tenant lists their own CBE, Awash, BOA & Telebirr accounts. Choose one and transfer the total.'],
+    ['fab fa-whatsapp','Confirm Order','Send your payment proof to the seller on WhatsApp — or just download your invoice if you prefer.'],
+    ['fa-box-open','Get It','The seller confirms and arranges pickup or delivery. The order is logged to them in the background.']
+  ];
+  var rows = steps.map(function(st,i){
+    var fa = st[0].indexOf('fab')===0 ? st[0] : 'fas '+st[0];
+    return '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px">'+
+      '<div style="width:40px;height:40px;border-radius:12px;background:var(--wine-tint);color:var(--wine);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="'+fa+'"></i></div>'+
+      '<div><div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:3px">'+(i+1)+'. '+esc(st[1])+'</div>'+
+      '<div style="font-size:.8rem;color:var(--mid);line-height:1.6">'+esc(st[2])+'</div></div></div>';
+  }).join('');
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:28px 26px 20px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.6rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+esc(L('howTitle'))+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid);margin-bottom:20px">'+esc(L('howSub'))+'</p>'+rows+
+    '</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
 window.ambOpenTos = function(){ var lg=BUILDING.legal; legalModal(lg.tosTitle, lg.tos, lg.updated); };
 window.ambOpenPrivacy = function(){ var lg=BUILDING.legal; legalModal(lg.privacyTitle, lg.privacy, lg.updated); };
 
@@ -2638,7 +2629,6 @@ function boot(){
   A.render.filterBar();
   A.render.products();
   A.render.heroVisual();
-  A.render.directory();
   A.render.wishBadge();
   A.renderCart();
   A.updateBadges();
@@ -2658,7 +2648,7 @@ function boot(){
     A.applyCatalog(cat);
     // re-render everything that shows catalog data
     A.render.ribbon(); A.render.chrome(); A.render.tenants(); A.render.services();
-    A.render.onSale(); A.render.filterChips(); A.render.filterBar(); A.render.products(); A.render.heroVisual(); A.render.directory(); A.render.i18n();
+    A.render.onSale(); A.render.filterChips(); A.render.filterBar(); A.render.products(); A.render.heroVisual(); A.render.i18n();
     if (window.ambOpenFromHash) window.ambOpenFromHash();
   }).catch(function(){});
   A.api('/api/auth/me').then(function(d){
@@ -2680,6 +2670,15 @@ function boot(){
   document.addEventListener('click', function(e){
     var wrap=A.$('ambSearchWrap');
     if(wrap && !wrap.contains(e.target)) window.ambCloseSearch();
+  });
+  // clicking the dimmed area outside any modal box closes that window
+  document.querySelectorAll('#amb-store .amb-modal').forEach(function(m){
+    m.addEventListener('click', function(e){
+      if(e.target===m){
+        if(m.id==='ambCoModal'){ window.ambCloseCheckout(); }
+        else window.ambCloseAll();
+      }
+    });
   });
   // Escape closes floor panel / mobile search / search dropdown; Enter picks first result
   document.addEventListener('keydown', function(e){

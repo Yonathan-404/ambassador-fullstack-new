@@ -65,6 +65,7 @@ function publicCatalog(){
     .filter(t => t.active !== false)
     .map(t => Object.assign({}, t, { products: (t.products || []).filter(p => p.active !== false) }));
   c.building.services = (c.building.services || []).filter(s => s.active !== false);
+  c.services = c.building.services;   // the frontend reads the top-level copy — keep it in sync so toggles/hides/edits apply
   return c;
 }
 async function mutateCatalog(fn){
@@ -553,6 +554,13 @@ function notifyTelegram(o){
 }
 
 /* ════════ tenant/product normalizers (admin CRUD guarantees render-safe shapes) ════════ */
+/* an image reference is either an http(s) URL or an inline data-URL (max ~1.5MB each) */
+function isImageRef(v){
+  if (typeof v !== 'string' || !v) return false;
+  if (/^https?:\/\//i.test(v)) return v.length <= 2000;
+  if (/^data:image\/(png|jpe?g|webp|gif);base64,/i.test(v)) return v.length <= 1.6 * 1024 * 1024;
+  return false;
+}
 function normTenant(input, existing){
   const t = existing ? JSON.parse(JSON.stringify(existing)) : {};
   const set = (k, v) => { if (input[k] !== undefined) t[k] = input[k]; else if (t[k] === undefined) t[k] = v; };
@@ -567,6 +575,7 @@ function normTenant(input, existing){
   set('photo', ''); set('blurb', ''); set('rating', 4.8); set('reviews', 0);
   set('reviewLink', ''); set('responseTime', 'usually replies within a few hours');
   t.active = input.active !== undefined ? !!input.active : (t.active !== undefined ? t.active : true);
+  t.hidden = input.hidden !== undefined ? !!input.hidden : !!t.hidden;
   if (!t.socials) t.socials = {};
   if (input.bank && input.bank.acct) {
     t.banks = [{ key:'cbe', name:'Commercial Bank of Ethiopia', acct:''+input.bank.acct, holder:input.bank.holder || t.name, color:'#5b2d8e', icon:'fa-building-columns' }];
@@ -593,6 +602,11 @@ function normProduct(t, input, existing){
   if (!p.stock) p.stock = { state:'in', label:'' };
   if (input.variant !== undefined) p.variant = input.variant;
   p.active = input.active !== undefined ? !!input.active : (p.active !== undefined ? p.active : true);
+  p.hidden = input.hidden !== undefined ? !!input.hidden : !!p.hidden;
+  if (Array.isArray(input.gallery)) {
+    const g = input.gallery.filter(isImageRef).slice(0, 3);
+    if (g.length) { p.gallery = g; p.img = g[0]; }   // keep existing images if every submitted ref was invalid
+  }
   return p;
 }
 function normService(input, existing){
@@ -609,6 +623,8 @@ function normService(input, existing){
   if (!Array.isArray(s.gallery) || !s.gallery.length) s.gallery = [s.photo].filter(Boolean);
   if (!Array.isArray(s.offerings)) s.offerings = [];
   s.active = input.active !== undefined ? !!input.active : (s.active !== undefined ? s.active : true);
+  s.hidden = input.hidden !== undefined ? !!input.hidden : !!s.hidden;
+  if (Array.isArray(input.photos)) { const ph = input.photos.filter(isImageRef).slice(0, 2); if (ph[0]) s.photo = ph[0]; if (ph[1]) s.photo2 = ph[1]; }
   return s;
 }
 
@@ -669,7 +685,7 @@ function bPenaltyOf(inv, config){
 
 /* ════════ app ════════ */
 const app = express();
-app.use(express.json({ limit: '300kb' }));
+app.use(express.json({ limit: '8mb' })   /* raised for base64 image uploads (products: 3, services: 2) */);
 app.disable('x-powered-by');
 
 app.get('/api/health', (req, res) => res.json({ ok: true, db: db.kind }));
@@ -832,13 +848,16 @@ app.post('/api/seller/product', requireSeller, async (req, res) => {
   const price = req.body.price !== undefined ? Math.max(1, parseInt(req.body.price, 10) || p.price) : undefined;
   const stock = req.body.stock;
   const active = typeof req.body.active === 'boolean' ? req.body.active : undefined;
+  const gallery = Array.isArray(req.body.gallery) ? req.body.gallery.filter(isImageRef).slice(0, 3) : undefined;
   if (stock && ['in','low','made','out'].indexOf(stock.state) < 0) return res.status(400).json({ error: 'Invalid stock state' });
+  if (Array.isArray(req.body.gallery) && !gallery.length && req.body.gallery.length) return res.status(400).json({ error: 'Images must be URLs or data-URLs under 1.5MB each' });
   await mutateCatalog(c => {
     const t = c.building.tenants.find(x => x.id === req.sellerTid);
     const prod = t.products.find(x => x.id === pid);
     if (price !== undefined) prod.price = price;
     if (stock) prod.stock = { state: stock.state, label: ('' + (stock.label || '')).slice(0, 6) };
     if (active !== undefined) prod.active = active;
+    if (gallery !== undefined) { prod.gallery = gallery.length ? gallery : prod.gallery; if (gallery[0]) prod.img = gallery[0]; }
   });
   res.json({ ok: true, product: PRODUCTS[pid] });
 });
@@ -1140,6 +1159,54 @@ app.delete('/api/admin/service/:id', requireAdmin, async (req, res) => {
   if (!SERVICES[req.params.id]) return res.status(404).json({ error: 'Unknown service' });
   await mutateCatalog(c => { c.building.services = (c.building.services || []).filter(x => x.id !== req.params.id); });
   res.json({ ok: true });
+});
+
+/* ── hide/unhide: `hidden` removes an item from the main storefront sections
+   (Our Sellers / Shop All Products / On Sale / Building Services) while it
+   stays fully searchable, orderable, and listed in the floor/office panel.
+   This is softer than the on/off toggle, which pulls the item everywhere. ── */
+app.post('/api/admin/tenant/:id/hide', requireAdmin, async (req, res) => {
+  const t = TENANTS[req.params.id];
+  if (!t) return res.status(404).json({ error: 'Unknown tenant' });
+  const next = req.body && typeof req.body.hidden === 'boolean' ? req.body.hidden : !t.hidden;
+  await mutateCatalog(c => { c.building.tenants.find(x => x.id === req.params.id).hidden = next; });
+  res.json({ tenant: TENANTS[req.params.id] });
+});
+app.post('/api/admin/product/:pid/hide', requireAdmin, async (req, res) => {
+  const p = PRODUCTS[req.params.pid];
+  if (!p) return res.status(404).json({ error: 'Unknown product' });
+  const next = req.body && typeof req.body.hidden === 'boolean' ? req.body.hidden : !p.hidden;
+  await mutateCatalog(c => {
+    const t = c.building.tenants.find(x => x.id === p.tenantId);
+    t.products.find(x => x.id === req.params.pid).hidden = next;
+  });
+  res.json({ product: PRODUCTS[req.params.pid] });
+});
+app.post('/api/admin/service/:id/hide', requireAdmin, async (req, res) => {
+  const sv = SERVICES[req.params.id];
+  if (!sv) return res.status(404).json({ error: 'Unknown service' });
+  const next = req.body && typeof req.body.hidden === 'boolean' ? req.body.hidden : !sv.hidden;
+  await mutateCatalog(c => { c.building.services.find(x => x.id === req.params.id).hidden = next; });
+  res.json({ service: SERVICES[req.params.id] });
+});
+
+/* ── storefront sections (Marketplace & Our Sellers): visibility + titles ── */
+app.get('/api/admin/sections', requireAdmin, (req, res) => {
+  res.json({ sections: (catalog.building && catalog.building.sections) || {} });
+});
+app.put('/api/admin/sections', requireAdmin, async (req, res) => {
+  const input = (req.body && req.body.sections) || {};
+  const clean = {};
+  ['shop', 'sellers'].forEach(k => {
+    const o = input[k] || {};
+    clean[k] = {
+      visible: o.visible !== false,
+      title: ('' + (o.title || '')).slice(0, 120),
+      sub: ('' + (o.sub || '')).slice(0, 300)
+    };
+  });
+  await mutateCatalog(c => { c.building.sections = clean; });
+  res.json({ sections: clean });
 });
 
 /* ── static frontend ── */
