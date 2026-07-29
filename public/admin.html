@@ -393,6 +393,15 @@ function editTenant(tid){
       <input id="et-icon-${tid}" value="${esc(t.icon||'fa-store')}" placeholder="Icon (fa-…)">
       <input id="et-photo-${tid}" value="${esc((t.photo||'').slice(0,80))}" placeholder="Photo URL">
     </div>
+    <div class="muted" style="margin-top:8px"><b>Social links</b> — handle or full URL, blank to remove.</div>
+    <div class="formgrid">
+      <input id="et-sc-instagram-${tid}" value="${esc((t.socials||{}).instagram||'')}" placeholder="Instagram">
+      <input id="et-sc-facebook-${tid}" value="${esc((t.socials||{}).facebook||'')}" placeholder="Facebook">
+      <input id="et-sc-tiktok-${tid}" value="${esc((t.socials||{}).tiktok||'')}" placeholder="TikTok">
+      <input id="et-sc-youtube-${tid}" value="${esc((t.socials||{}).youtube||'')}" placeholder="YouTube">
+      <input id="et-sc-telegram-${tid}" value="${esc((t.socials||{}).telegram||'')}" placeholder="Telegram">
+      <input id="et-sc-x-${tid}" value="${esc((t.socials||{}).x||'')}" placeholder="X (Twitter)">
+    </div>
     <textarea id="et-blurb-${tid}" rows="2" placeholder="Short blurb">${esc(t.blurb||'')}</textarea>
     <div style="margin-top:10px;text-align:right"><button onclick="saveTenantEdit('${tid}')">Save changes</button></div>
   </div>`;
@@ -407,7 +416,12 @@ async function saveTenantEdit(tid){
       floor:g('et-floor-'+tid), cat:g('et-cat-'+tid), owner:g('et-owner-'+tid),
       whatsapp:g('et-wa-'+tid), mobile:g('et-mobile-'+tid), color:g('et-color-'+tid),
       icon:g('et-icon-'+tid), photo:photoV.startsWith('http')?photoV:(t.photo||''),
-      blurb:document.getElementById('et-blurb-'+tid).value.trim()
+      blurb:document.getElementById('et-blurb-'+tid).value.trim(),
+      socials:{
+        instagram:g('et-sc-instagram-'+tid), facebook:g('et-sc-facebook-'+tid),
+        tiktok:g('et-sc-tiktok-'+tid), youtube:g('et-sc-youtube-'+tid),
+        telegram:g('et-sc-telegram-'+tid), x:g('et-sc-x-'+tid)
+      }
     }}});
     show('sellers');
   }catch(e){ alert(e.message); }

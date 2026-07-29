@@ -22,7 +22,7 @@ var BUILDING = {
   name: 'Ambassador Shopping Center',
   nameAm: 'አምባሳደር የገበያ ማዕከል',
   tagline: "Addis Ababa's Trust-First Marketplace",
-  logo: 'https://scontent.fadd3-1.fna.fbcdn.net/v/t39.30808-6/310884191_101444736089223_649161035358662679_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=eY8H6owdheYQ7kNvwGPFy8t&oh=00_AfofKHyjgmvO6DQE_XlFUrHezJjAKX_cNGk2N21pHqwjIQ&oe=69673528',
+  logo:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10',
   phone: '+251 912 345 678',
   copyright: '© 2025 Ambassador Shopping Center. All rights reserved.',
   /* building identity / about */
@@ -484,7 +484,7 @@ function sendOrderToTenant(order) {
    STATE
 ═══════════════════════════════════════════════════════════════════ */
 var state = {
-  filter: 'all',          // 'all' | catKey | tenantId
+  filter: 'verified',     // 'all' | 'verified' | 'grp:<group>' | tenantId | 'floor:<floor>'
   search: '',
   sort: 'featured',       // featured | priceLow | priceHigh | rating
   priceMax: 0,            // 0 = no cap
@@ -682,7 +682,12 @@ function fallbackCopy(text){
   ta.remove();
 }
 
-window.ambScrollTo = function (id) { var el=$(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); ambCloseSearch(); };
+window.ambScrollTo = function (id) {
+  var el=$(id); if(!el) return ambCloseSearch();
+  if (A.lenis) A.lenis.scrollTo(el, { offset: -76, duration: 1.15 });
+  else el.scrollIntoView({behavior:'smooth', block:'start'});
+  ambCloseSearch();
+};
 
 /* ════ LANGUAGE TOGGLE ════ */
 window.ambSetLang = function (lang) {
@@ -971,13 +976,30 @@ function renderTenants() {
   var gal=$('ambTenantGallery'); if(gal) gal.innerHTML = cards;
   var cnt=$('ambHeroSellerCount'); if(cnt) cnt.textContent = BUILDING.tenants.length;
 }
+/* brand-colored social pills — platform key: [title, url-builder prefix, icon, css class] */
+var SOC_DEFS = [
+  ['telegram','Telegram','https://t.me/','fab fa-telegram-plane','sc-telegram'],
+  ['facebook','Facebook','https://facebook.com/','fab fa-facebook-f','sc-facebook'],
+  ['instagram','Instagram','https://instagram.com/','fab fa-instagram','sc-instagram'],
+  ['tiktok','TikTok','https://tiktok.com/','fab fa-tiktok','sc-tiktok'],
+  ['whatsapp','WhatsApp','https://wa.me/','fab fa-whatsapp','sc-whatsapp'],
+  ['youtube','YouTube','https://youtube.com/','fab fa-youtube','sc-youtube'],
+  ['pinterest','Pinterest','https://pinterest.com/','fab fa-pinterest-p','sc-pinterest'],
+  ['linkedin','LinkedIn','https://linkedin.com/company/','fab fa-linkedin-in','sc-linkedin'],
+  ['x','X (Twitter)','https://x.com/','fab fa-x-twitter','sc-x'],
+  ['twitter','X (Twitter)','https://x.com/','fab fa-x-twitter','sc-x'],
+  ['snapchat','Snapchat','https://snapchat.com/add/','fab fa-snapchat-ghost','sc-snapchat'],
+  ['website','Website','','fas fa-globe','sc-website'],
+  ['email','Email','mailto:','fas fa-envelope','sc-email']
+];
 function socialIcons(s, color){
   if(!s) return '';
   var out=[];
-  if(s.telegram) out.push('<a class="amb-soc-mini" title="Telegram" href="https://t.me/'+esc(s.telegram)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-telegram-plane"></i></a>');
-  if(s.facebook) out.push('<a class="amb-soc-mini" title="Facebook" href="https://facebook.com/'+esc(s.facebook)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-facebook-f"></i></a>');
-  if(s.instagram) out.push('<a class="amb-soc-mini" title="Instagram" href="https://instagram.com/'+esc(s.instagram)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-instagram"></i></a>');
-  if(s.tiktok) out.push('<a class="amb-soc-mini" title="TikTok" href="https://tiktok.com/'+esc(s.tiktok)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-tiktok"></i></a>');
+  SOC_DEFS.forEach(function(d){
+    var v = s[d[0]]; if(!v) return;
+    var href = /^https?:|^mailto:/.test(v) ? v : d[2]+v;
+    out.push('<a class="amb-soc-mini '+d[4]+'" title="'+d[1]+'" href="'+esc(href)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="'+d[3]+'"></i></a>');
+  });
   return out.join('');
 }
 function tenantCardHTML(tn){
@@ -1055,7 +1077,7 @@ window.ambOpenTenant = function(tid){
         (tn.reviewLink?'<a class="amb-tp-reviews" href="'+esc(tn.reviewLink)+'" target="_blank" rel="noopener"><i class="fas fa-star"></i> '+t('seeReviews')+' ('+tn.reviews+') <i class="fas fa-arrow-up-right-from-square" style="font-size:.6rem"></i></a>':'')+
         '<div class="amb-tp-socials">'+socialIcons(tn.socials,tn.color)+'</div>'+
         '<div class="amb-tp-acts">'+
-          '<button class="amb-tp-shop" onclick="ambCloseAll();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
+          '<button class="amb-tp-shop" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
           '<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>'+
           '<button class="amb-tp-wa" style="background:var(--teal)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
         '</div>'+
@@ -1166,11 +1188,11 @@ function renderHeroVisual(){
   }).join('');
 
   var carouselImages = [
-    { src:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ይግዙና ይመገቡ':'Shop & Dine'), sub:(state.lang==='am'?'ከ200 በላይ ሱቆችና ምግብ ቤቶች':'Verified sellers across every floor') },
-    { src:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ፋሽንና ስታይል':'Fashion & Style'), sub:(state.lang==='am'?'የቅርብ ጊዜ ስታይሎች':'The latest from local and imported brands') },
-    { src:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ምግብና መጠጥ':'Food & Dining'), sub:(state.lang==='am'?'ጣፋጭ ምግብና ልዩ ዕይታ':'Exquisite views and cuisine') },
-    { src:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1200&h=500&fit=crop', label:(state.lang==='am'?'የቤት ማስዋቢያ':'Home Decor'), sub:(state.lang==='am'?'ለቤትዎ ውበት':'Furnish and decorate your space') },
-    { src:'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ጤናና እንክብካቤ':'Wellness & Spa'), sub:(state.lang==='am'?'የመዝናኛ ጊዜ':'Rejuvenate at Zen Spa') }
+    { src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall', sub:'' },
+    { src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall', sub:'' },
+    { src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors', sub:'' },
+    { src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart', sub:'' },
+    { src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location', sub:'' }
   ];
   var carouselHTML = carouselImages.map(function(img,idx){
     return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy"></div>';
@@ -1199,7 +1221,7 @@ function renderHeroVisual(){
       '</div></div>'+
     '</div>'+
     '<div class="welcome-right">'+
-      '<div><div class="floor-list-title">'+(state.lang==='am'?'ወደ ፎቅ ዝለል':'Jump to Floor')+'</div><div class="floor-vertical-list">'+floorsHTML+'</div></div>'+
+      '<div class="floor-vertical-list">'+floorsHTML+'</div>'+
     '</div>';
   initExploreCarousel();
 }
@@ -1306,14 +1328,44 @@ function renderOnSale(){
 }
 
 /* ── FILTER CHIPS ── */
+/* marketplace category groups — each maps to a set of tenant catKeys */
+var CAT_GROUPS = [
+  ['verified', {en:'Verified Sellers Product', am:'የተረጋገጡ ሻጮች ምርት'}, 'fa-circle-check', null],
+  ['jewelry',  {en:'Jewelry',       am:'ጌጣጌጥ'},        'fa-gem',            ['jewelry','gold','gold-shop']],
+  ['food',     {en:'Food & Drinks', am:'ምግብ እና መጠጥ'},  'fa-utensils',       ['food-court','pizza-restaurant','burger-restaurant','fast-food','coffee-shop','cafe','ice-cream','chocolate-shop','bakery-and-pastry']],
+  ['fashion',  {en:'Fashion',       am:'ፋሽን'},          'fa-shirt',          ['fashion','tailoring','sports-apparel','womenswear','imported-brands','footwear','cultural-wear']],
+  ['gaming',   {en:'Gaming',        am:'ጌም'},           'fa-gamepad',        ['gaming','game-zone','sports-equipment']],
+  ['furniture',{en:'Furniture',     am:'የቤት እቃ'},       'fa-couch',          ['home-furniture','premium-furniture','home-decor']],
+  ['electronics',{en:'Electronics', am:'ኤሌክትሮኒክስ'},   'fa-tv',             ['electronics','technology','mobile-phones']],
+  ['books',    {en:'Books & Stationery', am:'መጻሕፍት'},  'fa-book-open',      ['bookstore','stationery']]
+];
+function groupKeys(gid){
+  var g = CAT_GROUPS.filter(function(x){ return x[0]===gid; })[0];
+  return g ? g[3] : null;
+}
+function groupCount(gid){
+  if(gid==='verified') return ALL_PRODUCTS.filter(function(p){ return !p.hidden; }).length;
+  var keys = groupKeys(gid) || [];
+  return ALL_PRODUCTS.filter(function(p){
+    if(p.hidden) return false;
+    var tn = tenant(p.tenantId);
+    return tn && keys.indexOf(tn.catKey)>=0;
+  }).length;
+}
 function renderFilterChips() {
   var el=$('ambFilterChips'); if(!el) return;
-  var chips = '<button class="amb-chip'+(state.filter==='all'?' active':'')+'" onclick="ambFilter(\'all\')"><i class="fas fa-grip"></i> '+(state.lang==='am'?'ሁሉም':'All')+' <span class="amb-chip-ct">('+ALL_PRODUCTS.length+')</span></button>';
-  BUILDING.tenants.forEach(function(tn){
-    if(tn.hidden) return;
-    chips += '<button class="amb-chip'+(state.filter===tn.id?' active':'')+'" onclick="ambFilter(\''+tn.id+'\')">'+
-      '<i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+' <span class="amb-chip-ct">('+tn.products.length+')</span></button>';
+  var chips = '<button class="amb-chip'+(state.filter==='all'?' active':'')+'" onclick="ambFilter(\'all\')"><i class="fas fa-grip"></i> '+(state.lang==='am'?'ሁሉም':'All')+' <span class="amb-chip-ct">('+ALL_PRODUCTS.filter(function(p){return !p.hidden;}).length+')</span></button>';
+  CAT_GROUPS.forEach(function(g){
+    var val = g[0]==='verified' ? 'verified' : 'grp:'+g[0];
+    chips += '<button class="amb-chip'+(state.filter===val?' active':'')+'" onclick="ambFilter(\''+val+'\')">'+
+      '<i class="fas '+g[2]+'"></i> '+esc(g[1][state.lang]||g[1].en)+' <span class="amb-chip-ct">('+groupCount(g[0])+')</span></button>';
   });
+  // if a single seller is being viewed (via Shop Products / search), show it as a removable chip
+  var tnF = tenant(state.filter);
+  if(tnF){
+    chips += '<button class="amb-chip active" onclick="ambFilter(\'verified\')">'+
+      '<i class="fas '+tnF.icon+'"></i> '+esc(nameFor(tnF))+' <span class="amb-chip-ct">('+tnF.products.length+')</span> <i class="fas fa-xmark"></i></button>';
+  }
   el.innerHTML = chips;
 }
 window.ambFilter = function (key) {
@@ -1325,11 +1377,15 @@ window.ambFilter = function (key) {
 function visibleProducts() {
   var list = ALL_PRODUCTS.filter(function(p){
     if (p.hidden) return false;   // hidden: off the main grid, but still searchable, orderable & in floor listings
-    if (state.filter!=='all') {
+    if (state.filter!=='all' && state.filter!=='verified') {
       if (('' + state.filter).indexOf('floor:') === 0) {
         var fl = state.filter.slice(6);
         var tn0 = tenant(p.tenantId);
         if (!tn0 || tn0.floor !== fl) return false;
+      } else if (('' + state.filter).indexOf('grp:') === 0) {
+        var keys = groupKeys(state.filter.slice(4)) || [];
+        var tng = tenant(p.tenantId);
+        if (!tng || keys.indexOf(tng.catKey) < 0) return false;
       } else if (p.tenantId !== state.filter) return false;
     }
     if (state.priceMax && p.price>state.priceMax) return false;
@@ -1482,7 +1538,7 @@ function renderProducts() {
 }
 window.ambSetSort = function(v){ state.sort=v; renderFilterBar(); renderProducts(); };
 window.ambSetPriceMax = function(v){ state.priceMax=parseInt(v,10)||0; renderFilterBar(); renderProducts(); };
-window.ambResetShop = function(){ state.filter='all'; state.priceMax=0; state.priceMin=0; state.stockF='all'; state.ratingMin=0; state.floorF='all'; state.sort='featured'; state.search=''; var i=$('ambSearch'); if(i) i.value=''; var mi=$('ambMSearchIn'); if(mi) mi.value=''; renderFilterChips(); renderFilterBar(); renderProducts(); };
+window.ambResetShop = function(){ state.filter='verified'; state.priceMax=0; state.priceMin=0; state.stockF='all'; state.ratingMin=0; state.floorF='all'; state.sort='featured'; state.search=''; var i=$('ambSearch'); if(i) i.value=''; var mi=$('ambMSearchIn'); if(mi) mi.value=''; renderFilterChips(); renderFilterBar(); renderProducts(); };
 
 /* ── SEARCH (legacy entry, now feeds dropdown) ── */
 window.ambSearch = function () { window.ambSearchInput(); };
@@ -2671,6 +2727,58 @@ function boot(){
     var wrap=A.$('ambSearchWrap');
     if(wrap && !wrap.contains(e.target)) window.ambCloseSearch();
   });
+  /* ── Lenis smooth scroll (github.com/darkroomengineering/lenis) ──
+     Progressive: if the CDN script didn't load, everything falls back to
+     native smooth scrolling. Overlay scrollers keep native behavior via
+     data-lenis-prevent, and reduced-motion users get no smoothing at all. */
+  var reduceMotion = false;
+  try { reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+  if (typeof Lenis !== 'undefined' && !reduceMotion) {
+    try {
+      A.lenis = new Lenis({ autoRaf: true, duration: 1.1, smoothWheel: true });
+    } catch(e) { A.lenis = null; }
+  }
+  // overlay scroll areas stay native so panels/modals scroll normally
+  ['ambFpBody','ambMSearchBody','ambSearchDrop','ambProdModalBox','ambCartBody','ambCoBody'].forEach(function(id){
+    var el = A.$(id); if (el) el.setAttribute('data-lenis-prevent','');
+  });
+  document.querySelectorAll('#amb-store .amb-modal, #amb-store .amb-cart, #amb-store .amb-floor-panel').forEach(function(el){
+    el.setAttribute('data-lenis-prevent','');
+  });
+  // scroll-reveal: sections fade up; grids stagger their children
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var staggerSel = ['.amb-vibe-lines','.amb-mosaic','.amb-spot-grid','.amb-help-grid','.amb-steps'];
+    staggerSel.forEach(function(sel){
+      document.querySelectorAll('#amb-store '+sel).forEach(function(el){ el.classList.add('amb-stagger'); });
+    });
+    var revealEls = [];
+    document.querySelectorAll('#amb-store section.amb-section > .amb-container, #amb-store .amb-trust-band, #amb-store .amb-partners').forEach(function(el){
+      el.classList.add('amb-reveal'); revealEls.push(el);
+    });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          en.target.classList.add('amb-reveal-in');
+          en.target.querySelectorAll('.amb-stagger').forEach(function(g){ g.classList.add('amb-reveal-in'); });
+          io.unobserve(en.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  }
+  // gentle hero parallax driven by the Lenis scroll event (desktop only)
+  if (A.lenis && window.innerWidth > 900) {
+    var heroVis = document.querySelector('#amb-store .amb-hero-visual');
+    var heroCar = A.$('ambHeroCarouselSlot');
+    A.lenis.on('scroll', function(e){
+      var y = e.scroll || 0;
+      if (y < 900) {
+        if (heroVis) heroVis.style.transform = 'translateY(' + (y * 0.10) + 'px)';
+        if (heroCar) heroCar.style.transform = 'translateY(' + (y * 0.05) + 'px)';
+      }
+    });
+  }
+
   // clicking the dimmed area outside any modal box closes that window
   document.querySelectorAll('#amb-store .amb-modal').forEach(function(m){
     m.addEventListener('click', function(e){

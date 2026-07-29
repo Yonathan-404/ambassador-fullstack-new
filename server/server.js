@@ -576,6 +576,13 @@ function normTenant(input, existing){
   set('reviewLink', ''); set('responseTime', 'usually replies within a few hours');
   t.active = input.active !== undefined ? !!input.active : (t.active !== undefined ? t.active : true);
   t.hidden = input.hidden !== undefined ? !!input.hidden : !!t.hidden;
+  if (input.socials && typeof input.socials === 'object') {
+    const soc = {};
+    ['telegram','facebook','instagram','tiktok','whatsapp','youtube','pinterest','linkedin','x','snapchat','website','email'].forEach(k => {
+      if (input.socials[k]) soc[k] = ('' + input.socials[k]).slice(0, 200);
+    });
+    t.socials = soc;
+  }
   if (!t.socials) t.socials = {};
   if (input.bank && input.bank.acct) {
     t.banks = [{ key:'cbe', name:'Commercial Bank of Ethiopia', acct:''+input.bank.acct, holder:input.bank.holder || t.name, color:'#5b2d8e', icon:'fa-building-columns' }];

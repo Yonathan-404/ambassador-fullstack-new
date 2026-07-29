@@ -1308,6 +1308,103 @@
   #amb-store .amb-hero-carousel-slot{max-width:none}
   #amb-store .amb-hero-carousel-slot .explore-slide{height:170px}
 }
+
+/* ── v15: hero balance · light-burgundy floors · brand social colors · new sections ── */
+#amb-store .amb-hero-carousel-slot{margin-top:1.4rem;max-width:600px}
+#amb-store .mobile-frame-container{transform:none;margin-bottom:0}
+#amb-store .amb-hero-visual .welcome-right{flex:0 0 216px;min-width:0}
+#amb-store .floor-vertical-item{background:#f2d9e2;color:#7a1a44;padding:9px 13px;font-size:.8rem}
+#amb-store .floor-vertical-item .floor-occ{color:#9c6b80}
+#amb-store .floor-vertical-item:hover{background:var(--wine);color:#fff}
+@media(max-width:900px){
+  #amb-store .amb-hero-visual .welcome-right{flex:1}
+}
+/* brand-colored social pills */
+#amb-store .amb-soc-mini{color:#fff !important;border:none}
+#amb-store .sc-facebook{background:#4267B2}
+#amb-store .sc-instagram{background:linear-gradient(45deg,#FFDC80,#FCAF45,#F56040,#C13584)}
+#amb-store .sc-tiktok{background:#010101}
+#amb-store .sc-telegram{background:#229ED9}
+#amb-store .sc-whatsapp{background:#25D366}
+#amb-store .sc-youtube{background:#FF0000}
+#amb-store .sc-pinterest{background:#E60023}
+#amb-store .sc-linkedin{background:#0077B5}
+#amb-store .sc-x{background:#000}
+#amb-store .sc-snapchat{background:#FFFC00;color:#000 !important}
+#amb-store .sc-website{background:#9370DB}
+#amb-store .sc-email{background:#EA4335}
+#amb-store .amb-soc-mini:hover{transform:scale(1.14) rotate(8deg);filter:brightness(1.08)}
+/* Shop Smart strip */
+#amb-store .amb-vibe{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem);align-items:center}
+#amb-store .amb-vibe-lines{display:flex;flex-direction:column;gap:1.1rem}
+#amb-store .amb-vibe-line{display:flex;align-items:center;gap:16px;font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:900;color:var(--ink)}
+#amb-store .amb-vibe-line i{font-size:1.5rem;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+#amb-store .amb-vibe img{width:100%;border-radius:18px;box-shadow:var(--md);object-fit:cover;max-height:440px}
+/* gallery mosaic */
+#amb-store .amb-mosaic{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:8px}
+#amb-store .amb-mosaic img{width:100%;height:100%;object-fit:cover;border-radius:10px;transition:var(--tr)}
+#amb-store .amb-mosaic img:hover{transform:scale(1.03);box-shadow:var(--md)}
+#amb-store .amb-mosaic .tall{grid-row:span 2}
+#amb-store .amb-mosaic .wide{grid-column:span 2}
+/* spotlight */
+#amb-store .amb-spot{background:linear-gradient(135deg,#141b2e,#1e2a4a);border-radius:22px;padding:clamp(1.5rem,4vw,3rem)}
+#amb-store .amb-spot .amb-title{color:#fff}
+#amb-store .amb-spot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:1.4rem}
+#amb-store .amb-spot-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.35);transition:var(--tr)}
+#amb-store .amb-spot-card:hover{transform:translateY(-5px)}
+#amb-store .amb-spot-vid{position:relative;padding-top:56.25%}
+#amb-store .amb-spot-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#amb-store .amb-spot-card h4{font-size:.92rem;font-weight:800;color:var(--ink);padding:12px 14px 3px}
+#amb-store .amb-spot-card p{font-size:.76rem;color:var(--mid);font-style:italic;padding:0 14px 14px}
+/* office for rent */
+#amb-store .amb-rent{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem);align-items:center;background:linear-gradient(135deg,#f6f0f3,#efe2e9);border-radius:22px;padding:clamp(1.4rem,3.5vw,2.6rem)}
+#amb-store .amb-rent img{width:100%;border-radius:16px;box-shadow:var(--md)}
+#amb-store .amb-rent h3{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:900;color:var(--wine-d);margin-bottom:.7rem}
+#amb-store .amb-rent p{color:var(--mid);font-size:.92rem;line-height:1.7;margin-bottom:1.3rem}
+#amb-store .amb-rent-btn{background:var(--wine);color:#fff;font-weight:700;padding:13px 28px;border-radius:100px;display:inline-flex;align-items:center;gap:9px;transition:var(--tr);border:none;cursor:pointer;font-size:.9rem}
+#amb-store .amb-rent-btn:hover{background:var(--wine-d);transform:translateY(-2px)}
+/* map */
+#amb-store .amb-map-wrap{border-radius:18px;overflow:hidden;box-shadow:var(--md);position:relative}
+#amb-store .amb-map-wrap iframe{width:100%;height:420px;border:0;display:block}
+#amb-store .amb-map-cta{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--wine);color:#fff;font-weight:700;font-size:.82rem;padding:11px 22px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.3);transition:var(--tr)}
+#amb-store .amb-map-cta:hover{background:var(--wine-d)}
+/* partners marquee */
+#amb-store .amb-partners{overflow:hidden;position:relative;padding:.6rem 0}
+#amb-store .amb-partners-track{display:flex;align-items:center;width:max-content;animation:ambPartnerScroll 26s linear infinite}
+#amb-store .amb-partners:hover .amb-partners-track{animation-play-state:paused}
+#amb-store .amb-partner{height:58px;width:150px;margin:0 1.6rem;display:flex;align-items:center;justify-content:center}
+#amb-store .amb-partner img{max-height:48px;max-width:130px;filter:grayscale(100%);transition:var(--tr);border-radius:8px}
+#amb-store .amb-partner:hover img{filter:none;transform:scale(1.1)}
+@keyframes ambPartnerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media(max-width:768px){
+  #amb-store .amb-vibe,#amb-store .amb-rent{grid-template-columns:1fr}
+  #amb-store .amb-mosaic{grid-template-columns:repeat(2,1fr);grid-auto-rows:120px}
+  #amb-store .amb-map-wrap iframe{height:320px}
+}
+</style>
+<script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
+<style>
+/* ── Lenis smooth scroll (recommended base) ── */
+html.lenis, html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto !important}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+/* ── scroll-reveal (class added by JS only — no-JS keeps everything visible) ── */
+#amb-store .amb-reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+#amb-store .amb-reveal.amb-reveal-in{opacity:1;transform:none}
+#amb-store .amb-stagger > *{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1)}
+#amb-store .amb-stagger.amb-reveal-in > *{opacity:1;transform:none}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(1){transition-delay:.05s}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(2){transition-delay:.15s}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(3){transition-delay:.25s}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(4){transition-delay:.35s}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(5){transition-delay:.45s}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(6){transition-delay:.55s}
+#amb-store .amb-stagger.amb-reveal-in > *:nth-child(7){transition-delay:.65s}
+#amb-store .amb-hero-visual{will-change:transform}
+@media (prefers-reduced-motion: reduce){
+  #amb-store .amb-reveal, #amb-store .amb-stagger > *{opacity:1 !important;transform:none !important;transition:none !important}
+}
 </style>
 </head>
 <body>
@@ -1370,14 +1467,7 @@
     <div class="amb-hero-veil"></div>
     <div class="amb-hero-inner amb-hero-split">
       <div class="amb-hero-copy">
-        <div class="amb-eyebrow"><i class="fas fa-shield-halved"></i> <span id="ambHeroEyebrow" data-i18n="tagline">Addis Ababa's Trust-First Marketplace</span></div>
         <h2 data-i18n-html="heroTitle">Shop from sellers with a <em>real address</em>.</h2>
-        <p id="ambHeroSub" data-i18n="heroSub">Every product here is sold by a verified tenant inside Ambassador Shopping Center. Visit them in person or buy online — your choice.</p>
-        <div class="amb-hero-ctas">
-          <button class="amb-cta amb-cta-gold" onclick="ambScrollTo('ambShop')"><i class="fas fa-bag-shopping"></i> <span data-i18n="startShopping">Start Shopping</span></button>
-          <button class="amb-cta amb-cta-ghost" onclick="ambScrollTo('ambTenants')"><i class="fas fa-store"></i> <span data-i18n="meetTenants">Meet the Sellers</span></button>
-        </div>
-        <div class="amb-hero-stats" id="ambHeroStats"></div>
         <div class="amb-hero-carousel-slot" id="ambHeroCarouselSlot"></div>
       </div>
       <div class="amb-hero-visual" id="ambHeroVisual"></div>
@@ -1473,6 +1563,106 @@
         <h3 class="amb-title" id="ambPolicyTitle">Returns & Buyer Safety</h3>
       </div>
       <div class="amb-help-grid" id="ambPolicy"></div>
+    </div>
+  </section>
+
+  <!-- mall life: Shop Smart · Save Big · Play Hard · Eat Well -->
+  <section class="amb-section alt">
+    <div class="amb-container">
+      <div class="amb-vibe">
+        <div class="amb-vibe-lines">
+          <div class="amb-vibe-line"><i class="fas fa-shopping-bag" style="background:linear-gradient(135deg,#e4406e,#a8123f)"></i> Shop Smart</div>
+          <div class="amb-vibe-line"><i class="fas fa-piggy-bank" style="background:linear-gradient(135deg,#2f9e44,#1d7a33)"></i> Save Big</div>
+          <div class="amb-vibe-line"><i class="fas fa-gamepad" style="background:linear-gradient(135deg,#3b82f6,#1e56c0)"></i> Play Hard</div>
+          <div class="amb-vibe-line"><i class="fas fa-utensils" style="background:linear-gradient(135deg,#e8a013,#b57708)"></i> Eat Well!</div>
+        </div>
+        <img src="https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg" alt="Ambassador Mall shopping experience" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- visit our mall — photo mosaic -->
+  <section class="amb-section">
+    <div class="amb-container">
+      <div class="amb-head">
+        <div class="amb-eyebrow2">Step Inside</div>
+        <h3 class="amb-title">Visit Our Mall</h3>
+      </div>
+      <div class="amb-mosaic">
+        <img class="tall" src="https://i.postimg.cc/NMLJc5qx/main.jpg" alt="Ambassador Mall building" loading="lazy">
+        <img src="https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg" alt="Inside the mall" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?auto=format&fit=crop&w=800&q=80" alt="Cultural wear" loading="lazy">
+        <img class="tall" src="https://i.postimg.cc/L6PzMmcM/shinegold.jpg" alt="Gold Mart" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80" alt="Bookstore" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=800&q=80" alt="Electronics" loading="lazy">
+        <img class="wide" src="https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900" alt="Ambassador Mall location" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- in the spotlight — media coverage -->
+  <section class="amb-section alt">
+    <div class="amb-container">
+      <div class="amb-spot">
+        <div class="amb-head" style="margin-bottom:0">
+          <div class="amb-eyebrow2" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#e8c96a">Media Coverage</div>
+          <h3 class="amb-title">In The Spotlight</h3>
+        </div>
+        <div class="amb-spot-grid">
+          <div class="amb-spot-card">
+            <div class="amb-spot-vid"><iframe src="https://www.youtube.com/embed/J5eL0ByLoWA" title="EBS Feature" loading="lazy" allowfullscreen></iframe></div>
+            <h4>EBS Feature</h4><p>"አራት ኪሎን ድምቅ ያረገው ሞል"</p>
+          </div>
+          <div class="amb-spot-card">
+            <div class="amb-spot-vid"><iframe src="https://www.youtube.com/embed/14LCq7sfcpw?start=11" title="Amleset Muche" loading="lazy" allowfullscreen></iframe></div>
+            <h4>Amleset Muche</h4><p>"A revolutionary shopping experience in the heart of Addis"</p>
+          </div>
+          <div class="amb-spot-card">
+            <div class="amb-spot-vid"><iframe src="https://www.youtube.com/embed/L5tGwtOfgnI" title="NBC Coverage" loading="lazy" allowfullscreen></iframe></div>
+            <h4>NBC Coverage</h4><p>"Redefining urban commercial spaces in East Africa"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- office for rent -->
+  <section class="amb-section">
+    <div class="amb-container">
+      <div class="amb-rent">
+        <img src="https://i.postimg.cc/7PWVksbS/officeforrent.jpg" alt="Office for Rent at Ambassador Mall" loading="lazy">
+        <div>
+          <h3>Office for Rent</h3>
+          <p>Discover our spacious and modern office spaces available for rent inside Ambassador Mall. Perfect for businesses of all sizes — prime Arat Kilo location, right in front of the National Palace and Abrehot Library.</p>
+          <a class="amb-rent-btn" href="tel:+251926785987"><i class="fas fa-phone"></i> Call Us to Visit</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- find us — map -->
+  <section class="amb-section alt">
+    <div class="amb-container">
+      <div class="amb-head">
+        <div class="amb-eyebrow2">Find Us</div>
+        <h3 class="amb-title">Right in the Heart of Addis</h3>
+      </div>
+      <div class="amb-map-wrap">
+        <iframe src="https://www.google.com/maps?q=Ambassador+Mall,+Addis+Ababa&output=embed" title="Ambassador Mall map" loading="lazy" allowfullscreen></iframe>
+        <a class="amb-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=Ambassador+Mall,Addis+Ababa" target="_blank" rel="noopener"><i class="fas fa-diamond-turn-right"></i> Get Directions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- trusted partners -->
+  <section class="amb-section">
+    <div class="amb-container">
+      <div class="amb-head" style="margin-bottom:1rem">
+        <h3 class="amb-title amb-title-sm">Trusted Partners</h3>
+      </div>
+    </div>
+    <div class="amb-partners">
+      <div class="amb-partners-track"><div class="amb-partner"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzT0W-vXCBHMcCKSLrWpBdBytL3A560uzWrw&s" alt="Etsy" loading="lazy"></div><div class="amb-partner"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div><div class="amb-partner"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzT0W-vXCBHMcCKSLrWpBdBytL3A560uzWrw&s" alt="Etsy" loading="lazy"></div><div class="amb-partner"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div></div>
     </div>
   </section>
 
@@ -1618,7 +1808,7 @@ var BUILDING = {
   name: 'Ambassador Shopping Center',
   nameAm: 'አምባሳደር የገበያ ማዕከል',
   tagline: "Addis Ababa's Trust-First Marketplace",
-  logo: 'https://scontent.fadd3-1.fna.fbcdn.net/v/t39.30808-6/310884191_101444736089223_649161035358662679_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=eY8H6owdheYQ7kNvwGPFy8t&oh=00_AfofKHyjgmvO6DQE_XlFUrHezJjAKX_cNGk2N21pHqwjIQ&oe=69673528',
+  logo:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10',
   phone: '+251 912 345 678',
   copyright: '© 2025 Ambassador Shopping Center. All rights reserved.',
   /* building identity / about */
@@ -2080,7 +2270,7 @@ function sendOrderToTenant(order) {
    STATE
 ═══════════════════════════════════════════════════════════════════ */
 var state = {
-  filter: 'all',          // 'all' | catKey | tenantId
+  filter: 'verified',     // 'all' | 'verified' | 'grp:<group>' | tenantId | 'floor:<floor>'
   search: '',
   sort: 'featured',       // featured | priceLow | priceHigh | rating
   priceMax: 0,            // 0 = no cap
@@ -2278,7 +2468,12 @@ function fallbackCopy(text){
   ta.remove();
 }
 
-window.ambScrollTo = function (id) { var el=$(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); ambCloseSearch(); };
+window.ambScrollTo = function (id) {
+  var el=$(id); if(!el) return ambCloseSearch();
+  if (A.lenis) A.lenis.scrollTo(el, { offset: -76, duration: 1.15 });
+  else el.scrollIntoView({behavior:'smooth', block:'start'});
+  ambCloseSearch();
+};
 
 /* ════ LANGUAGE TOGGLE ════ */
 window.ambSetLang = function (lang) {
@@ -2567,13 +2762,30 @@ function renderTenants() {
   var gal=$('ambTenantGallery'); if(gal) gal.innerHTML = cards;
   var cnt=$('ambHeroSellerCount'); if(cnt) cnt.textContent = BUILDING.tenants.length;
 }
+/* brand-colored social pills — platform key: [title, url-builder prefix, icon, css class] */
+var SOC_DEFS = [
+  ['telegram','Telegram','https://t.me/','fab fa-telegram-plane','sc-telegram'],
+  ['facebook','Facebook','https://facebook.com/','fab fa-facebook-f','sc-facebook'],
+  ['instagram','Instagram','https://instagram.com/','fab fa-instagram','sc-instagram'],
+  ['tiktok','TikTok','https://tiktok.com/','fab fa-tiktok','sc-tiktok'],
+  ['whatsapp','WhatsApp','https://wa.me/','fab fa-whatsapp','sc-whatsapp'],
+  ['youtube','YouTube','https://youtube.com/','fab fa-youtube','sc-youtube'],
+  ['pinterest','Pinterest','https://pinterest.com/','fab fa-pinterest-p','sc-pinterest'],
+  ['linkedin','LinkedIn','https://linkedin.com/company/','fab fa-linkedin-in','sc-linkedin'],
+  ['x','X (Twitter)','https://x.com/','fab fa-x-twitter','sc-x'],
+  ['twitter','X (Twitter)','https://x.com/','fab fa-x-twitter','sc-x'],
+  ['snapchat','Snapchat','https://snapchat.com/add/','fab fa-snapchat-ghost','sc-snapchat'],
+  ['website','Website','','fas fa-globe','sc-website'],
+  ['email','Email','mailto:','fas fa-envelope','sc-email']
+];
 function socialIcons(s, color){
   if(!s) return '';
   var out=[];
-  if(s.telegram) out.push('<a class="amb-soc-mini" title="Telegram" href="https://t.me/'+esc(s.telegram)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-telegram-plane"></i></a>');
-  if(s.facebook) out.push('<a class="amb-soc-mini" title="Facebook" href="https://facebook.com/'+esc(s.facebook)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-facebook-f"></i></a>');
-  if(s.instagram) out.push('<a class="amb-soc-mini" title="Instagram" href="https://instagram.com/'+esc(s.instagram)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-instagram"></i></a>');
-  if(s.tiktok) out.push('<a class="amb-soc-mini" title="TikTok" href="https://tiktok.com/'+esc(s.tiktok)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="fab fa-tiktok"></i></a>');
+  SOC_DEFS.forEach(function(d){
+    var v = s[d[0]]; if(!v) return;
+    var href = /^https?:|^mailto:/.test(v) ? v : d[2]+v;
+    out.push('<a class="amb-soc-mini '+d[4]+'" title="'+d[1]+'" href="'+esc(href)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><i class="'+d[3]+'"></i></a>');
+  });
   return out.join('');
 }
 function tenantCardHTML(tn){
@@ -2651,7 +2863,7 @@ window.ambOpenTenant = function(tid){
         (tn.reviewLink?'<a class="amb-tp-reviews" href="'+esc(tn.reviewLink)+'" target="_blank" rel="noopener"><i class="fas fa-star"></i> '+t('seeReviews')+' ('+tn.reviews+') <i class="fas fa-arrow-up-right-from-square" style="font-size:.6rem"></i></a>':'')+
         '<div class="amb-tp-socials">'+socialIcons(tn.socials,tn.color)+'</div>'+
         '<div class="amb-tp-acts">'+
-          '<button class="amb-tp-shop" onclick="ambCloseAll();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
+          '<button class="amb-tp-shop" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
           '<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>'+
           '<button class="amb-tp-wa" style="background:var(--teal)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
         '</div>'+
@@ -2762,11 +2974,11 @@ function renderHeroVisual(){
   }).join('');
 
   var carouselImages = [
-    { src:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ይግዙና ይመገቡ':'Shop & Dine'), sub:(state.lang==='am'?'ከ200 በላይ ሱቆችና ምግብ ቤቶች':'Verified sellers across every floor') },
-    { src:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ፋሽንና ስታይል':'Fashion & Style'), sub:(state.lang==='am'?'የቅርብ ጊዜ ስታይሎች':'The latest from local and imported brands') },
-    { src:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ምግብና መጠጥ':'Food & Dining'), sub:(state.lang==='am'?'ጣፋጭ ምግብና ልዩ ዕይታ':'Exquisite views and cuisine') },
-    { src:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=1200&h=500&fit=crop', label:(state.lang==='am'?'የቤት ማስዋቢያ':'Home Decor'), sub:(state.lang==='am'?'ለቤትዎ ውበት':'Furnish and decorate your space') },
-    { src:'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&h=500&fit=crop', label:(state.lang==='am'?'ጤናና እንክብካቤ':'Wellness & Spa'), sub:(state.lang==='am'?'የመዝናኛ ጊዜ':'Rejuvenate at Zen Spa') }
+    { src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall', sub:'' },
+    { src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall', sub:'' },
+    { src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors', sub:'' },
+    { src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart', sub:'' },
+    { src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location', sub:'' }
   ];
   var carouselHTML = carouselImages.map(function(img,idx){
     return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy"></div>';
@@ -2795,7 +3007,7 @@ function renderHeroVisual(){
       '</div></div>'+
     '</div>'+
     '<div class="welcome-right">'+
-      '<div><div class="floor-list-title">'+(state.lang==='am'?'ወደ ፎቅ ዝለል':'Jump to Floor')+'</div><div class="floor-vertical-list">'+floorsHTML+'</div></div>'+
+      '<div class="floor-vertical-list">'+floorsHTML+'</div>'+
     '</div>';
   initExploreCarousel();
 }
@@ -2902,14 +3114,44 @@ function renderOnSale(){
 }
 
 /* ── FILTER CHIPS ── */
+/* marketplace category groups — each maps to a set of tenant catKeys */
+var CAT_GROUPS = [
+  ['verified', {en:'Verified Sellers Product', am:'የተረጋገጡ ሻጮች ምርት'}, 'fa-circle-check', null],
+  ['jewelry',  {en:'Jewelry',       am:'ጌጣጌጥ'},        'fa-gem',            ['jewelry','gold','gold-shop']],
+  ['food',     {en:'Food & Drinks', am:'ምግብ እና መጠጥ'},  'fa-utensils',       ['food-court','pizza-restaurant','burger-restaurant','fast-food','coffee-shop','cafe','ice-cream','chocolate-shop','bakery-and-pastry']],
+  ['fashion',  {en:'Fashion',       am:'ፋሽን'},          'fa-shirt',          ['fashion','tailoring','sports-apparel','womenswear','imported-brands','footwear','cultural-wear']],
+  ['gaming',   {en:'Gaming',        am:'ጌም'},           'fa-gamepad',        ['gaming','game-zone','sports-equipment']],
+  ['furniture',{en:'Furniture',     am:'የቤት እቃ'},       'fa-couch',          ['home-furniture','premium-furniture','home-decor']],
+  ['electronics',{en:'Electronics', am:'ኤሌክትሮኒክስ'},   'fa-tv',             ['electronics','technology','mobile-phones']],
+  ['books',    {en:'Books & Stationery', am:'መጻሕፍት'},  'fa-book-open',      ['bookstore','stationery']]
+];
+function groupKeys(gid){
+  var g = CAT_GROUPS.filter(function(x){ return x[0]===gid; })[0];
+  return g ? g[3] : null;
+}
+function groupCount(gid){
+  if(gid==='verified') return ALL_PRODUCTS.filter(function(p){ return !p.hidden; }).length;
+  var keys = groupKeys(gid) || [];
+  return ALL_PRODUCTS.filter(function(p){
+    if(p.hidden) return false;
+    var tn = tenant(p.tenantId);
+    return tn && keys.indexOf(tn.catKey)>=0;
+  }).length;
+}
 function renderFilterChips() {
   var el=$('ambFilterChips'); if(!el) return;
-  var chips = '<button class="amb-chip'+(state.filter==='all'?' active':'')+'" onclick="ambFilter(\'all\')"><i class="fas fa-grip"></i> '+(state.lang==='am'?'ሁሉም':'All')+' <span class="amb-chip-ct">('+ALL_PRODUCTS.length+')</span></button>';
-  BUILDING.tenants.forEach(function(tn){
-    if(tn.hidden) return;
-    chips += '<button class="amb-chip'+(state.filter===tn.id?' active':'')+'" onclick="ambFilter(\''+tn.id+'\')">'+
-      '<i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+' <span class="amb-chip-ct">('+tn.products.length+')</span></button>';
+  var chips = '<button class="amb-chip'+(state.filter==='all'?' active':'')+'" onclick="ambFilter(\'all\')"><i class="fas fa-grip"></i> '+(state.lang==='am'?'ሁሉም':'All')+' <span class="amb-chip-ct">('+ALL_PRODUCTS.filter(function(p){return !p.hidden;}).length+')</span></button>';
+  CAT_GROUPS.forEach(function(g){
+    var val = g[0]==='verified' ? 'verified' : 'grp:'+g[0];
+    chips += '<button class="amb-chip'+(state.filter===val?' active':'')+'" onclick="ambFilter(\''+val+'\')">'+
+      '<i class="fas '+g[2]+'"></i> '+esc(g[1][state.lang]||g[1].en)+' <span class="amb-chip-ct">('+groupCount(g[0])+')</span></button>';
   });
+  // if a single seller is being viewed (via Shop Products / search), show it as a removable chip
+  var tnF = tenant(state.filter);
+  if(tnF){
+    chips += '<button class="amb-chip active" onclick="ambFilter(\'verified\')">'+
+      '<i class="fas '+tnF.icon+'"></i> '+esc(nameFor(tnF))+' <span class="amb-chip-ct">('+tnF.products.length+')</span> <i class="fas fa-xmark"></i></button>';
+  }
   el.innerHTML = chips;
 }
 window.ambFilter = function (key) {
@@ -2921,11 +3163,15 @@ window.ambFilter = function (key) {
 function visibleProducts() {
   var list = ALL_PRODUCTS.filter(function(p){
     if (p.hidden) return false;   // hidden: off the main grid, but still searchable, orderable & in floor listings
-    if (state.filter!=='all') {
+    if (state.filter!=='all' && state.filter!=='verified') {
       if (('' + state.filter).indexOf('floor:') === 0) {
         var fl = state.filter.slice(6);
         var tn0 = tenant(p.tenantId);
         if (!tn0 || tn0.floor !== fl) return false;
+      } else if (('' + state.filter).indexOf('grp:') === 0) {
+        var keys = groupKeys(state.filter.slice(4)) || [];
+        var tng = tenant(p.tenantId);
+        if (!tng || keys.indexOf(tng.catKey) < 0) return false;
       } else if (p.tenantId !== state.filter) return false;
     }
     if (state.priceMax && p.price>state.priceMax) return false;
@@ -3078,7 +3324,7 @@ function renderProducts() {
 }
 window.ambSetSort = function(v){ state.sort=v; renderFilterBar(); renderProducts(); };
 window.ambSetPriceMax = function(v){ state.priceMax=parseInt(v,10)||0; renderFilterBar(); renderProducts(); };
-window.ambResetShop = function(){ state.filter='all'; state.priceMax=0; state.priceMin=0; state.stockF='all'; state.ratingMin=0; state.floorF='all'; state.sort='featured'; state.search=''; var i=$('ambSearch'); if(i) i.value=''; var mi=$('ambMSearchIn'); if(mi) mi.value=''; renderFilterChips(); renderFilterBar(); renderProducts(); };
+window.ambResetShop = function(){ state.filter='verified'; state.priceMax=0; state.priceMin=0; state.stockF='all'; state.ratingMin=0; state.floorF='all'; state.sort='featured'; state.search=''; var i=$('ambSearch'); if(i) i.value=''; var mi=$('ambMSearchIn'); if(mi) mi.value=''; renderFilterChips(); renderFilterBar(); renderProducts(); };
 
 /* ── SEARCH (legacy entry, now feeds dropdown) ── */
 window.ambSearch = function () { window.ambSearchInput(); };
@@ -4267,6 +4513,58 @@ function boot(){
     var wrap=A.$('ambSearchWrap');
     if(wrap && !wrap.contains(e.target)) window.ambCloseSearch();
   });
+  /* ── Lenis smooth scroll (github.com/darkroomengineering/lenis) ──
+     Progressive: if the CDN script didn't load, everything falls back to
+     native smooth scrolling. Overlay scrollers keep native behavior via
+     data-lenis-prevent, and reduced-motion users get no smoothing at all. */
+  var reduceMotion = false;
+  try { reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+  if (typeof Lenis !== 'undefined' && !reduceMotion) {
+    try {
+      A.lenis = new Lenis({ autoRaf: true, duration: 1.1, smoothWheel: true });
+    } catch(e) { A.lenis = null; }
+  }
+  // overlay scroll areas stay native so panels/modals scroll normally
+  ['ambFpBody','ambMSearchBody','ambSearchDrop','ambProdModalBox','ambCartBody','ambCoBody'].forEach(function(id){
+    var el = A.$(id); if (el) el.setAttribute('data-lenis-prevent','');
+  });
+  document.querySelectorAll('#amb-store .amb-modal, #amb-store .amb-cart, #amb-store .amb-floor-panel').forEach(function(el){
+    el.setAttribute('data-lenis-prevent','');
+  });
+  // scroll-reveal: sections fade up; grids stagger their children
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var staggerSel = ['.amb-vibe-lines','.amb-mosaic','.amb-spot-grid','.amb-help-grid','.amb-steps'];
+    staggerSel.forEach(function(sel){
+      document.querySelectorAll('#amb-store '+sel).forEach(function(el){ el.classList.add('amb-stagger'); });
+    });
+    var revealEls = [];
+    document.querySelectorAll('#amb-store section.amb-section > .amb-container, #amb-store .amb-trust-band, #amb-store .amb-partners').forEach(function(el){
+      el.classList.add('amb-reveal'); revealEls.push(el);
+    });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting) {
+          en.target.classList.add('amb-reveal-in');
+          en.target.querySelectorAll('.amb-stagger').forEach(function(g){ g.classList.add('amb-reveal-in'); });
+          io.unobserve(en.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  }
+  // gentle hero parallax driven by the Lenis scroll event (desktop only)
+  if (A.lenis && window.innerWidth > 900) {
+    var heroVis = document.querySelector('#amb-store .amb-hero-visual');
+    var heroCar = A.$('ambHeroCarouselSlot');
+    A.lenis.on('scroll', function(e){
+      var y = e.scroll || 0;
+      if (y < 900) {
+        if (heroVis) heroVis.style.transform = 'translateY(' + (y * 0.10) + 'px)';
+        if (heroCar) heroCar.style.transform = 'translateY(' + (y * 0.05) + 'px)';
+      }
+    });
+  }
+
   // clicking the dimmed area outside any modal box closes that window
   document.querySelectorAll('#amb-store .amb-modal').forEach(function(m){
     m.addEventListener('click', function(e){

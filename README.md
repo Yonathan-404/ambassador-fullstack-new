@@ -31,6 +31,36 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v16 — Lenis smooth scroll
+
+Added [Lenis](https://github.com/darkroomengineering/lenis) (darkroom.engineering)
+for buttery inertia-based page scrolling, loaded from the unpkg CDN with a
+clean fallback: if the script doesn't load, every `ambScrollTo` call (nav
+links, "Shop This Floor", search picks, etc.) degrades to native
+`scrollIntoView` — nothing breaks either way. Modals, the cart, the floor
+panel, and search dropdowns are marked `data-lenis-prevent` so they keep
+ordinary scrolling instead of being smoothed. Sections now fade/rise into
+view on scroll (IntersectionObserver, respects `prefers-reduced-motion`), the
+mosaic/spotlight/vibe grids stagger their children in, and the hero photo
+carousel gets a subtle parallax drift tied to Lenis's scroll position on
+desktop. Verified constructor and event API directly against the installed
+`lenis@1.3.23` package source to make sure the integration is correct.
+
+### v15 — mall showcase + marketplace categories
+
+Storefront: hero rebalanced (left: headline + building-photo carousel only;
+right: light-burgundy floor list, no label, sized so the phone mockup reads at
+true proportions). Marketplace chips are now category groups — All, **Verified
+Sellers Product (default)**, Jewelry, Food & Drinks, Fashion, Gaming,
+Furniture, Electronics, Books & Stationery — and viewing one seller shows a
+removable chip. Floor → office → **Shop Products** now closes everything and
+lands directly on that seller's products. New sections from the original mall
+directory: Shop Smart / Save Big / Play Hard / Eat Well strip, Visit Our Mall
+photo mosaic, In The Spotlight media videos, Office for Rent, an embedded
+Google Map with directions, and the Trusted Partners logo marquee. Tenant
+social links render as brand-colored pills (12 platforms), are seeded for all
+44 tenants, and are editable in the admin Seller form. New mall logo applied.
+
 ### v14 — layout polish + full admin control
 
 Storefront: cleaner header (no subtitle), compact phone mockup, the photo
