@@ -31,6 +31,74 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v18 — mobile hamburger menu, Google sign-in hardening, commission reports
+
+**Storefront — hamburger menu.** The mobile menu button used to just scroll
+to the shop section; it now opens a real slide-out drawer with Login/Account,
+Sellers, Shop, Services, My Orders, Cart, Wishlist and the language toggle —
+closes on the X, outside click, or Escape, matching every other overlay in
+the app. On small screens the top nav bar itself is decluttered: sign-in,
+orders, wishlist and language move into the drawer, leaving just search and
+cart visible up top.
+
+**Storefront — Google sign-in hardening.** The Google Identity Services
+integration was already real (server verifies ID tokens, sets a session
+cookie) — but every failure path silently left a blank box: a blocked script,
+a slow network, or a bad/misconfigured Client ID (wrong Authorized JavaScript
+Origin) all failed invisibly. Now `loadGsi` has a real onerror path plus a 6s
+timeout fallback, and `renderButton` is checked a beat after calling it — any
+failure shows a "couldn't load, try again" button instead of nothing.
+`admin.html` also gained a self-diagnostic banner that checks `/api/config`
+on load and tells you plainly whether `GOOGLE_CLIENT_ID` is actually set on
+the server, with a link to create one.
+
+**Admin — commission & sales reports.** Bisinka's 2% platform commission
+(configurable, stored in `catalog.building.commission.rate`) now has a full
+reporting system: a new **Reports** tab with date-range presets (Today,
+Yesterday, This Week, This Month, Last 7/30 Days, Custom), live auto-refresh
+every 20s while viewing Today, stat cards (orders, sales, commission, net to
+sellers, delivery, VAT, cancelled-excluded), a daily sales bar chart, and a
+per-seller breakdown table. **Generate Report** produces a clean print/PDF
+view via a dedicated print stylesheet; **Download CSV** exports the same
+breakdown. **Send to tenants** messages each seller their own period summary
+over real SMS infrastructure (Afromessage/Twilio, log-only fallback) plus a
+ready WhatsApp deep link — individually or in bulk — and never fakes delivery
+for sellers with no phone on file. All of it was verified against a running
+server with real seeded orders, not just unit tests.
+
+### v17 — hero redesign, footer polish, banking & content swap
+
+**Hero:** the phone/QR mockup is gone entirely. The floor list — described as
+the important part — is now the sole visual on the right, elevated into a
+proper glass-panel "Building Directory" card with a header icon and live
+floor/office counts.
+
+**Footer:** social icons are brand-colored (Telegram, Instagram, Facebook,
+TikTok), plus new Call (green, tel: link) and Share (gold, Web Share API with
+a clipboard/SMS fallback) buttons. "Returns & Buyer Safety" moved out of a
+standalone section into a footer modal next to Privacy Policy, matching how
+"How Ordering Works" already worked.
+
+**Banking:** Awash Bank replaced with Bank of Abyssinia everywhere a tenant
+lists payment accounts — catalog data, demo fallback data, and all checkout
+copy. Verified live against a running server that the cart's bank list no
+longer contains "Awash" anywhere in the rendered app.
+
+**Trusted Partners:** Amazon → Bank of Abyssinia, Etsy → Ambassador Mall's own
+logo. Cards got a real visual upgrade — white bordered tiles with brand-tinted
+hover glow — replacing the flat grayscale-on-hover treatment.
+
+**Content swap:** the "Find Us" map section is now "Share Your Experience" —
+a working feedback form (mailto-based, validates a message is present) next
+to the original location photo and the "Come for the shopping," / "stay for
+the fun!" tag cards. Office for Rent gained a "See Offices" button next to
+"Call Us to Visit" that opens a gallery of unoccupied units with photo
+placeholders, floor/size/price, and a WhatsApp inquiry link.
+
+**Marketplace Support** enhanced with a "usually replies within..." badge and
+four quick-topic buttons (order issue, payment issue, seller complaint,
+general question) that pre-fill the WhatsApp message.
+
 ### v16 — Lenis smooth scroll
 
 Added [Lenis](https://github.com/darkroomengineering/lenis) (darkroom.engineering)

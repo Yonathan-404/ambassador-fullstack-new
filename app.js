@@ -115,7 +115,7 @@ var BUILDING = {
       blurb: 'Premium Ethiopian coffee, fresh pastries & roasted beans — served and packed daily on the Ground Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000234567890', holder:'Sahis Cafe', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013201458896700', holder:'Sahis Cafe', icon:'fa-building-columns', color:'#003893' },
+        { key:'boa', name:'Bank of Abyssinia', acct:'013201458896700', holder:'Sahis Cafe', icon:'fa-building-columns', color:'#d4a017' },
         { key:'telebirr', name:'Telebirr', acct:'0911 223 344', holder:'Sahis Cafe', icon:'fa-mobile-screen', color:'#1a9c4a' }
       ],
       products: [
@@ -140,7 +140,6 @@ var BUILDING = {
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000345671234', holder:'US Brand Collection', icon:'fa-building-columns', color:'#7e1b8f' },
         { key:'boa', name:'Bank of Abyssinia', acct:'88012345671', holder:'US Brand Collection', icon:'fa-building-columns', color:'#d4a017' },
-        { key:'awash', name:'Awash Bank', acct:'013209988776600', holder:'US Brand Collection', icon:'fa-building-columns', color:'#003893' }
       ],
       products: [
         { id:'us-1', name:'Slim-Fit Stretch Jeans', cat:'Denim', price:2400, old:3000, badge:'🔥 Hot', rating:4.7, reviews:62, img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80', desc:'Premium stretch-denim slim-fit jeans. Imported, true-to-size. Dark indigo wash. Sizes 28–38.', specs:{Fit:'Slim',Material:'98% cotton',Wash:'Dark indigo',Sizes:'28–38'}, gallery:['https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80','https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80','https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80'], stock:{state:'in', label:''}, variant:{label:'Size', options:['S','M','L','XL','XXL']} },
@@ -163,7 +162,7 @@ var BUILDING = {
       blurb: 'Hand-woven habesha kemis, netela and traditional menswear with authentic tibeb embroidery — 2nd Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000456789012', holder:'Embut Cultural Clothes', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013204567891200', holder:'Embut Cultural Clothes', icon:'fa-building-columns', color:'#003893' },
+        { key:'boa', name:'Bank of Abyssinia', acct:'013204567891200', holder:'Embut Cultural Clothes', icon:'fa-building-columns', color:'#d4a017' },
         { key:'telebirr', name:'Telebirr', acct:'0933 445 566', holder:'Embut Cultural Clothes', icon:'fa-mobile-screen', color:'#1a9c4a' }
       ],
       products: [
@@ -211,7 +210,6 @@ var BUILDING = {
       blurb: 'Quality sofas, dining sets and bedroom furniture — delivery & assembly across Addis. 4th Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000678901234', holder:'Rosewood Furniture', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013206789012300', holder:'Rosewood Furniture', icon:'fa-building-columns', color:'#003893' },
         { key:'boa', name:'Bank of Abyssinia', acct:'88067890123', holder:'Rosewood Furniture', icon:'fa-building-columns', color:'#d4a017' }
       ],
       products: [
@@ -235,7 +233,7 @@ var BUILDING = {
       blurb: 'Rugs, lamps, wall art and accent pieces to bring any room to life — 5th Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000789012345', holder:'Meron Home Decor', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013207890123400', holder:'Meron Home Decor', icon:'fa-building-columns', color:'#003893' },
+        { key:'boa', name:'Bank of Abyssinia', acct:'013207890123400', holder:'Meron Home Decor', icon:'fa-building-columns', color:'#d4a017' },
         { key:'telebirr', name:'Telebirr', acct:'0966 778 899', holder:'Meron Home Decor', icon:'fa-mobile-screen', color:'#1a9c4a' }
       ],
       products: [
@@ -259,7 +257,6 @@ var BUILDING = {
       blurb: 'Smartphones, audio, smart TVs and accessories — genuine stock with warranty. 6th Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000890123456', holder:'Patch Africa Electronics', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013208901234500', holder:'Patch Africa Electronics', icon:'fa-building-columns', color:'#003893' },
         { key:'boa', name:'Bank of Abyssinia', acct:'88089012345', holder:'Patch Africa Electronics', icon:'fa-building-columns', color:'#d4a017' }
       ],
       products: [
@@ -389,7 +386,7 @@ var I18N = {
     needHelp:'Need help?', adminContact:'Marketplace Support', callUs:'Call', emailUs:'Email',
     vat:'VAT', subtotal:'Subtotal', grandTotal:'Total', inclVat:'incl. VAT',
     notifyMe:'Notify me', notifyTitle:'Get notified', notifyDesc:'Leave your phone and we\u2019ll let you know when this is back in stock.', notifyDone:'We\u2019ll notify you', yourPhone:'Your phone number',
-    tos:'Terms of Service', privacy:'Privacy Policy', legalUpdated:'Last updated',
+    tos:'Terms of Service', privacy:'Privacy Policy', legalUpdated:'Last updated', returnsTitle:'Returns & Buyer Safety',
     setLocation:'Set delivery location', useGps:'Use my GPS location', orPickArea:'or choose your subcity', deliveryAddisOnly:'Delivery within Addis Ababa only',
     deliveryCalcNext:'Delivery calculated at the next step', locatingYou:'Finding your location\u2026', nearestZone:'Nearest zone',
     orderConfirmed:'Order confirmed', orderConfirmedSub:'Save your reference and send your payment proof to the seller on WhatsApp.', whatNext:'What happens next', nextStep1:'Transfer the exact total to the seller\u2019s account', nextStep2:'Send your payment screenshot to the seller on WhatsApp', nextStep3:'The seller confirms and arranges your delivery',
@@ -442,7 +439,7 @@ var I18N = {
     needHelp:'እገዛ ይፈልጋሉ?', adminContact:'የገበያ ድጋፍ', callUs:'ይደውሉ', emailUs:'ኢሜይል',
     vat:'ተ.እ.ታ', subtotal:'ድምር', grandTotal:'ጠቅላላ', inclVat:'ከተ.እ.ታ ጋር',
     notifyMe:'አሳውቀኝ', notifyTitle:'ማሳወቂያ ያግኙ', notifyDesc:'ስልክዎን ይተዉ፤ ሲገኝ እናሳውቅዎታለን።', notifyDone:'እናሳውቅዎታለን', yourPhone:'የስልክ ቁጥርዎ',
-    tos:'የአገልግሎት ውሎች', privacy:'የግላዊነት መመሪያ', legalUpdated:'መጨረሻ የተሻሻለው',
+    tos:'የአገልግሎት ውሎች', privacy:'የግላዊነት መመሪያ', legalUpdated:'መጨረሻ የተሻሻለው', returnsTitle:'ተመላሽና የገዢ ደህንነት',
     setLocation:'የመድረሻ ቦታ ያስገቡ', useGps:'የGPS ቦታዬን ተጠቀም', orPickArea:'ወይም ክፍለ ከተማ ይምረጡ', deliveryAddisOnly:'ማድረስ በአዲስ አበባ ብቻ',
     deliveryCalcNext:'የማድረስ ክፍያ በሚቀጥለው ደረጃ ይሰላል', locatingYou:'ቦታዎን በማግኘት ላይ\u2026', nearestZone:'ቅርብ ዞን',
     orderConfirmed:'ትዕዛዝ ተረጋግጧል', orderConfirmedSub:'ማመሳከሪያዎን ያስቀምጡ እና የክፍያ ማረጋገጫዎን ለሻጩ በዋትስአፕ ይላኩ።', whatNext:'ቀጥሎ ምን ይሆናል', nextStep1:'ትክክለኛውን ጠቅላላ ወደ ሻጩ ሂሳብ ያስተላልፉ', nextStep2:'የክፍያ ማረጋገጫዎን ለሻጩ በዋትስአፕ ይላኩ', nextStep3:'ሻጩ አረጋግጦ ማድረሻ ያዘጋጃል',
@@ -730,7 +727,7 @@ function applyI18n(){
 function renderRibbon() {
   var items = [
     ['fa-shield-halved', state.lang==='am'?'እውነተኛ አድራሻ ካላቸው የተረጋገጡ ሻጮች ይግዙ':'Buy from verified sellers with a real address'],
-    ['fa-building-columns', state.lang==='am'?'በቀጥታ ለእያንዳንዱ ሱቅ ይክፈሉ · CBE · Awash · BOA · Telebirr':'Pay each shop directly · CBE · Awash · BOA · Telebirr'],
+    ['fa-building-columns', state.lang==='am'?'በቀጥታ ለእያንዳንዱ ሱቅ ይክፈሉ · CBE · አቢሲኒያ ባንክ · Telebirr':'Pay each shop directly · CBE · Bank of Abyssinia · Telebirr'],
     ['fab fa-whatsapp', state.lang==='am'?'ትዕዛዝዎን በዋትስአፕ ያረጋግጡ':'Confirm your order on WhatsApp'],
     ['fa-file-invoice', state.lang==='am'?'ወዲያውኑ የPDF ደረሰኝ ያውርዱ':'Download a PDF invoice instantly'],
     ['fa-location-dot', BUILDING.name+' · '+(state.lang==='am'?'ከብሔራዊ ቤተ መንግሥት ፊት ለፊት':'in front of the National Palace')],
@@ -748,11 +745,11 @@ function renderChrome() {
   if ($('ambFooterName')) $('ambFooterName').textContent = BUILDING.name;
   if ($('ambCopyright')) $('ambCopyright').textContent = BUILDING.copyright;
   var ph=$('ambFooterPhone'); if(ph){ ph.textContent = BUILDING.phone; ph.href='tel:'+BUILDING.phone.replace(/\s/g,''); }
+  var fc=$('ambFooterCall'); if(fc && BUILDING.phone) fc.href='tel:'+BUILDING.phone.replace(/\s/g,'');
   // hero stats — trust framing (no "sample tenant" language)
   renderHeroStats();
   renderAbout();
   renderQuickLinks();
-  renderPolicy();
 }
 
 function renderHeroStats(){
@@ -801,13 +798,10 @@ function renderQuickLinks(){
   }).join('');
 }
 
-/* ── BUYER SAFETY / RETURNS + SUPPORT cards ── */
-function renderPolicy(){
-  var el=$('ambPolicy'); if(!el) return;
-  var pol=BUILDING.policy, a=BUILDING.admin, am=state.lang==='am';
-  var title=$('ambPolicyTitle'); if(title) title.textContent = pol.returnsTitle;
-  el.innerHTML =
-    '<div class="amb-help-card">'+
+/* ── BUYER SAFETY / RETURNS — now a footer modal (see ambOpenReturns) ── */
+function policyCardsHTML(){
+  var pol=BUILDING.policy, am=state.lang==='am';
+  return '<div class="amb-help-card">'+
       '<div class="amb-help-ic" style="background:linear-gradient(135deg,var(--teal),var(--teal-d))"><i class="fas fa-shield-halved"></i></div>'+
       '<div class="amb-help-t">'+(am?'ክፍያ ደህንነት':'Payment safety')+'</div>'+
       '<p class="amb-help-d">'+esc(am?pol.safetyAm:pol.safety)+'</p>'+
@@ -824,6 +818,17 @@ function renderPolicy(){
       '<button class="amb-help-btn" onclick="ambOpenAdmin()"><i class="fas fa-headset"></i> '+esc(t('adminContact'))+'</button>'+
     '</div>';
 }
+window.ambOpenReturns = function(){
+  var pol=BUILDING.policy;
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:28px 26px 22px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.6rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+esc(pol.returnsTitle||L('returnsTitle'))+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid);margin-bottom:18px">'+(state.lang==='am'?'ስለ ክፍያ ደህንነት፣ ተመላሽ እና ድጋፍ ያንብቡ።':'How payments are protected, how returns work, and how to reach support.')+'</p>'+
+      '<div class="amb-help-grid" style="grid-template-columns:1fr">'+policyCardsHTML()+'</div>'+
+    '</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
 
 /* ════ SEARCH DROPDOWN (grouped typeahead) ════ */
 window.ambSearchInput = function(){
@@ -1208,19 +1213,17 @@ function renderHeroVisual(){
       '</div>';
   }
 
-  var qrUrl = (typeof location!=='undefined') ? (location.origin+location.pathname) : '';
+  var totalUnits = BUILDING.tenants.length;
+  var totalFloors = floorList.length;
   el.innerHTML =
-    '<div class="welcome-left">'+
-      '<div class="mobile-frame-container"><div class="mobile-screen">'+
-        '<div class="mobile-header"><h3>Ambassador Mall</h3><p>Digital Directory</p></div>'+
-        '<div class="mobile-body">'+
-          '<div class="qr-code-container"><a href="'+esc(qrUrl)+'" target="_blank"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(qrUrl)+'&color=7a1a44&bgcolor=ffffff" alt="QR Code"></a></div>'+
-          '<div class="nfc-tag"><i class="fas fa-wifi"></i><span>NFC Tag</span><i class="fas fa-chevron-right" style="font-size:.55rem;opacity:.5"></i><span class="nfc-highlight">'+(state.lang==='am'?'በአጭሩ ይንኩ':'short scan & tap it')+'</span></div>'+
-          '<p class="qr-instruction">'+(state.lang==='am'?'ሙሉውን ማውጫ ለማየት QR ኮዱን ይቃኙ ወይም ስልክዎን ይንኩ።':'Scan the QR code or tap your phone to access the full mall directory.')+'</p>'+
+    '<div class="amb-floor-directory">'+
+      '<div class="amb-fd-head">'+
+        '<div class="amb-fd-head-ic"><i class="fas fa-building-columns"></i></div>'+
+        '<div class="amb-fd-head-txt">'+
+          '<h3>'+(state.lang==='am'?'የፎቅ ማውጫ':'Building Directory')+'</h3>'+
+          '<span>'+totalFloors+' '+(state.lang==='am'?'ፎቆች':'floors')+' · '+totalUnits+' '+(state.lang==='am'?'ቢሮዎች':'offices')+'</span>'+
         '</div>'+
-      '</div></div>'+
-    '</div>'+
-    '<div class="welcome-right">'+
+      '</div>'+
       '<div class="floor-vertical-list">'+floorsHTML+'</div>'+
     '</div>';
   initExploreCarousel();
@@ -2459,22 +2462,31 @@ window.ambReorder = function(tid){ ambCloseAll(); ambFilterToShop(tid); };
 function ambFilterToShop(tid){ if(window.ambFilter){ window.ambFilter(tid); } window.ambScrollTo('ambShop'); }
 
 /* ── ADMIN / MARKETPLACE SUPPORT CONTACT ── */
-window.ambOpenAdmin = function(){
+window.ambOpenAdmin = function(topic){
   var a=BUILDING.admin; if(!a) return;
-  var waMsg = encodeURIComponent('Hello '+a.name+' — I have a question about '+BUILDING.name+' online store.');
+  var am = state.lang==='am';
+  var topics = am
+    ? [['Order issue','ትዕዛዝ ችግር'],['Payment issue','የክፍያ ችግር'],['Seller complaint','ስለ ሻጭ ቅሬታ'],['General question','አጠቃላይ ጥያቄ']]
+    : [['Order issue','Order issue'],['Payment issue','Payment issue'],['Seller complaint','Seller complaint'],['General question','General question']];
+  var msgBase = topic ? topic+' — ' : '';
+  var waMsg = encodeURIComponent('Hello '+a.name+', '+msgBase+'I have a question about '+BUILDING.name+' online store.');
   $('ambProdModalBox').innerHTML =
     '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
     '<div class="amb-admin-modal">'+
-      '<div class="amb-admin-ic"><i class="fas fa-headset"></i></div>'+
-      '<div class="amb-admin-name">'+esc(state.lang==='am'&&a.nameAm?a.nameAm:a.name)+'</div>'+
+      '<div class="amb-admin-ic"><i class="fas fa-headset"></i><span class="amb-admin-dot"></span></div>'+
+      '<div class="amb-admin-name">'+esc(am&&a.nameAm?a.nameAm:a.name)+'</div>'+
       '<div class="amb-admin-role">'+esc(a.role)+'</div>'+
+      '<div class="amb-admin-badge"><i class="fas fa-circle"></i> '+esc(a.responseTime || (am?'ብዙ ጊዜ በደቂቃዎች ውስጥ ምላሽ ይሰጣል':'Usually replies within minutes'))+'</div>'+
+      '<div class="amb-admin-topics">'+
+        topics.map(function(tp){ return '<button class="amb-admin-topic" onclick="ambOpenAdmin(\''+tp[0].replace(/'/g,"\\'")+'\')">'+esc(tp[1])+'</button>'; }).join('')+
+      '</div>'+
       '<div class="amb-admin-rows">'+
         '<a class="amb-admin-row" href="tel:'+esc(a.phone)+'"><span><i class="fas fa-phone"></i> '+L('callUs')+'</span><b>'+esc(a.phone)+'</b></a>'+
         '<a class="amb-admin-row" href="https://wa.me/'+esc(a.whatsapp)+'?text='+waMsg+'" target="_blank" rel="noopener"><span><i class="fab fa-whatsapp"></i> WhatsApp</span><b>'+esc(a.phone)+'</b></a>'+
         '<a class="amb-admin-row" href="https://t.me/'+esc(a.telegram)+'" target="_blank" rel="noopener"><span><i class="fab fa-telegram"></i> Telegram</span><b>@'+esc(a.telegram)+'</b></a>'+
         '<a class="amb-admin-row" href="mailto:'+esc(a.email)+'"><span><i class="fas fa-envelope"></i> '+L('emailUs')+'</span><b>'+esc(a.email)+'</b></a>'+
       '</div>'+
-      '<div class="amb-admin-note"><i class="fas fa-circle-info"></i> '+(state.lang==='am'
+      '<div class="amb-admin-note"><i class="fas fa-circle-info"></i> '+(am
         ? 'ስለ ሻጭ ወይም ምርት ጥያቄ ካለዎት መጀመሪያ በቀጥታ ሻጩን ያግኙ። ቢሲንካ የገበያ ቦታውን ያስተዳድራል።'
         : 'For questions about a specific product, contact the seller directly first. Bisinka operates the marketplace platform.')+'</div>'+
     '</div>';
@@ -2493,6 +2505,79 @@ function legalModal(title, items, updated){
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
 }
+/* ── OFFICE FOR RENT — unoccupied units gallery ── */
+var AVAILABLE_OFFICES = [
+  { unit:'304', floor:'3rd Floor', floorAm:'3ኛ ፎቅ', size:'28 m²', price:'ETB 22,000/mo', img:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80' },
+  { unit:'406', floor:'4th Floor', floorAm:'4ኛ ፎቅ', size:'34 m²', price:'ETB 26,500/mo', img:'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=500&q=80' },
+  { unit:'505', floor:'5th Floor', floorAm:'5ኛ ፎቅ', size:'20 m²', price:'ETB 17,000/mo', img:'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80' },
+  { unit:'606', floor:'6th Floor', floorAm:'6ኛ ፎቅ', size:'42 m²', price:'ETB 31,000/mo', img:'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500&q=80' }
+];
+window.ambOpenAvailableOffices = function(){
+  var am = state.lang==='am';
+  var cards = AVAILABLE_OFFICES.map(function(o){
+    var waMsg = encodeURIComponent((am?'ሰላም፣ ስለ ቢሮ ':'Hello, I am interested in office ')+o.unit+' ('+o.floor+') '+(am?'ፍላጎት አለኝ።':'that is for rent.'));
+    return '<div class="amb-off-card">'+
+      '<div class="amb-off-pic" style="background-image:url(\''+o.img+'\')"><span class="amb-off-badge">'+(am?'ክፍት':'Available')+'</span></div>'+
+      '<div class="amb-off-body">'+
+        '<h5>'+(am?'ቢሮ ':'Office ')+esc(o.unit)+'</h5>'+
+        '<div class="amb-off-meta">'+esc(am?o.floorAm:o.floor)+' · '+esc(o.size)+'</div>'+
+        '<div class="amb-off-price">'+esc(o.price)+'</div>'+
+        '<a href="https://wa.me/251926785987?text='+waMsg+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> '+(am?'ይጠይቁ':'Inquire')+'</a>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:26px 24px 6px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+(am?'ክፍት ቢሮዎች':'Available Offices')+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid)">'+(am?'በአሁኑ ጊዜ ለኪራይ ክፍት የሆኑ ቢሮዎች — ለመጎብኘት ይደውሉልን ወይም መልዕክት ይላኩ።':'Currently unoccupied offices open for rent — call or message us to arrange a visit.')+'</p>'+
+    '</div>'+
+    '<div class="amb-off-grid">'+cards+'</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
+
+/* ── SHARE YOUR EXPERIENCE — feedback form (mailto, no backend needed) ── */
+/* pure builder (kept separate from the DOM/navigation side effect so it can be unit-tested) */
+function buildFeedbackMailto(name, email, phone, msg){
+  var to = (BUILDING.admin && BUILDING.admin.email) || 'support@ambassadormall.et';
+  var subject = 'Feedback from ' + (name || 'a visitor') + ' — ' + (BUILDING.name || 'Ambassador Mall');
+  var bodyLines = [msg, ''];
+  if (name) bodyLines.push('Name: ' + name);
+  if (email) bodyLines.push('Email: ' + email);
+  if (phone) bodyLines.push('Phone: ' + phone);
+  return 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyLines.join('\n'));
+}
+A.buildFeedbackMailto = buildFeedbackMailto;
+window.ambSubmitFeedback = function(){
+  var name = ($('ambFbName')||{}).value || '';
+  var email = ($('ambFbEmail')||{}).value || '';
+  var phone = ($('ambFbPhone')||{}).value || '';
+  var msg = (($('ambFbMsg')||{}).value || '').trim();
+  if (!msg) {
+    ambToast(state.lang==='am' ? 'እባክዎ መልዕክትዎን ይጻፉ' : 'Please write your message', 'err');
+    var ta=$('ambFbMsg'); if(ta) ta.focus();
+    return;
+  }
+  window.location.href = buildFeedbackMailto(name, email, phone, msg);
+  ambToast(state.lang==='am' ? 'ኢሜይል ተከፍቷል — ልከው ይላኩ!' : 'Your email app is opening — hit send!', 'suc');
+};
+window.ambShareMall = function(){
+  var url = (typeof location!=='undefined') ? (location.origin+location.pathname) : '';
+  var text = state.lang==='am'
+    ? 'ለተጠቃሚው ምቹ የሆነውን Ambassador Shopping Mall ድህረገፅ ይመልከቱ'
+    : 'Check out Ambassador Shopping Mall — verified tenants, real addresses:';
+  if (navigator.share) {
+    navigator.share({ title: BUILDING.name || 'Ambassador Shopping Mall', text: text, url: url }).catch(function(){});
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function(){
+      ambToast(state.lang==='am' ? 'ማገናኛ ተቀድቷል!' : 'Link copied!');
+    }).catch(function(){ window.open('sms:?body='+encodeURIComponent(text+' '+url)); });
+    return;
+  }
+  window.open('sms:?body='+encodeURIComponent(text+' '+url));
+};
 window.ambOpenHow = function(){
   var steps = state.lang==='am' ? [
     ['fa-cart-plus','ወደ ጋሪ ያክሉ','ከማንኛውም ሻጭ ምርቶችን ይመልከቱና የሚወዱትን ያክሉ። ጋሪዎ ዕቃዎችን በሻጭ በራስ-ሰር ይመድባል።'],
@@ -2501,7 +2586,7 @@ window.ambOpenHow = function(){
     ['fa-box-open','ይረከቡ','ሻጩ አረጋግጦ መረከቢያ ወይም መላኪያ ያዘጋጃል። ትዕዛዙ በጀርባ ይመዘገባል።']
   ] : [
     ['fa-cart-plus','Add to Cart','Browse products from any seller and add what you like. Your cart groups items by tenant automatically.'],
-    ['fa-building-columns','Pick a Bank','Each tenant lists their own CBE, Awash, BOA & Telebirr accounts. Choose one and transfer the total.'],
+    ['fa-building-columns','Pick a Bank','Each tenant lists their own CBE, Bank of Abyssinia & Telebirr accounts. Choose one and transfer the total.'],
     ['fab fa-whatsapp','Confirm Order','Send your payment proof to the seller on WhatsApp — or just download your invoice if you prefer.'],
     ['fa-box-open','Get It','The seller confirms and arranges pickup or delivery. The order is logged to them in the background.']
   ];
@@ -2526,17 +2611,40 @@ window.ambOpenPrivacy = function(){ var lg=BUILDING.legal; legalModal(lg.privacy
 /* ── ACCOUNT: Google sign-in ──
    REAL when the server has GOOGLE_CLIENT_ID: loads Google Identity Services,
    renders the official button, and the server verifies the ID token + sets a
-   session cookie. Without a client ID, a clearly-labeled demo session is used. */
-var gsiLoaded = false;
-function loadGsi(cb){
-  if (window.google && window.google.accounts) { cb(); return; }
-  if (gsiLoaded) { setTimeout(function(){ loadGsi(cb); }, 200); return; }
+   session cookie. Without a client ID, a clearly-labeled demo session is used.
+   Every failure mode (script blocked, init throws, slow network) surfaces a
+   visible fallback instead of leaving a blank box — see ambGsiFallback(). */
+var gsiLoaded = false, gsiFailed = false;
+function loadGsi(cb, onerr){
+  if (gsiFailed) { onerr && onerr(); return; }
+  if (window.google && window.google.accounts && window.google.accounts.id) { cb(); return; }
+  if (gsiLoaded) { setTimeout(function(){ loadGsi(cb, onerr); }, 200); return; }
   gsiLoaded = true;
   var s=document.createElement('script');
   s.src='https://accounts.google.com/gsi/client'; s.async=true; s.defer=true;
-  s.onload=cb; s.onerror=function(){ gsiLoaded=false; };
+  s.onload=cb;
+  s.onerror=function(){ gsiLoaded=false; gsiFailed=true; onerr && onerr(); };
   document.head.appendChild(s);
+  // belt-and-braces: some ad/privacy blockers neither fire onerror nor onload —
+  // if nothing has happened in 6s, treat it as failed so the UI doesn't hang blank
+  setTimeout(function(){
+    if (!(window.google && window.google.accounts && window.google.accounts.id)) {
+      gsiFailed = true; onerr && onerr();
+    }
+  }, 6000);
 }
+function ambGsiFallback(reason){
+  var host=$('ambGsiHost'); if(!host) return;
+  var am = state.lang==='am';
+  host.innerHTML =
+    '<div style="width:100%;text-align:center">'+
+      '<div style="font-size:.74rem;color:var(--mid);margin-bottom:10px">'+
+        (am ? 'የGoogle ግባ ማገልገል አልተጫነም (ምናልባት ማገጃ ወይም የግንኙነት ችግር)።' : 'Google sign-in couldn\'t load (maybe a blocker or connection issue).')+
+      '</div>'+
+      '<button class="amb-google-btn" onclick="ambOpenSignIn()"><i class="fas fa-rotate-right"></i> '+(am?'እንደገና ይሞክሩ':'Try again')+'</button>'+
+    '</div>';
+}
+A.ambGsiFallback = ambGsiFallback;   // exposed for testability
 window.ambOpenSignIn = function(){
   if(state.user){ return window.ambOpenAccount(); }
   var hasGoogle = !!(A.cfg && A.cfg.googleClientId);
@@ -2547,7 +2655,7 @@ window.ambOpenSignIn = function(){
       '<div class="amb-auth-t">'+L('signInTitle')+'</div>'+
       '<div class="amb-auth-s">'+L('signInSub')+'</div>'+
       (hasGoogle
-        ? '<div id="ambGsiHost" style="display:flex;justify-content:center;min-height:44px"></div>'
+        ? '<div id="ambGsiHost" style="display:flex;justify-content:center;min-height:44px"><div class="amb-gsi-spinner"></div></div>'
         : '<button class="amb-google-btn" onclick="ambDoGoogleSignIn()">'+
           '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>'+
           ' '+L('signInGoogle')+' <span style="font-size:.66rem;opacity:.6">(demo)</span></button>')+
@@ -2569,9 +2677,16 @@ window.ambOpenSignIn = function(){
           }
         });
         var host=$('ambGsiHost');
-        if(host) google.accounts.id.renderButton(host, { theme:'outline', size:'large', shape:'pill', width:280 });
-      }catch(e){}
-    });
+        if(host){
+          host.innerHTML='';
+          google.accounts.id.renderButton(host, { theme:'outline', size:'large', shape:'pill', width:280 });
+          // renderButton fails silently on a bad/misconfigured client_id (e.g. wrong
+          // Authorized JavaScript origin) — if the host is still empty a beat later,
+          // treat it the same as a load failure instead of leaving a blank box
+          setTimeout(function(){ if(host && !host.firstChild){ ambGsiFallback('render-empty'); } }, 1200);
+        }
+      }catch(e){ ambGsiFallback('init-threw'); }
+    }, function(){ ambGsiFallback('load-failed'); });
   }
 };
 function ambSetUser(u){
@@ -2627,12 +2742,50 @@ function renderAccountUI(){
       btn.title=L('signIn');
     }
   }
+  // mirror the same state into the mobile hamburger drawer's account row
+  var dIc=$('ambMDrawerAccount'), dName=$('ambMDrawerAcctName'), dSub=$('ambMDrawerAcctSub');
+  if(dIc){
+    var icEl = dIc.querySelector('.amb-mdrawer-account-ic');
+    if(state.user){
+      var ini2=(state.user.name||'?').split(' ').slice(0,2).map(function(w){return w.charAt(0);}).join('');
+      if(icEl) icEl.innerHTML = esc(ini2);
+      if(dName) dName.textContent = state.user.name || L('myAccount');
+      if(dSub) dSub.textContent = state.user.email || '';
+      dIc.onclick = function(){ ambCloseMobileMenu(); window.ambOpenAccount(); };
+    } else {
+      if(icEl) icEl.innerHTML = '<i class="fas fa-user"></i>';
+      if(dName) dName.textContent = L('signIn');
+      if(dSub) dSub.textContent = state.lang==='am' ? 'ለፈጣን ክፍያ ዝርዝሮችዎን ያስቀምጡ' : 'Save details for faster checkout';
+      dIc.onclick = function(){ ambCloseMobileMenu(); window.ambOpenSignIn(); };
+    }
+  }
   // prefill checkout name/phone if empty
   if(state.user){
     if(!state.coData.name && state.user.name) state.coData.name=state.user.name;
   }
 }
 A.renderAccountUI = renderAccountUI;
+
+/* ── mobile hamburger drawer: login, tenants, shop, services, orders, cart, wishlist, language ── */
+window.ambOpenMobileMenu = function(){
+  var d=$('ambMDrawer'), sc=$('ambMDrawerScrim'); if(!d) return;
+  var logo=$('ambMDrawerLogo'), nm=$('ambMDrawerName');
+  if(logo && BUILDING.logo) logo.src = BUILDING.logo;
+  if(nm && BUILDING.name) nm.textContent = BUILDING.name;
+  var cb=$('ambMDrawerCartBadge'); if(cb) cb.textContent = ($('ambCartBadge')||{}).textContent || '0';
+  var wb=$('ambMDrawerWishBadge'); if(wb) wb.textContent = ($('ambWishBadge')||{}).textContent || '0';
+  var lt=$('ambMDrawerLangTxt'); if(lt) lt.textContent = state.lang==='am' ? 'English / አማርኛ' : 'አማርኛ / English';
+  d.classList.add('open'); if(sc) sc.classList.add('on');
+  document.body.style.overflow='hidden';
+};
+window.ambCloseMobileMenu = function(){
+  var d=$('ambMDrawer'), sc=$('ambMDrawerScrim'); if(!d) return;
+  d.classList.remove('open'); if(sc) sc.classList.remove('on');
+  var modalOpen = document.querySelector('#amb-store .amb-modal.on, #amb-store .amb-cart.open, #amb-store .amb-floor-panel.open, #amb-store .amb-msearch.on');
+  if(!modalOpen) document.body.style.overflow='';
+};
+window.ambMNav = function(id){ ambCloseMobileMenu(); ambScrollTo(id); };
+
 
 /* ── ABANDONED CART RECOVERY ──
    On load, if the cart has items and was last touched over the threshold ago,
@@ -2791,6 +2944,8 @@ function boot(){
   // Escape closes floor panel / mobile search / search dropdown; Enter picks first result
   document.addEventListener('keydown', function(e){
     if(e.key==='Escape'){
+      var md=A.$('ambMDrawer');
+      if(md && md.classList.contains('open')){ window.ambCloseMobileMenu(); return; }
       var ms=A.$('ambMSearch');
       if(ms && ms.classList.contains('on')){ window.ambCloseMSearch(); return; }
       var fp=A.$('ambFloorPanel');

@@ -41,6 +41,38 @@
   .imgslot .thumb.filled{border-style:solid;border-color:#8a1450}
   .imgslot .rm{display:block;width:100%;margin-top:4px;background:#eee;color:#a55;font-size:.62rem;padding:3px 0;border-radius:6px}
   .secgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+  /* ── Reports ── */
+  .rep-presets{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .rep-preset{background:#fff;border:1.5px solid #ddd;color:#554;padding:7px 13px;border-radius:99px;font-size:.76rem;font-weight:700;cursor:pointer}
+  .rep-preset.active{background:#8a1450;border-color:#8a1450;color:#fff}
+  .rep-live{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:800;color:#1d9e54;text-transform:uppercase;letter-spacing:.4px}
+  .rep-live .dot{width:7px;height:7px;border-radius:50%;background:#1d9e54;animation:repPulse 1.4s infinite}
+  @keyframes repPulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .rep-statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+  .rep-stat{background:#fff;border:1px solid #e8e2e5;border-radius:13px;padding:14px 16px}
+  .rep-stat .n{font-size:1.5rem;font-weight:800;color:#221820;line-height:1.1}
+  .rep-stat .l{font-size:.68rem;color:#8a7a84;text-transform:uppercase;letter-spacing:.4px;margin-top:3px;font-weight:700}
+  .rep-stat.commission{background:linear-gradient(135deg,#fff7e0,#fdf0d0);border-color:#e8c96a}
+  .rep-stat.commission .n{color:#9a6b00}
+  .rep-stat.net{background:linear-gradient(135deg,#e9f8ee,#dcf3e4);border-color:#a8dcb8}
+  .rep-stat.net .n{color:#1d9e54}
+  .rep-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e8e2e5;border-radius:13px;overflow:hidden;font-size:.8rem}
+  .rep-table th{background:#f6f3f4;text-align:left;padding:9px 12px;font-size:.68rem;text-transform:uppercase;letter-spacing:.4px;color:#8a7a84}
+  .rep-table td{padding:9px 12px;border-top:1px solid #f0ebed}
+  .rep-table tr:hover td{background:#fbf8f9}
+  .rep-table .num{text-align:right;font-variant-numeric:tabular-nums}
+  .rep-table .send-btn{background:#25D366;color:#fff;border:0;border-radius:7px;padding:5px 10px;font-size:.68rem;font-weight:700;cursor:pointer}
+  .rep-rate-box{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e8e2e5;border-radius:11px;padding:10px 14px;margin:10px 0}
+  .rep-rate-box input{width:80px}
+  .rep-bar-chart{display:flex;align-items:flex-end;gap:4px;height:90px;margin:14px 0;padding:0 2px}
+  .rep-bar{flex:1;background:linear-gradient(180deg,#c2477a,#8a1450);border-radius:4px 4px 0 0;min-height:3px;position:relative;cursor:default}
+  .rep-bar:hover{background:linear-gradient(180deg,#e4406e,#a8123f)}
+  @media print{
+    body *{visibility:hidden}
+    #repPrintArea, #repPrintArea *{visibility:visible}
+    #repPrintArea{position:absolute;top:0;left:0;width:100%;padding:20px}
+    .rep-table .send-btn, .rep-presets, .rep-live{display:none !important}
+  }
 </style>
 </head>
 <body>
@@ -49,6 +81,7 @@
   <div class="bar">
     <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
     <button onclick="show('orders')">Orders</button>
+    <button class="alt" style="background:#0e7c6b" onclick="show('reports')">📊 Reports</button>
     <button class="alt" onclick="show('sellers')">Sellers</button>
     <button class="alt" onclick="show('products')">Products</button>
     <button class="alt" onclick="show('services')">Services</button>
@@ -56,6 +89,7 @@
     <button class="gray" onclick="show('notify')">Notify</button>
     <button class="gray" onclick="show('sms')">SMS log</button>
   </div>
+  <div id="cfgStatus" class="muted" style="margin-bottom:8px"></div>
   <div id="out" class="empty">Enter your ADMIN_KEY and choose a view.</div>
 </div>
 <script>
@@ -73,6 +107,7 @@ async function api(path, opts){
 function fail(e){ out.className='empty'; out.textContent='Error: '+e.message; }
 
 async function show(view){
+  if(window.__repLiveTimer){ clearInterval(window.__repLiveTimer); window.__repLiveTimer=null; }
   if(!K()){ out.className='empty'; out.textContent='Please enter the ADMIN_KEY.'; return; }
   out.className='empty'; out.textContent='Loading…';
   try{
@@ -87,6 +122,24 @@ async function show(view){
           <div class="muted">${esc(b.name||'')} ${esc(b.phone||'')} · ${b.method==='pickup'?'pickup':esc((b.area||'')+' — '+(b.addr||''))}</div>
           <div>sub ${o.subtotal} + dlv ${o.delivery_fee} + VAT ${o.tax} = <b style="color:#8a1450">${o.total} ETB</b> → ${esc((o.bank||{}).name||'')} ${esc((o.bank||{}).acct||'')}</div>
         </div>`;}).join(''):'<div class="empty">No orders yet.</div>';
+    }
+    else if(view==='reports'){
+      out.className='';
+      out.innerHTML = `
+        <div class="card">
+          <div class="rep-presets" id="repPresets"></div>
+          <div class="formgrid" style="margin-top:10px">
+            <input type="date" id="repFrom"><input type="date" id="repTo">
+            <select id="repTenantFilter"><option value="">All sellers</option></select>
+            <button onclick="loadReport()">Apply</button>
+          </div>
+        </div>
+        <div id="repBody">Loading…</div>`;
+      window.__repPreset = 'mtd';
+      await primeTenantFilter();
+      renderRepPresets();
+      setReportRange('mtd');
+      await loadReport();
     }
     else if(view==='sellers'){
       const c=await api('/api/admin/catalog'); const ts=c.building.tenants||[]; out.className='';
@@ -505,7 +558,181 @@ async function saveSections(){
     show('storefront');
   }catch(e){ alert(e.message); }
 }
+/* ── Reports: date-range presets, live polling, stat cards, tenant table ── */
+const REP_PRESETS = [
+  ['today','Today'], ['yesterday','Yesterday'], ['week','This Week'],
+  ['mtd','This Month'], ['last7','Last 7 Days'], ['last30','Last 30 Days']
+];
+function fmtDate(d){ return d.toISOString().slice(0,10); }
+function setReportRange(preset){
+  window.__repPreset = preset;
+  const now = new Date();
+  let from, to = now;
+  if(preset==='today'){ from = new Date(now.getFullYear(),now.getMonth(),now.getDate()); }
+  else if(preset==='yesterday'){ const y=new Date(now); y.setDate(y.getDate()-1); from=new Date(y.getFullYear(),y.getMonth(),y.getDate()); to=from; }
+  else if(preset==='week'){ const d=new Date(now); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); from=new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+  else if(preset==='mtd'){ from = new Date(now.getFullYear(), now.getMonth(), 1); }
+  else if(preset==='last7'){ const d=new Date(now); d.setDate(d.getDate()-6); from=new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+  else if(preset==='last30'){ const d=new Date(now); d.setDate(d.getDate()-29); from=new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+  document.getElementById('repFrom').value = fmtDate(from);
+  document.getElementById('repTo').value = fmtDate(to);
+  renderRepPresets();
+}
+function renderRepPresets(){
+  const el=document.getElementById('repPresets'); if(!el) return;
+  el.innerHTML = REP_PRESETS.map(p=>`<button class="rep-preset ${window.__repPreset===p[0]?'active':''}" onclick="setReportRange('${p[0]}');loadReport()">${p[1]}</button>`).join('')+
+    `<button class="rep-preset ${window.__repPreset==='custom'?'active':''}" onclick="window.__repPreset='custom';renderRepPresets()">Custom</button>`;
+}
+async function primeTenantFilter(){
+  try{
+    const c = window.__cat || await api('/api/admin/catalog');
+    window.__cat = c;
+    const sel = document.getElementById('repTenantFilter');
+    if(sel) sel.innerHTML = '<option value="">All sellers</option>' + (c.building.tenants||[]).map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
+  }catch(e){}
+}
+async function loadReport(){
+  if(window.__repLiveTimer){ clearInterval(window.__repLiveTimer); window.__repLiveTimer=null; }
+  const from = document.getElementById('repFrom').value, to = document.getElementById('repTo').value;
+  const tid = document.getElementById('repTenantFilter').value;
+  const body = document.getElementById('repBody');
+  body.innerHTML = 'Loading…';
+  try{
+    const q = new URLSearchParams({from,to}); if(tid) q.set('tenantId',tid);
+    const r = await api('/api/admin/report?'+q.toString());
+    renderReportBody(r, from, to, tid);
+    // "live" auto-refresh only makes sense while looking at today's numbers
+    if(window.__repPreset==='today'){
+      window.__repLiveTimer = setInterval(async ()=>{
+        try{ const rr = await api('/api/admin/report?'+q.toString()); renderReportBody(rr, from, to, tid); }catch(e){}
+      }, 20000);
+    }
+  }catch(e){ body.innerHTML = `<div class="empty">Error: ${esc(e.message)}</div>`; }
+}
+function renderReportBody(r, from, to, tid){
+  const body = document.getElementById('repBody');
+  const t = r.totals;
+  const maxDay = Math.max(1, ...r.byDay.map(d=>d.subtotal));
+  const bars = r.byDay.map(d=>`<div class="rep-bar" style="height:${Math.max(4,(d.subtotal/maxDay*90))}px" title="${esc(d.date)}: ETB ${d.subtotal} (${d.orders} orders, ETB ${d.commission} commission)"></div>`).join('');
+  const tenantRows = r.byTenant.length ? r.byTenant.map(x=>`
+    <tr>
+      <td>${esc(x.tenantName)}</td>
+      <td class="num">${x.orders}</td>
+      <td class="num">${x.subtotal.toLocaleString()}</td>
+      <td class="num">${x.commission.toLocaleString()}</td>
+      <td class="num">${x.net.toLocaleString()}</td>
+      <td><button class="send-btn" onclick="sendReportTo('${esc(x.tenantId)}','${esc(x.tenantName)}')"><i class="fab fa-whatsapp"></i> Send</button></td>
+    </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">No completed sales in this range.</td></tr>`;
+  const liveTag = window.__repPreset==='today' ? '<span class="rep-live"><span class="dot"></span> LIVE · refreshes every 20s</span>' : '';
+
+  body.innerHTML = `
+    <div id="repPrintArea">
+      <div class="row" style="margin-bottom:6px">
+        <h3 style="margin:0">Sales & Commission Report</h3>
+        ${liveTag}
+      </div>
+      <div class="muted">${esc(r.range.from.slice(0,10))} to ${esc(new Date(new Date(r.range.to)-86400000).toISOString().slice(0,10))} · commission rate ${(r.rate*100).toFixed(1)}%${tid?' · '+esc((document.getElementById('repTenantFilter').selectedOptions[0]||{}).text||''):''}</div>
+
+      <div class="rep-statgrid">
+        <div class="rep-stat"><div class="n">${t.orders}</div><div class="l">Orders</div></div>
+        <div class="rep-stat"><div class="n">${t.subtotal.toLocaleString()}</div><div class="l">Sales (ETB)</div></div>
+        <div class="rep-stat commission"><div class="n">${t.commission.toLocaleString()}</div><div class="l">Bisinka Commission</div></div>
+        <div class="rep-stat net"><div class="n">${t.net.toLocaleString()}</div><div class="l">Net to Sellers</div></div>
+        <div class="rep-stat"><div class="n">${t.deliveryFee.toLocaleString()}</div><div class="l">Delivery Fees</div></div>
+        <div class="rep-stat"><div class="n">${t.tax.toLocaleString()}</div><div class="l">VAT Collected</div></div>
+        <div class="rep-stat"><div class="n">${t.cancelledOrders}</div><div class="l">Cancelled (excluded)</div></div>
+      </div>
+
+      <div class="rep-rate-box">
+        <b>Commission rate:</b> <span id="repRateDisplay">${(r.rate*100).toFixed(1)}%</span>
+        <input type="number" id="repRateInput" min="0" max="50" step="0.1" placeholder="new %">
+        <button class="gray" onclick="saveCommissionRate()">Update rate</button>
+        <span class="muted">Applies to future reports; past reports keep the rate they were generated with.</span>
+      </div>
+
+      ${r.byDay.length ? `<div class="muted" style="margin-top:14px">Daily sales</div><div class="rep-bar-chart">${bars}</div>` : ''}
+
+      <h3>By Seller</h3>
+      <table class="rep-table">
+        <thead><tr><th>Seller</th><th class="num">Orders</th><th class="num">Sales</th><th class="num">Commission</th><th class="num">Net</th><th>Report</th></tr></thead>
+        <tbody>${tenantRows}</tbody>
+      </table>
+
+      <div class="bar" style="margin-top:14px">
+        <button onclick="window.print()"><i class="fas fa-print"></i> Generate / Print Report</button>
+        <button class="alt" onclick="downloadReportCsv()"><i class="fas fa-file-csv"></i> Download CSV</button>
+        ${r.byTenant.length ? '<button class="alt" style="background:#25D366" onclick="sendReportAll()"><i class="fab fa-whatsapp"></i> Send to All Sellers</button>' : ''}
+      </div>
+    </div>`;
+}
+async function saveCommissionRate(){
+  const pct = parseFloat(document.getElementById('repRateInput').value);
+  if(!isFinite(pct) || pct<0 || pct>50){ alert('Enter a rate between 0 and 50.'); return; }
+  try{
+    await api('/api/admin/commission', {method:'PUT', body:{rate: pct/100}});
+    await loadReport();
+  }catch(e){ alert(e.message); }
+}
+async function sendReportTo(tid, name){
+  const from = document.getElementById('repFrom').value, to = document.getElementById('repTo').value;
+  try{
+    const d = await api('/api/admin/report/send', {method:'POST', body:{tenantId:tid, from, to}});
+    const s = (d.sent||[])[0];
+    if(!s){ alert('Could not send — '+((d.skipped||[])[0]||{}).reason); return; }
+    let msg = `Sent to ${name}`+(s.via==='sms'?' via SMS.':'.');
+    if(s.whatsappLink){ msg += '\\n\\nOpen WhatsApp to send the same report:'; if(confirm(msg+'\\n\\nOpen WhatsApp now?')) window.open(s.whatsappLink,'_blank'); }
+    else alert(msg);
+  }catch(e){ alert(e.message); }
+}
+async function sendReportAll(){
+  if(!confirm("Send this period's report to every seller by SMS now?")) return;
+  const from = document.getElementById('repFrom').value, to = document.getElementById('repTo').value;
+  try{
+    const d = await api('/api/admin/report/send', {method:'POST', body:{all:true, from, to}});
+    alert(`Sent to ${d.sent.length} seller(s). ${d.skipped.length?d.skipped.length+' skipped (no phone on file).':''}`);
+  }catch(e){ alert(e.message); }
+}
+function downloadReportCsv(){
+  const from = document.getElementById('repFrom').value, to = document.getElementById('repTo').value;
+  const tid = document.getElementById('repTenantFilter').value;
+  const q = new URLSearchParams({from,to}); if(tid) q.set('tenantId',tid);
+  // the CSV route needs the x-admin-key header, which a plain link navigation
+  // can't send — so fetch it here and trigger a blob download instead
+  fetch('/api/admin/report.csv?'+q.toString(), {headers:{'x-admin-key':K()}})
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.blob(); })
+    .then(b=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(b);
+      a.download=`ambassador-sales-report-${from}-to-${to}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+    })
+    .catch(()=>alert('Could not download CSV'));
+}
+
 const v = id => document.getElementById(id).value.trim();
+
+/* self-diagnostic: is buyer Google sign-in actually configured server-side?
+   This calls the public (no admin key needed) /api/config endpoint so it
+   works even before you've typed the ADMIN_KEY. */
+(async function checkConfig(){
+  const el = document.getElementById('cfgStatus');
+  try{
+    const r = await fetch('/api/config');
+    const cfg = await r.json();
+    if(cfg.googleClientId){
+      el.innerHTML = '✅ <b>Google sign-in is configured</b> — buyers see the real "Continue with Google" button.';
+      el.style.color = '#1d9e54';
+    } else {
+      el.innerHTML = '⚠️ <b>Google sign-in is NOT configured</b> — buyers currently see a demo/guest sign-in instead. '+
+        'Set <code>GOOGLE_CLIENT_ID</code> in your Render environment variables (create an OAuth Client ID at '+
+        '<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a>, '+
+        'add the site URL to "Authorized JavaScript origins") — no code changes needed, it activates automatically once set.';
+      el.style.color = '#9a6b00';
+    }
+  }catch(e){
+    el.textContent = '';
+  }
+})();
 </script>
 </body>
 </html>

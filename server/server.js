@@ -32,6 +32,7 @@ const SEED = JSON.parse(fs.readFileSync(path.join(__dirname, 'catalog.json'), 'u
 let catalog = null, B = null, PRODUCTS = {}, TENANTS = {}, SERVICES = {};
 function indexCatalog(){
   B = catalog.building;
+  if (!B.commission || typeof B.commission.rate !== 'number') B.commission = { rate: 0.02 };  // Bisinka's 2% platform commission
   PRODUCTS = {}; TENANTS = {}; SERVICES = {};
   (B.tenants || []).forEach(t => {
     if (t.active === undefined) t.active = true;
@@ -155,6 +156,11 @@ if (process.env.DATABASE_URL) {
       return r.rows[0] || null;
     },
     async allOrders(){ return (await pool.query(`SELECT * FROM orders ORDER BY id DESC LIMIT 500`)).rows; },
+    async ordersInRange(fromISO, toISO){
+      return (await pool.query(
+        `SELECT * FROM orders WHERE created_at >= $1 AND created_at < $2 ORDER BY created_at ASC LIMIT 20000`,
+        [fromISO, toISO])).rows;
+    },
     async insertNotify(n){ await pool.query(`INSERT INTO notify_requests (product_id,phone) VALUES ($1,$2)`,[n.productId,n.phone]); },
     async allNotify(){ return (await pool.query(`SELECT * FROM notify_requests ORDER BY id DESC LIMIT 500`)).rows; },
     async setSellerCode(tid, phone, hash){
@@ -264,6 +270,13 @@ if (process.env.DATABASE_URL) {
       flush(); return o;
     },
     async allOrders(){ return mem.orders.slice(0, 500); },
+    async ordersInRange(fromISO, toISO){
+      const f = new Date(fromISO).getTime(), t = new Date(toISO).getTime();
+      return mem.orders.filter(o => {
+        const ts = new Date(o.created_at || o.date).getTime();
+        return ts >= f && ts < t;
+      }).sort((a, b) => new Date(a.created_at||a.date) - new Date(b.created_at||b.date));
+    },
     async insertNotify(n){ mem.notify.unshift({ id: mem.seq++, product_id:n.productId, phone:n.phone, created_at:new Date().toISOString() }); flush(); },
     async allNotify(){ return mem.notify.slice(0, 500); },
     async setSellerCode(tid, phone, hash){ mem.sellerCodes[tid] = { tenant_id: tid, phone, code_hash: hash }; flush(); },
@@ -1214,6 +1227,133 @@ app.put('/api/admin/sections', requireAdmin, async (req, res) => {
   });
   await mutateCatalog(c => { c.building.sections = clean; });
   res.json({ sections: clean });
+});
+
+/* ════════ COMMISSION & SALES REPORTS ════════
+   Bisinka charges a platform commission (default 2%) on the GOODS value of
+   completed sales (order subtotal) — delivery fees and VAT pass through
+   untouched, and cancelled orders never carry commission. The rate lives in
+   catalog.building.commission.rate so it can be changed without a redeploy;
+   every report prints the rate that was actually used, so numbers stay
+   auditable even if the rate changes later. ── */
+
+app.get('/api/admin/commission', requireAdmin, (req, res) => {
+  res.json({ commission: B.commission });
+});
+app.put('/api/admin/commission', requireAdmin, async (req, res) => {
+  const rate = parseFloat(req.body && req.body.rate);
+  if (!isFinite(rate) || rate < 0 || rate > 0.5) return res.status(400).json({ error: 'Rate must be between 0 and 0.5 (0%–50%)' });
+  await mutateCatalog(c => { c.building.commission = { rate }; });
+  res.json({ commission: B.commission });
+});
+
+/* shared aggregation used by both the on-screen report and the CSV export */
+function dayKey(d){ return new Date(d).toISOString().slice(0, 10); }
+async function buildReport(fromISO, toISO, tenantId){
+  const rate = B.commission.rate;
+  let rows = await db.ordersInRange(fromISO, toISO);
+  if (tenantId) rows = rows.filter(o => o.tenant_id === tenantId);
+
+  const totals = { orders: rows.length, cancelledOrders: 0, subtotal: 0, deliveryFee: 0, tax: 0, total: 0, commission: 0, net: 0 };
+  const byStatus = {};
+  const byDayMap = new Map();
+  const byTenantMap = new Map();
+
+  rows.forEach(o => {
+    byStatus[o.status] = (byStatus[o.status] || 0) + 1;
+    const cancelled = o.status === 'cancelled';
+    if (cancelled) { totals.cancelledOrders++; return; }  // no commission on cancelled orders
+
+    const sub = o.subtotal || 0, dlv = o.delivery_fee || 0, tax = o.tax || 0, tot = o.total || 0;
+    const comm = Math.round(sub * rate);
+    totals.subtotal += sub; totals.deliveryFee += dlv; totals.tax += tax; totals.total += tot; totals.commission += comm;
+
+    const dk = dayKey(o.created_at);
+    const dRow = byDayMap.get(dk) || { date: dk, orders: 0, subtotal: 0, commission: 0 };
+    dRow.orders++; dRow.subtotal += sub; dRow.commission += comm;
+    byDayMap.set(dk, dRow);
+
+    const tid = o.tenant_id;
+    const tRow = byTenantMap.get(tid) || { tenantId: tid, tenantName: (TENANTS[tid] && TENANTS[tid].name) || tid, orders: 0, subtotal: 0, commission: 0, net: 0 };
+    tRow.orders++; tRow.subtotal += sub; tRow.commission += comm; tRow.net += (sub - comm);
+    byTenantMap.set(tid, tRow);
+  });
+  totals.net = totals.subtotal - totals.commission;
+
+  return {
+    range: { from: fromISO, to: toISO }, rate,
+    totals,
+    byStatus,
+    byDay: Array.from(byDayMap.values()).sort((a, b) => a.date < b.date ? -1 : 1),
+    byTenant: Array.from(byTenantMap.values()).sort((a, b) => b.subtotal - a.subtotal)
+  };
+}
+function parseRangeQuery(q){
+  // defaults to month-to-date in local server time if nothing supplied
+  const now = new Date();
+  let from = q.from ? new Date(q.from + 'T00:00:00') : new Date(now.getFullYear(), now.getMonth(), 1);
+  let to = q.to ? new Date(q.to + 'T00:00:00') : now;
+  to.setDate(to.getDate() + (q.to ? 1 : 0)); // 'to' is inclusive of that calendar day when explicitly given
+  if (!(from instanceof Date) || isNaN(from)) from = new Date(now.getFullYear(), now.getMonth(), 1);
+  if (!(to instanceof Date) || isNaN(to)) to = now;
+  return { fromISO: from.toISOString(), toISO: to.toISOString() };
+}
+
+app.get('/api/admin/report', requireAdmin, async (req, res) => {
+  try {
+    const { fromISO, toISO } = parseRangeQuery(req.query);
+    const report = await buildReport(fromISO, toISO, req.query.tenantId || null);
+    res.json(report);
+  } catch (e) { res.status(500).json({ error: 'Could not build report' }); }
+});
+
+app.get('/api/admin/report.csv', requireAdmin, async (req, res) => {
+  try {
+    const { fromISO, toISO } = parseRangeQuery(req.query);
+    const report = await buildReport(fromISO, toISO, req.query.tenantId || null);
+    const lines = ['Tenant ID,Tenant Name,Orders,Sales (Subtotal ETB),Commission (' + (report.rate * 100).toFixed(1) + '%) ETB,Net to Seller ETB'];
+    report.byTenant.forEach(t => {
+      lines.push([t.tenantId, '"' + t.tenantName.replace(/"/g, '""') + '"', t.orders, t.subtotal, t.commission, t.net].join(','));
+    });
+    lines.push('');
+    lines.push(['TOTAL', '', report.totals.orders, report.totals.subtotal, report.totals.commission, report.totals.net].join(','));
+    lines.push('');
+    lines.push('Report range,' + report.range.from.slice(0, 10) + ' to ' + report.range.to.slice(0, 10));
+    lines.push('Cancelled orders (excluded above),' + report.totals.cancelledOrders);
+    const csv = lines.join('\n');
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="ambassador-sales-report-${req.query.from || 'mtd'}-to-${req.query.to || 'today'}.csv"`);
+    res.send(csv);
+  } catch (e) { res.status(500).json({ error: 'Could not build CSV' }); }
+});
+
+/* send each tenant their own period summary — real SMS (Afromessage/Twilio,
+   log-only fallback) plus a ready-to-tap WhatsApp deep link the admin can
+   send manually for richer formatting. Never fakes delivery: if a tenant has
+   no phone on file, they show up in `skipped`, not `sent`. */
+app.post('/api/admin/report/send', requireAdmin, async (req, res) => {
+  try {
+    const { fromISO, toISO } = parseRangeQuery(req.body || {});
+    const targetIds = req.body && req.body.tenantId ? [req.body.tenantId]
+      : (req.body && req.body.all ? Object.keys(TENANTS) : []);
+    if (!targetIds.length) return res.status(400).json({ error: 'Provide tenantId or all:true' });
+
+    const periodLabel = fromISO.slice(0, 10) + ' to ' + new Date(new Date(toISO) - 86400000).toISOString().slice(0, 10);
+    const sent = [], skipped = [], links = [];
+    for (const tid of targetIds) {
+      const t = TENANTS[tid]; if (!t) { skipped.push({ tenantId: tid, reason: 'unknown tenant' }); continue; }
+      const r = await buildReport(fromISO, toISO, tid);
+      const row = r.totals;
+      const msg = `Ambassador Mall sales report (${periodLabel}) for ${t.name}: ${row.orders} order(s), sales ETB ${row.subtotal}, ` +
+        `Bisinka commission ${(r.rate * 100).toFixed(1)}% = ETB ${row.commission}, net to you ETB ${row.net}. — Bisinka Marketplace`;
+      const waLink = t.whatsapp ? `https://wa.me/${t.whatsapp}?text=${encodeURIComponent(msg)}` : null;
+      if (t.mobile) { sendSMS(t.mobile, msg); sent.push({ tenantId: tid, name: t.name, via: 'sms', whatsappLink: waLink }); }
+      else if (waLink) { sent.push({ tenantId: tid, name: t.name, via: 'whatsapp-link-only', whatsappLink: waLink }); }
+      else { skipped.push({ tenantId: tid, name: t.name, reason: 'no phone on file' }); }
+      if (waLink) links.push({ tenantId: tid, name: t.name, whatsappLink: waLink });
+    }
+    res.json({ sent, skipped, links });
+  } catch (e) { res.status(500).json({ error: 'Could not send reports' }); }
 });
 
 /* ── static frontend ── */

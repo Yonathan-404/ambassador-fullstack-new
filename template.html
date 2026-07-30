@@ -160,41 +160,36 @@
 #amb-store .amb-hstat-n{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:900;color:var(--teal)}
 #amb-store .amb-hstat-l{font-size:.7rem;color:var(--mid);line-height:1.2;text-transform:uppercase;letter-spacing:.5px}
 
-/* ════ HERO VISUAL — Jump to Floor + phone mockup + carousel ════ */
-#amb-store .amb-hero-split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(1.5rem,4vw,3.2rem);align-items:center}
-#amb-store .amb-hero-visual{display:flex;gap:20px;max-width:100%}
-#amb-store .amb-hero-visual .welcome-left{flex:0 0 auto}
-#amb-store .amb-hero-visual .welcome-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
-#amb-store .floor-list-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
-#amb-store .floor-vertical-list{display:flex;flex-direction:column;gap:5px;max-height:250px;overflow-y:auto;padding-right:6px}
+/* ════ HERO VISUAL — Building Directory panel (floors are the primary CTA) ════ */
+#amb-store .amb-hero-split{display:grid;grid-template-columns:1.06fr .94fr;gap:clamp(1.5rem,4vw,3.2rem);align-items:stretch}
+#amb-store .amb-hero-visual{max-width:100%;display:flex}
+#amb-store .amb-floor-directory{
+  flex:1;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);border-radius:26px;
+  padding:1.3rem 1.2rem 1.4rem;backdrop-filter:blur(16px);
+  box-shadow:0 30px 70px -30px rgba(40,40,70,.32),0 0 0 1px rgba(122,26,68,.06);
+  display:flex;flex-direction:column;gap:1rem
+}
+#amb-store .amb-fd-head{display:flex;align-items:center;gap:12px}
+#amb-store .amb-fd-head-ic{
+  width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--wine),var(--wine-d));
+  color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;
+  box-shadow:0 8px 18px -6px rgba(122,26,68,.5)
+}
+#amb-store .amb-fd-head-txt h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:800;color:var(--ink);line-height:1.1}
+#amb-store .amb-fd-head-txt span{font-size:.72rem;font-weight:600;color:var(--wine-d);text-transform:uppercase;letter-spacing:.4px}
+#amb-store .floor-vertical-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;padding-right:6px}
 #amb-store .floor-vertical-list::-webkit-scrollbar{width:4px}
 #amb-store .floor-vertical-list::-webkit-scrollbar-track{background:var(--wine-tint);border-radius:4px}
 #amb-store .floor-vertical-list::-webkit-scrollbar-thumb{background:var(--wine-l);border-radius:4px}
-#amb-store .floor-vertical-item{background:var(--wine-tint);padding:10px 15px;border-radius:10px;color:var(--wine-d);font-weight:600;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:var(--tr);border-left:4px solid var(--fc,var(--wine));box-shadow:var(--sm);font-size:.86rem}
-#amb-store .floor-vertical-item:hover{background:var(--wine);color:#fff;transform:translateX(3px);box-shadow:var(--md)}
-#amb-store .floor-vertical-item .amh-inline{color:var(--gold-d)}
+#amb-store .floor-vertical-item{background:#fff;padding:12px 16px;border-radius:12px;color:var(--wine-d);font-weight:700;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:var(--tr);border-left:4px solid var(--fc,var(--wine));box-shadow:var(--sm);font-size:.9rem}
+#amb-store .floor-vertical-item:hover{background:var(--wine);color:#fff;transform:translateX(4px) scale(1.015);box-shadow:0 10px 24px -8px rgba(122,26,68,.5)}
+#amb-store .floor-vertical-item .amh-inline{color:var(--gold-d);font-size:.82em}
 #amb-store .floor-vertical-item:hover .amh-inline{color:#fff}
-#amb-store .floor-vertical-item .floor-occ{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+#amb-store .floor-vertical-item .floor-occ{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:4px;font-weight:600}
 #amb-store .floor-vertical-item:hover .floor-occ{color:rgba(255,255,255,.85)}
 #amb-store .floor-vertical-item .floor-occ i{color:var(--success);font-size:.6rem}
-#amb-store .floor-vertical-item .floor-arrow{opacity:.4;transition:.2s;font-size:.72rem;margin-left:8px}
+#amb-store .floor-vertical-item .floor-arrow{opacity:.4;transition:.2s;font-size:.75rem;margin-left:8px}
 #amb-store .floor-vertical-item:hover .floor-arrow{opacity:1;transform:translateX(3px)}
-
-/* phone mockup */
-#amb-store .mobile-frame-container{background:#fff;padding:16px 11px;border-radius:28px;box-shadow:0 18px 38px rgba(123,0,63,.12);position:relative;border:13px solid #121212;width:180px;margin:0 auto;min-height:250px;display:flex;flex-direction:column}
-#amb-store .mobile-frame-container::before{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:82px;height:16px;background:#121212;border-radius:0 0 9px 9px;z-index:2}
-#amb-store .mobile-frame-container::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:55px;height:4px;background:#121212;border-radius:6px}
-#amb-store .mobile-screen{flex:1;background:#fff;border-radius:15px;overflow:hidden;display:flex;flex-direction:column}
-#amb-store .mobile-header{background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;padding:8px 9px;text-align:center}
-#amb-store .mobile-header h3{font-size:.76rem;color:var(--gold);margin:0}
-#amb-store .mobile-header p{font-size:.52rem;opacity:.9;margin:1px 0 0}
-#amb-store .mobile-body{padding:11px 9px 13px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1}
-#amb-store .qr-code-container{width:78px;height:78px;margin:0 auto 8px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);overflow:hidden;box-shadow:var(--sm)}
-#amb-store .qr-code-container img{width:100%;height:100%;object-fit:cover}
-#amb-store .nfc-tag{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);padding:4px 9px;border-radius:50px;margin-bottom:5px;border:1px solid var(--line);font-size:.52rem;flex-wrap:wrap;justify-content:center}
-#amb-store .nfc-tag i{color:var(--teal);font-size:.62rem}
-#amb-store .nfc-tag .nfc-highlight{font-weight:700;color:var(--wine)}
-#amb-store .qr-instruction{font-size:.48rem;color:var(--muted);margin-top:2px;line-height:1.3}
 
 /* explore carousel — prev/next now overlaid on the image itself (left/right), dots stay below */
 #amb-store .explore-carousel-wrap{position:relative;overflow:hidden;border-radius:16px;background:var(--wine-tint);width:100%;height:190px;box-shadow:inset 0 2px 8px rgba(0,0,0,.03);flex-shrink:0}
@@ -215,11 +210,10 @@
 
 @media(max-width:900px){
   #amb-store .amb-hero-split{grid-template-columns:1fr}
-  #amb-store .amb-hero-visual{flex-direction:column;align-items:center}
 }
 @media(max-width:480px){
-  #amb-store .mobile-frame-container{width:150px;min-height:210px}
   #amb-store .explore-carousel-wrap{height:150px}
+  #amb-store .floor-vertical-list{max-height:280px}
 }
 
 /* ════ BANK / TRUST BAND ════ */
@@ -346,9 +340,15 @@
 #amb-store .amb-flogo-txt{font-family:'Cormorant Garamond',serif;color:#fff;font-size:1.2rem;font-weight:700}
 #amb-store .amb-flogo-txt span{color:var(--teal-bright)}
 #amb-store .amb-footer-brand p{font-size:.8rem;line-height:1.7;margin-bottom:1rem;max-width:340px}
-#amb-store .amb-footer-soc{display:flex;gap:.55rem}
-#amb-store .amb-soc-btn{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);transition:var(--tr)}
-#amb-store .amb-soc-btn:hover{background:var(--teal);color:#fff}
+#amb-store .amb-footer-soc{display:flex;gap:.6rem;flex-wrap:wrap}
+#amb-store .amb-soc-btn{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#fff;transition:var(--tr);box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
+#amb-store .amb-soc-btn:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 8px 18px rgba(0,0,0,.35)}
+#amb-store .amb-soc-btn.f-telegram{background:#229ED9}
+#amb-store .amb-soc-btn.f-instagram{background:linear-gradient(45deg,#FFDC80,#FCAF45,#F56040,#C13584)}
+#amb-store .amb-soc-btn.f-facebook{background:#4267B2}
+#amb-store .amb-soc-btn.f-tiktok{background:#010101}
+#amb-store .amb-soc-btn.f-call{background:#25D366}
+#amb-store .amb-soc-btn.f-share{background:linear-gradient(135deg,var(--gold),var(--gold-d))}
 #amb-store .amb-footer-col h4{color:#fff;font-size:.84rem;font-weight:700;margin-bottom:1rem}
 #amb-store .amb-footer-col h4{position:relative;padding-bottom:.5rem}
 #amb-store .amb-footer-col h4::after{content:'';position:absolute;bottom:0;left:0;width:24px;height:2px;background:var(--teal-bright);border-radius:2px}
@@ -570,6 +570,42 @@
   #amb-store .amb-pm{grid-template-columns:1fr}
   #amb-store .amb-pm-img{border-radius:22px 22px 0 0;min-height:220px}
   #amb-store .amb-footer-grid{grid-template-columns:1fr;gap:2rem}
+  /* declutter the top bar: sign-in, orders, wishlist and language move into the hamburger drawer */
+  #amb-store .amb-nav-actions .amb-lang-btn,
+  #amb-store .amb-nav-actions > button[onclick^="ambOpenOrders"],
+  #amb-store .amb-nav-actions > button[onclick*="Tap the"],
+  #amb-store .amb-nav-actions > #ambAccountBtn{display:none}
+}
+
+/* ── mobile hamburger drawer ── */
+#amb-store .amb-mdrawer-scrim{position:fixed;inset:0;background:rgba(40,11,26,.5);backdrop-filter:blur(3px);z-index:640;opacity:0;pointer-events:none;transition:opacity .3s}
+#amb-store .amb-mdrawer-scrim.on{opacity:1;pointer-events:all}
+#amb-store .amb-mdrawer{position:fixed;top:0;right:0;bottom:0;width:min(340px,86vw);background:var(--paper,#fff);z-index:650;display:flex;flex-direction:column;transform:translateX(102%);transition:transform .36s var(--ease);box-shadow:-16px 0 44px rgba(40,11,26,.24)}
+#amb-store .amb-mdrawer.open{transform:none}
+#amb-store .amb-mdrawer-head{display:flex;align-items:center;gap:10px;padding:18px 16px;background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;flex-shrink:0}
+#amb-store .amb-mdrawer-logo{width:36px;height:36px;border-radius:9px;object-fit:cover;flex-shrink:0;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+#amb-store .amb-mdrawer-head span:not(.amb-mdrawer-x span){font-weight:800;font-size:.92rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#amb-store .amb-mdrawer-x{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-size:.82rem;cursor:pointer;flex-shrink:0;transition:var(--tr)}
+#amb-store .amb-mdrawer-x:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+#amb-store .amb-mdrawer-body{flex:1;overflow-y:auto;padding:16px}
+#amb-store .amb-mdrawer-account{display:flex;align-items:center;gap:12px;width:100%;background:var(--wine-tint);border:1px solid rgba(122,26,68,.14);border-radius:14px;padding:12px 14px;margin-bottom:16px;text-align:left;cursor:pointer;transition:var(--tr)}
+#amb-store .amb-mdrawer-account:hover{background:var(--wine);color:#fff}
+#amb-store .amb-mdrawer-account:hover .amb-mdrawer-account-ic{background:rgba(255,255,255,.2);color:#fff}
+#amb-store .amb-mdrawer-account:hover .amb-mdrawer-account-txt span{color:rgba(255,255,255,.8)}
+#amb-store .amb-mdrawer-account-ic{width:40px;height:40px;border-radius:50%;background:var(--wine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;font-weight:800}
+#amb-store .amb-mdrawer-account-txt{flex:1;min-width:0;display:flex;flex-direction:column}
+#amb-store .amb-mdrawer-account-txt b{font-size:.86rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#amb-store .amb-mdrawer-account-txt span{font-size:.68rem;color:var(--mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#amb-store .amb-mdrawer-links{display:flex;flex-direction:column;gap:3px}
+#amb-store .amb-mdrawer-links a{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:11px;font-size:.88rem;font-weight:700;color:var(--ink2);transition:var(--tr);cursor:pointer}
+#amb-store .amb-mdrawer-links a:hover{background:var(--wine-tint);color:var(--wine)}
+#amb-store .amb-mdrawer-links a i{width:20px;text-align:center;color:var(--wine);font-size:.9rem}
+#amb-store .amb-mdrawer-links a .amb-badge{margin-left:auto}
+#amb-store .amb-mdrawer-divider{height:1px;background:var(--line,#eee);margin:12px 4px}
+#amb-store .amb-mdrawer-lang{display:flex;align-items:center;gap:10px;width:100%;background:var(--surface2,#faf6f8);border:1px solid var(--line,#eee);border-radius:11px;padding:12px 14px;font-size:.84rem;font-weight:700;color:var(--ink2);cursor:pointer;transition:var(--tr)}
+#amb-store .amb-mdrawer-lang:hover{background:var(--wine-tint);color:var(--wine)}
+@media(min-width:769px){
+  #amb-store .amb-mdrawer,#amb-store .amb-mdrawer-scrim{display:none}
 }
 @media(max-width:560px){
   #amb-store .amb-cart{width:100%}
@@ -1014,11 +1050,17 @@
 #amb-store .amb-order-reorder{width:100%;background:var(--surface2);color:var(--wine);padding:9px;border-radius:10px;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;transition:var(--tr)}
 #amb-store .amb-order-reorder:hover{background:var(--wine-tint)}
 
-/* admin / support modal */
+/* admin / support modal — enhanced marketplace support */
 #amb-store .amb-admin-modal{padding:28px 24px;text-align:center}
-#amb-store .amb-admin-ic{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 14px}
+#amb-store .amb-admin-ic{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 14px;position:relative}
+#amb-store .amb-admin-ic .amb-admin-dot{position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--success,#2f9e44);border:2.5px solid #fff}
 #amb-store .amb-admin-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--ink)}
-#amb-store .amb-admin-role{font-size:.78rem;color:var(--mid);margin-bottom:18px}
+#amb-store .amb-admin-role{font-size:.78rem;color:var(--mid);margin-bottom:10px}
+#amb-store .amb-admin-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-tint);color:var(--teal-d);font-size:.68rem;font-weight:700;padding:6px 13px;border-radius:100px;margin-bottom:16px}
+#amb-store .amb-admin-badge i{color:var(--success,#2f9e44);font-size:.55rem}
+#amb-store .amb-admin-topics{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+#amb-store .amb-admin-topic{font-size:.72rem;font-weight:700;color:var(--wine-d);background:var(--wine-tint);border:1px solid rgba(122,26,68,.14);padding:8px 13px;border-radius:100px;cursor:pointer;transition:var(--tr)}
+#amb-store .amb-admin-topic:hover{background:var(--wine);color:#fff}
 #amb-store .amb-admin-rows{display:flex;flex-direction:column;gap:9px;margin-bottom:16px;text-align:left}
 #amb-store .amb-admin-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border:1.5px solid var(--line);border-radius:13px;transition:var(--tr)}
 #amb-store .amb-admin-row:hover{border-color:var(--teal);background:var(--teal-tint)}
@@ -1132,6 +1174,8 @@
 #amb-store .amb-auth-t{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--ink)}
 #amb-store .amb-auth-s{font-size:.82rem;color:var(--mid);line-height:1.55;margin:5px 0 20px}
 #amb-store .amb-google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:11px;background:#fff;border:1.5px solid var(--line);color:#3c4043;font-weight:600;font-size:.9rem;padding:12px;border-radius:12px;transition:var(--tr);box-shadow:var(--sm)}
+#amb-store .amb-gsi-spinner{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--wine);animation:ambGsiSpin .7s linear infinite;margin-top:11px}
+@keyframes ambGsiSpin{to{transform:rotate(360deg)}}
 #amb-store .amb-google-btn:hover{background:#f8f9fa;border-color:#dadce0;box-shadow:var(--md)}
 #amb-store .amb-auth-guest{width:100%;margin-top:10px;color:var(--mid);font-weight:600;font-size:.82rem;padding:11px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr)}
 #amb-store .amb-auth-guest:hover{background:var(--surface2)}
@@ -1294,31 +1338,23 @@
   #amb-store .amb-fp-grid{grid-template-columns:1fr}
 }
 
-/* ── v14 tweaks: compact phone · full floor list · hero carousel slot ── */
-#amb-store .mobile-frame-container{transform:scale(.82);transform-origin:top center;margin-bottom:-40px}
-#amb-store .floor-vertical-list{max-height:none;overflow-y:visible;padding-right:0}
-#amb-store .amb-hero-carousel-slot{margin-top:1.6rem;max-width:560px}
+/* ── carousel slot (lives under the hero headline) ── */
+#amb-store .amb-hero-carousel-slot{margin-top:1.5rem;max-width:600px}
 #amb-store .amb-hero-carousel-slot .explore-carousel-wrap{border-radius:16px;overflow:hidden;box-shadow:var(--md);position:relative}
 #amb-store .amb-hero-carousel-slot .explore-track{display:flex;transition:transform .6s var(--ease)}
-#amb-store .amb-hero-carousel-slot .explore-slide{flex:0 0 100%;height:210px}
+#amb-store .amb-hero-carousel-slot .explore-slide{flex:0 0 100%;height:230px}
 #amb-store .amb-hero-carousel-slot .explore-slide img{width:100%;height:100%;object-fit:cover;display:block}
 #amb-store .amb-modal-x{width:38px;height:38px;background:var(--wine);font-size:.95rem;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 #amb-store .amb-modal-x:hover{background:var(--wine-d);transform:rotate(90deg)}
 @media(max-width:900px){
   #amb-store .amb-hero-carousel-slot{max-width:none}
-  #amb-store .amb-hero-carousel-slot .explore-slide{height:170px}
+  #amb-store .amb-hero-carousel-slot .explore-slide{height:190px}
 }
-
-/* ── v15: hero balance · light-burgundy floors · brand social colors · new sections ── */
-#amb-store .amb-hero-carousel-slot{margin-top:1.4rem;max-width:600px}
-#amb-store .mobile-frame-container{transform:none;margin-bottom:0}
-#amb-store .amb-hero-visual .welcome-right{flex:0 0 216px;min-width:0}
-#amb-store .floor-vertical-item{background:#f2d9e2;color:#7a1a44;padding:9px 13px;font-size:.8rem}
+/* light-burgundy floor rows (final palette for the directory panel) */
+#amb-store .floor-vertical-item{background:#f2d9e2;color:#7a1a44}
 #amb-store .floor-vertical-item .floor-occ{color:#9c6b80}
 #amb-store .floor-vertical-item:hover{background:var(--wine);color:#fff}
-@media(max-width:900px){
-  #amb-store .amb-hero-visual .welcome-right{flex:1}
-}
+#amb-store .floor-vertical-item:hover .floor-occ{color:rgba(255,255,255,.85)}
 /* brand-colored social pills */
 #amb-store .amb-soc-mini{color:#fff !important;border:none}
 #amb-store .sc-facebook{background:#4267B2}
@@ -1361,20 +1397,56 @@
 #amb-store .amb-rent img{width:100%;border-radius:16px;box-shadow:var(--md)}
 #amb-store .amb-rent h3{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:900;color:var(--wine-d);margin-bottom:.7rem}
 #amb-store .amb-rent p{color:var(--mid);font-size:.92rem;line-height:1.7;margin-bottom:1.3rem}
+#amb-store .amb-rent-btns{display:flex;gap:12px;flex-wrap:wrap}
 #amb-store .amb-rent-btn{background:var(--wine);color:#fff;font-weight:700;padding:13px 28px;border-radius:100px;display:inline-flex;align-items:center;gap:9px;transition:var(--tr);border:none;cursor:pointer;font-size:.9rem}
 #amb-store .amb-rent-btn:hover{background:var(--wine-d);transform:translateY(-2px)}
-/* map */
-#amb-store .amb-map-wrap{border-radius:18px;overflow:hidden;box-shadow:var(--md);position:relative}
-#amb-store .amb-map-wrap iframe{width:100%;height:420px;border:0;display:block}
-#amb-store .amb-map-cta{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--wine);color:#fff;font-weight:700;font-size:.82rem;padding:11px 22px;border-radius:100px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.3);transition:var(--tr)}
-#amb-store .amb-map-cta:hover{background:var(--wine-d)}
+#amb-store .amb-rent-btn.ghost{background:#fff;color:var(--wine-d);border:1.5px solid var(--wine-l)}
+#amb-store .amb-rent-btn.ghost:hover{background:var(--wine-tint)}
+/* available-offices gallery (opens in the product modal) */
+#amb-store .amb-off-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:22px 24px 26px}
+#amb-store .amb-off-card{border:1.5px solid var(--line,#eee);border-radius:16px;overflow:hidden;transition:var(--tr);background:#fff}
+#amb-store .amb-off-card:hover{transform:translateY(-4px);box-shadow:var(--md);border-color:var(--wine-l)}
+#amb-store .amb-off-pic{height:130px;background:var(--surface2,#faf6f8) center/cover no-repeat;position:relative}
+#amb-store .amb-off-pic .amb-off-badge{position:absolute;top:8px;left:8px;background:var(--success,#2f9e44);color:#fff;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:100px}
+#amb-store .amb-off-body{padding:12px 14px 14px}
+#amb-store .amb-off-body h5{font-size:.86rem;font-weight:800;color:var(--ink);margin-bottom:2px}
+#amb-store .amb-off-body .amb-off-meta{font-size:.7rem;color:var(--muted);margin-bottom:8px}
+#amb-store .amb-off-body .amb-off-price{font-size:.82rem;font-weight:800;color:var(--wine-d);margin-bottom:10px}
+#amb-store .amb-off-body a{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--wine-tint);color:var(--wine-d);font-weight:700;font-size:.76rem;padding:9px;border-radius:10px;transition:var(--tr)}
+#amb-store .amb-off-body a:hover{background:var(--wine);color:#fff}
+/* Share Your Experience — feedback + mall photo/tagline card */
+#amb-store .amb-share{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(1.5rem,4vw,2.6rem);align-items:stretch}
+#amb-store .amb-share-form{background:#fff;border:1.5px solid var(--line,#eee);border-radius:20px;padding:clamp(1.4rem,3vw,2.2rem);box-shadow:var(--sm)}
+#amb-store .amb-share-form h4{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:800;color:var(--wine-d);margin-bottom:1.1rem}
+#amb-store .amb-sfield{margin-bottom:14px}
+#amb-store .amb-sfield label{display:block;font-size:.74rem;font-weight:700;color:var(--mid);margin-bottom:6px}
+#amb-store .amb-sfield input,#amb-store .amb-sfield textarea{width:100%;padding:11px 14px;border:1.5px solid var(--line,#eee);border-radius:11px;font-size:.86rem;font-family:inherit;color:var(--ink);outline:none;transition:var(--tr);box-sizing:border-box}
+#amb-store .amb-sfield input:focus,#amb-store .amb-sfield textarea:focus{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-tint)}
+#amb-store .amb-sfield textarea{resize:vertical;min-height:100px}
+#amb-store .amb-share-submit{width:100%;background:var(--wine);color:#fff;font-weight:700;padding:13px;border-radius:12px;border:none;cursor:pointer;font-size:.9rem;transition:var(--tr);display:flex;align-items:center;justify-content:center;gap:8px}
+#amb-store .amb-share-submit:hover{background:var(--wine-d);transform:translateY(-1px)}
+#amb-store .amb-share-visual{display:flex;flex-direction:column;gap:14px}
+#amb-store .amb-share-img{border-radius:20px;overflow:hidden;box-shadow:var(--md);flex:1;min-height:200px}
+#amb-store .amb-share-img img{width:100%;height:100%;object-fit:cover;display:block}
+#amb-store .amb-share-taglines{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#amb-store .amb-share-tag{background:#fff;border:1.5px solid var(--line,#eee);border-radius:14px;padding:16px;display:flex;align-items:center;gap:11px;box-shadow:var(--sm)}
+#amb-store .amb-share-tag .sti{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:.95rem}
+#amb-store .amb-share-tag span{font-weight:800;font-size:.84rem;color:var(--ink)}
+@media(max-width:768px){
+  #amb-store .amb-share{grid-template-columns:1fr}
+  #amb-store .amb-share-taglines{grid-template-columns:1fr}
+}
 /* partners marquee */
-#amb-store .amb-partners{overflow:hidden;position:relative;padding:.6rem 0}
-#amb-store .amb-partners-track{display:flex;align-items:center;width:max-content;animation:ambPartnerScroll 26s linear infinite}
+#amb-store .amb-partners{overflow:hidden;position:relative;padding:1rem 0}
+#amb-store .amb-partners::before,#amb-store .amb-partners::after{content:'';position:absolute;top:0;bottom:0;width:70px;z-index:2;pointer-events:none}
+#amb-store .amb-partners::before{left:0;background:linear-gradient(90deg,var(--paper,#fff),transparent)}
+#amb-store .amb-partners::after{right:0;background:linear-gradient(270deg,var(--paper,#fff),transparent)}
+#amb-store .amb-partners-track{display:flex;align-items:center;width:max-content;animation:ambPartnerScroll 30s linear infinite}
 #amb-store .amb-partners:hover .amb-partners-track{animation-play-state:paused}
-#amb-store .amb-partner{height:58px;width:150px;margin:0 1.6rem;display:flex;align-items:center;justify-content:center}
-#amb-store .amb-partner img{max-height:48px;max-width:130px;filter:grayscale(100%);transition:var(--tr);border-radius:8px}
-#amb-store .amb-partner:hover img{filter:none;transform:scale(1.1)}
+#amb-store .amb-partner{height:76px;width:168px;margin:0 .8rem;display:flex;align-items:center;justify-content:center;background:#fff;border:1.5px solid var(--line,#eee);border-radius:16px;box-shadow:var(--sm);transition:var(--tr)}
+#amb-store .amb-partner img{max-height:44px;max-width:118px;transition:var(--tr);border-radius:6px;object-fit:contain}
+#amb-store .amb-partner:hover{transform:translateY(-4px);border-color:var(--pc,var(--gold));box-shadow:0 14px 28px -10px rgba(0,0,0,.18)}
+#amb-store .amb-partner:hover img{transform:scale(1.08)}
 @keyframes ambPartnerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @media(max-width:768px){
   #amb-store .amb-vibe,#amb-store .amb-rent{grid-template-columns:1fr}
@@ -1457,9 +1529,39 @@ html.lenis, html.lenis body{height:auto}
       <button class="amb-icon-btn" id="ambAccountBtn" onclick="ambOpenSignIn()" title="Sign in">
         <i class="fas fa-user"></i>
       </button>
-      <button class="amb-menu-btn" onclick="ambScrollTo('ambShop')"><i class="fas fa-bars"></i></button>
+      <button class="amb-menu-btn" onclick="ambOpenMobileMenu()" aria-label="Menu"><i class="fas fa-bars"></i></button>
     </div>
   </nav>
+
+  <!-- mobile hamburger drawer: login, tenants, shop, services, etc. -->
+  <div class="amb-mdrawer-scrim" id="ambMDrawerScrim" onclick="ambCloseMobileMenu()"></div>
+  <aside class="amb-mdrawer" id="ambMDrawer" role="dialog" aria-modal="true">
+    <div class="amb-mdrawer-head">
+      <img class="amb-mdrawer-logo" id="ambMDrawerLogo" alt="logo">
+      <span id="ambMDrawerName">Ambassador Shopping Center</span>
+      <button class="amb-mdrawer-x" onclick="ambCloseMobileMenu()" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="amb-mdrawer-body">
+      <button class="amb-mdrawer-account" id="ambMDrawerAccount" onclick="ambOpenSignIn()">
+        <span class="amb-mdrawer-account-ic"><i class="fas fa-user"></i></span>
+        <span class="amb-mdrawer-account-txt"><b id="ambMDrawerAcctName">Sign in</b><span id="ambMDrawerAcctSub">Save details for faster checkout</span></span>
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <nav class="amb-mdrawer-links">
+        <a onclick="ambMNav('ambTenants')"><i class="fas fa-store"></i> <span data-i18n="navTenants">Sellers</span></a>
+        <a onclick="ambMNav('ambShop')"><i class="fas fa-bag-shopping"></i> <span data-i18n="navShop">Shop</span></a>
+        <a onclick="ambMNav('ambServices')"><i class="fas fa-concierge-bell"></i> <span data-i18n="navServices">Services</span></a>
+      </nav>
+      <div class="amb-mdrawer-divider"></div>
+      <nav class="amb-mdrawer-links">
+        <a onclick="ambCloseMobileMenu();ambOpenOrders()"><i class="fas fa-receipt"></i> <span data-i18n="myOrders">My Orders</span></a>
+        <a onclick="ambCloseMobileMenu();ambOpenCart()"><i class="fas fa-shopping-bag"></i> <span>Cart</span><span class="amb-badge" id="ambMDrawerCartBadge">0</span></a>
+        <a onclick="ambToast('Tap the ♥ on any product to save it')"><i class="fas fa-heart"></i> <span>Wishlist</span><span class="amb-badge" id="ambMDrawerWishBadge">0</span></a>
+      </nav>
+      <div class="amb-mdrawer-divider"></div>
+      <button class="amb-mdrawer-lang" onclick="ambToggleLang()"><i class="fas fa-language"></i> <span id="ambMDrawerLangTxt">አማርኛ / English</span></button>
+    </div>
+  </aside>
 
   <!-- hero (split: copy + live seller showcase) -->
   <section class="amb-hero">
@@ -1555,17 +1657,6 @@ html.lenis, html.lenis body{height:auto}
     </div>
   </section>
 
-  <!-- buyer safety + marketplace support -->
-  <section class="amb-section alt" id="ambHelp">
-    <div class="amb-container">
-      <div class="amb-head">
-        <div class="amb-eyebrow2"><span data-i18n="needHelp">Need help?</span></div>
-        <h3 class="amb-title" id="ambPolicyTitle">Returns & Buyer Safety</h3>
-      </div>
-      <div class="amb-help-grid" id="ambPolicy"></div>
-    </div>
-  </section>
-
   <!-- mall life: Shop Smart · Save Big · Play Hard · Eat Well -->
   <section class="amb-section alt">
     <div class="amb-container">
@@ -1634,22 +1725,38 @@ html.lenis, html.lenis body{height:auto}
         <div>
           <h3>Office for Rent</h3>
           <p>Discover our spacious and modern office spaces available for rent inside Ambassador Mall. Perfect for businesses of all sizes — prime Arat Kilo location, right in front of the National Palace and Abrehot Library.</p>
-          <a class="amb-rent-btn" href="tel:+251926785987"><i class="fas fa-phone"></i> Call Us to Visit</a>
+          <div class="amb-rent-btns">
+            <a class="amb-rent-btn" href="tel:+251926785987"><i class="fas fa-phone"></i> Call Us to Visit</a>
+            <button type="button" class="amb-rent-btn ghost" onclick="ambOpenAvailableOffices()"><i class="fas fa-door-open"></i> See Offices</button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- find us — map -->
-  <section class="amb-section alt">
+  <!-- share your experience — feedback + mall photo -->
+  <section class="amb-section alt" id="ambShare">
     <div class="amb-container">
       <div class="amb-head">
-        <div class="amb-eyebrow2">Find Us</div>
-        <h3 class="amb-title">Right in the Heart of Addis</h3>
+        <div class="amb-eyebrow2">We'd Love to Hear From You</div>
+        <h3 class="amb-title">Share Your Experience</h3>
       </div>
-      <div class="amb-map-wrap">
-        <iframe src="https://www.google.com/maps?q=Ambassador+Mall,+Addis+Ababa&output=embed" title="Ambassador Mall map" loading="lazy" allowfullscreen></iframe>
-        <a class="amb-map-cta" href="https://www.google.com/maps/dir/?api=1&destination=Ambassador+Mall,Addis+Ababa" target="_blank" rel="noopener"><i class="fas fa-diamond-turn-right"></i> Get Directions</a>
+      <div class="amb-share">
+        <div class="amb-share-form">
+          <h4>Send Us Feedback</h4>
+          <div class="amb-sfield"><label>Your Name (optional)</label><input type="text" id="ambFbName" placeholder="Yonas K."></div>
+          <div class="amb-sfield"><label>Email Address (optional)</label><input type="email" id="ambFbEmail" placeholder="you@example.com"></div>
+          <div class="amb-sfield"><label>Phone Number (optional)</label><input type="tel" id="ambFbPhone" placeholder="+251 900 123 456"></div>
+          <div class="amb-sfield"><label>Your Message</label><textarea id="ambFbMsg" placeholder="Share your feedback..."></textarea></div>
+          <button type="button" class="amb-share-submit" onclick="ambSubmitFeedback()"><i class="fas fa-paper-plane"></i> Send Message</button>
+        </div>
+        <div class="amb-share-visual">
+          <div class="amb-share-img"><img src="https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900" alt="Ambassador Mall location" loading="lazy"></div>
+          <div class="amb-share-taglines">
+            <div class="amb-share-tag"><span class="sti" style="background:linear-gradient(135deg,#e4406e,#a8123f)"><i class="fas fa-bag-shopping"></i></span><span>Come for the shopping,</span></div>
+            <div class="amb-share-tag"><span class="sti" style="background:linear-gradient(135deg,#2f9e44,#1d7a33)"><i class="fas fa-film"></i></span><span>stay for the fun!</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1662,7 +1769,7 @@ html.lenis, html.lenis body{height:auto}
       </div>
     </div>
     <div class="amb-partners">
-      <div class="amb-partners-track"><div class="amb-partner"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzT0W-vXCBHMcCKSLrWpBdBytL3A560uzWrw&s" alt="Etsy" loading="lazy"></div><div class="amb-partner"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div><div class="amb-partner"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzT0W-vXCBHMcCKSLrWpBdBytL3A560uzWrw&s" alt="Etsy" loading="lazy"></div><div class="amb-partner"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div></div>
+      <div class="amb-partners-track"><div class="amb-partner" style="--pc:#7c3aed"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner" style="--pc:#0ea5a3"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner" style="--pc:#1a9c4a"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner" style="--pc:#d4a017"><img src="https://s3-us-west-2.amazonaws.com/cbi-image-service-prd/original/a5215cf5-f60e-4d6a-a6dd-071d5d3c67d7.png?w=3840" alt="Bank of Abyssinia" loading="lazy"></div><div class="amb-partner" style="--pc:#7e1b8f"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner" style="--pc:#0e7c6b"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner" style="--pc:#7a1a44"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10" alt="Ambassador Mall" loading="lazy"></div><div class="amb-partner" style="--pc:#6a11cb"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div><div class="amb-partner" style="--pc:#7c3aed"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner" style="--pc:#0ea5a3"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner" style="--pc:#1a9c4a"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner" style="--pc:#d4a017"><img src="https://s3-us-west-2.amazonaws.com/cbi-image-service-prd/original/a5215cf5-f60e-4d6a-a6dd-071d5d3c67d7.png?w=3840" alt="Bank of Abyssinia" loading="lazy"></div><div class="amb-partner" style="--pc:#7e1b8f"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner" style="--pc:#0e7c6b"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner" style="--pc:#7a1a44"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10" alt="Ambassador Mall" loading="lazy"></div><div class="amb-partner" style="--pc:#6a11cb"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div></div>
     </div>
   </section>
 
@@ -1673,10 +1780,12 @@ html.lenis, html.lenis body{height:auto}
         <div class="amb-flogo"><img id="ambFooterLogo" alt="logo"><div class="amb-flogo-txt" id="ambFooterName">Ambassador Shopping Center</div></div>
         <p id="ambFooterDesc">The online storefront of Ambassador Shopping Center — in front of the National Palace, Addis Ababa. Shop verified tenants online or visit them in person. Built on the Bisinka building directory.</p>
         <div class="amb-footer-soc">
-          <a class="amb-soc-btn" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
-          <a class="amb-soc-btn" title="Instagram"><i class="fab fa-instagram"></i></a>
-          <a class="amb-soc-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a class="amb-soc-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a class="amb-soc-btn f-call" id="ambFooterCall" title="Call us"><i class="fas fa-phone"></i></a>
+          <a class="amb-soc-btn f-telegram" href="https://t.me/ambassadormall" target="_blank" rel="noopener" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+          <a class="amb-soc-btn f-instagram" href="https://www.instagram.com/ambassadorshoppingmall/" target="_blank" rel="noopener" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a class="amb-soc-btn f-facebook" href="https://www.facebook.com/search/top?q=ambassador%20mall" target="_blank" rel="noopener" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a class="amb-soc-btn f-tiktok" href="https://tiktok.com/@ambassadormall" target="_blank" rel="noopener" title="TikTok"><i class="fab fa-tiktok"></i></a>
+          <button type="button" class="amb-soc-btn f-share" onclick="ambShareMall()" title="Share"><i class="fas fa-share-nodes"></i></button>
         </div>
         <button class="amb-foot-verified-btn" onclick="ambShowVerifiedInfo()" style="margin-top:14px;display:inline-flex;align-items:center;gap:7px;background:rgba(212,175,55,.14);border:1px solid rgba(212,175,55,.4);color:var(--gold-d,#b8941f);padding:8px 13px;border-radius:10px;font-size:.76rem;font-weight:700;cursor:pointer">
           <i class="fas fa-shield-halved"></i> What "Verified" means
@@ -1707,6 +1816,8 @@ html.lenis, html.lenis body{height:auto}
         <a onclick="ambOpenTos()" data-i18n="tos">Terms of Service</a>
         <span>·</span>
         <a onclick="ambOpenPrivacy()" data-i18n="privacy">Privacy Policy</a>
+        <span>·</span>
+        <a onclick="ambOpenReturns()" data-i18n="returnsTitle">Returns & Buyer Safety</a>
         <span>·</span>
         <a onclick="ambOpenHow()" data-i18n="howTitle">How Ordering Works</a>
       </div>
@@ -1901,7 +2012,7 @@ var BUILDING = {
       blurb: 'Premium Ethiopian coffee, fresh pastries & roasted beans — served and packed daily on the Ground Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000234567890', holder:'Sahis Cafe', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013201458896700', holder:'Sahis Cafe', icon:'fa-building-columns', color:'#003893' },
+        { key:'boa', name:'Bank of Abyssinia', acct:'013201458896700', holder:'Sahis Cafe', icon:'fa-building-columns', color:'#d4a017' },
         { key:'telebirr', name:'Telebirr', acct:'0911 223 344', holder:'Sahis Cafe', icon:'fa-mobile-screen', color:'#1a9c4a' }
       ],
       products: [
@@ -1926,7 +2037,6 @@ var BUILDING = {
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000345671234', holder:'US Brand Collection', icon:'fa-building-columns', color:'#7e1b8f' },
         { key:'boa', name:'Bank of Abyssinia', acct:'88012345671', holder:'US Brand Collection', icon:'fa-building-columns', color:'#d4a017' },
-        { key:'awash', name:'Awash Bank', acct:'013209988776600', holder:'US Brand Collection', icon:'fa-building-columns', color:'#003893' }
       ],
       products: [
         { id:'us-1', name:'Slim-Fit Stretch Jeans', cat:'Denim', price:2400, old:3000, badge:'🔥 Hot', rating:4.7, reviews:62, img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80', desc:'Premium stretch-denim slim-fit jeans. Imported, true-to-size. Dark indigo wash. Sizes 28–38.', specs:{Fit:'Slim',Material:'98% cotton',Wash:'Dark indigo',Sizes:'28–38'}, gallery:['https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80','https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80','https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80'], stock:{state:'in', label:''}, variant:{label:'Size', options:['S','M','L','XL','XXL']} },
@@ -1949,7 +2059,7 @@ var BUILDING = {
       blurb: 'Hand-woven habesha kemis, netela and traditional menswear with authentic tibeb embroidery — 2nd Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000456789012', holder:'Embut Cultural Clothes', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013204567891200', holder:'Embut Cultural Clothes', icon:'fa-building-columns', color:'#003893' },
+        { key:'boa', name:'Bank of Abyssinia', acct:'013204567891200', holder:'Embut Cultural Clothes', icon:'fa-building-columns', color:'#d4a017' },
         { key:'telebirr', name:'Telebirr', acct:'0933 445 566', holder:'Embut Cultural Clothes', icon:'fa-mobile-screen', color:'#1a9c4a' }
       ],
       products: [
@@ -1997,7 +2107,6 @@ var BUILDING = {
       blurb: 'Quality sofas, dining sets and bedroom furniture — delivery & assembly across Addis. 4th Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000678901234', holder:'Rosewood Furniture', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013206789012300', holder:'Rosewood Furniture', icon:'fa-building-columns', color:'#003893' },
         { key:'boa', name:'Bank of Abyssinia', acct:'88067890123', holder:'Rosewood Furniture', icon:'fa-building-columns', color:'#d4a017' }
       ],
       products: [
@@ -2021,7 +2130,7 @@ var BUILDING = {
       blurb: 'Rugs, lamps, wall art and accent pieces to bring any room to life — 5th Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000789012345', holder:'Meron Home Decor', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013207890123400', holder:'Meron Home Decor', icon:'fa-building-columns', color:'#003893' },
+        { key:'boa', name:'Bank of Abyssinia', acct:'013207890123400', holder:'Meron Home Decor', icon:'fa-building-columns', color:'#d4a017' },
         { key:'telebirr', name:'Telebirr', acct:'0966 778 899', holder:'Meron Home Decor', icon:'fa-mobile-screen', color:'#1a9c4a' }
       ],
       products: [
@@ -2045,7 +2154,6 @@ var BUILDING = {
       blurb: 'Smartphones, audio, smart TVs and accessories — genuine stock with warranty. 6th Floor.',
       banks: [
         { key:'cbe', name:'Commercial Bank of Ethiopia', acct:'1000890123456', holder:'Patch Africa Electronics', icon:'fa-building-columns', color:'#7e1b8f' },
-        { key:'awash', name:'Awash Bank', acct:'013208901234500', holder:'Patch Africa Electronics', icon:'fa-building-columns', color:'#003893' },
         { key:'boa', name:'Bank of Abyssinia', acct:'88089012345', holder:'Patch Africa Electronics', icon:'fa-building-columns', color:'#d4a017' }
       ],
       products: [
@@ -2175,7 +2283,7 @@ var I18N = {
     needHelp:'Need help?', adminContact:'Marketplace Support', callUs:'Call', emailUs:'Email',
     vat:'VAT', subtotal:'Subtotal', grandTotal:'Total', inclVat:'incl. VAT',
     notifyMe:'Notify me', notifyTitle:'Get notified', notifyDesc:'Leave your phone and we\u2019ll let you know when this is back in stock.', notifyDone:'We\u2019ll notify you', yourPhone:'Your phone number',
-    tos:'Terms of Service', privacy:'Privacy Policy', legalUpdated:'Last updated',
+    tos:'Terms of Service', privacy:'Privacy Policy', legalUpdated:'Last updated', returnsTitle:'Returns & Buyer Safety',
     setLocation:'Set delivery location', useGps:'Use my GPS location', orPickArea:'or choose your subcity', deliveryAddisOnly:'Delivery within Addis Ababa only',
     deliveryCalcNext:'Delivery calculated at the next step', locatingYou:'Finding your location\u2026', nearestZone:'Nearest zone',
     orderConfirmed:'Order confirmed', orderConfirmedSub:'Save your reference and send your payment proof to the seller on WhatsApp.', whatNext:'What happens next', nextStep1:'Transfer the exact total to the seller\u2019s account', nextStep2:'Send your payment screenshot to the seller on WhatsApp', nextStep3:'The seller confirms and arranges your delivery',
@@ -2228,7 +2336,7 @@ var I18N = {
     needHelp:'እገዛ ይፈልጋሉ?', adminContact:'የገበያ ድጋፍ', callUs:'ይደውሉ', emailUs:'ኢሜይል',
     vat:'ተ.እ.ታ', subtotal:'ድምር', grandTotal:'ጠቅላላ', inclVat:'ከተ.እ.ታ ጋር',
     notifyMe:'አሳውቀኝ', notifyTitle:'ማሳወቂያ ያግኙ', notifyDesc:'ስልክዎን ይተዉ፤ ሲገኝ እናሳውቅዎታለን።', notifyDone:'እናሳውቅዎታለን', yourPhone:'የስልክ ቁጥርዎ',
-    tos:'የአገልግሎት ውሎች', privacy:'የግላዊነት መመሪያ', legalUpdated:'መጨረሻ የተሻሻለው',
+    tos:'የአገልግሎት ውሎች', privacy:'የግላዊነት መመሪያ', legalUpdated:'መጨረሻ የተሻሻለው', returnsTitle:'ተመላሽና የገዢ ደህንነት',
     setLocation:'የመድረሻ ቦታ ያስገቡ', useGps:'የGPS ቦታዬን ተጠቀም', orPickArea:'ወይም ክፍለ ከተማ ይምረጡ', deliveryAddisOnly:'ማድረስ በአዲስ አበባ ብቻ',
     deliveryCalcNext:'የማድረስ ክፍያ በሚቀጥለው ደረጃ ይሰላል', locatingYou:'ቦታዎን በማግኘት ላይ\u2026', nearestZone:'ቅርብ ዞን',
     orderConfirmed:'ትዕዛዝ ተረጋግጧል', orderConfirmedSub:'ማመሳከሪያዎን ያስቀምጡ እና የክፍያ ማረጋገጫዎን ለሻጩ በዋትስአፕ ይላኩ።', whatNext:'ቀጥሎ ምን ይሆናል', nextStep1:'ትክክለኛውን ጠቅላላ ወደ ሻጩ ሂሳብ ያስተላልፉ', nextStep2:'የክፍያ ማረጋገጫዎን ለሻጩ በዋትስአፕ ይላኩ', nextStep3:'ሻጩ አረጋግጦ ማድረሻ ያዘጋጃል',
@@ -2516,7 +2624,7 @@ function applyI18n(){
 function renderRibbon() {
   var items = [
     ['fa-shield-halved', state.lang==='am'?'እውነተኛ አድራሻ ካላቸው የተረጋገጡ ሻጮች ይግዙ':'Buy from verified sellers with a real address'],
-    ['fa-building-columns', state.lang==='am'?'በቀጥታ ለእያንዳንዱ ሱቅ ይክፈሉ · CBE · Awash · BOA · Telebirr':'Pay each shop directly · CBE · Awash · BOA · Telebirr'],
+    ['fa-building-columns', state.lang==='am'?'በቀጥታ ለእያንዳንዱ ሱቅ ይክፈሉ · CBE · አቢሲኒያ ባንክ · Telebirr':'Pay each shop directly · CBE · Bank of Abyssinia · Telebirr'],
     ['fab fa-whatsapp', state.lang==='am'?'ትዕዛዝዎን በዋትስአፕ ያረጋግጡ':'Confirm your order on WhatsApp'],
     ['fa-file-invoice', state.lang==='am'?'ወዲያውኑ የPDF ደረሰኝ ያውርዱ':'Download a PDF invoice instantly'],
     ['fa-location-dot', BUILDING.name+' · '+(state.lang==='am'?'ከብሔራዊ ቤተ መንግሥት ፊት ለፊት':'in front of the National Palace')],
@@ -2534,11 +2642,11 @@ function renderChrome() {
   if ($('ambFooterName')) $('ambFooterName').textContent = BUILDING.name;
   if ($('ambCopyright')) $('ambCopyright').textContent = BUILDING.copyright;
   var ph=$('ambFooterPhone'); if(ph){ ph.textContent = BUILDING.phone; ph.href='tel:'+BUILDING.phone.replace(/\s/g,''); }
+  var fc=$('ambFooterCall'); if(fc && BUILDING.phone) fc.href='tel:'+BUILDING.phone.replace(/\s/g,'');
   // hero stats — trust framing (no "sample tenant" language)
   renderHeroStats();
   renderAbout();
   renderQuickLinks();
-  renderPolicy();
 }
 
 function renderHeroStats(){
@@ -2587,13 +2695,10 @@ function renderQuickLinks(){
   }).join('');
 }
 
-/* ── BUYER SAFETY / RETURNS + SUPPORT cards ── */
-function renderPolicy(){
-  var el=$('ambPolicy'); if(!el) return;
-  var pol=BUILDING.policy, a=BUILDING.admin, am=state.lang==='am';
-  var title=$('ambPolicyTitle'); if(title) title.textContent = pol.returnsTitle;
-  el.innerHTML =
-    '<div class="amb-help-card">'+
+/* ── BUYER SAFETY / RETURNS — now a footer modal (see ambOpenReturns) ── */
+function policyCardsHTML(){
+  var pol=BUILDING.policy, am=state.lang==='am';
+  return '<div class="amb-help-card">'+
       '<div class="amb-help-ic" style="background:linear-gradient(135deg,var(--teal),var(--teal-d))"><i class="fas fa-shield-halved"></i></div>'+
       '<div class="amb-help-t">'+(am?'ክፍያ ደህንነት':'Payment safety')+'</div>'+
       '<p class="amb-help-d">'+esc(am?pol.safetyAm:pol.safety)+'</p>'+
@@ -2610,6 +2715,17 @@ function renderPolicy(){
       '<button class="amb-help-btn" onclick="ambOpenAdmin()"><i class="fas fa-headset"></i> '+esc(t('adminContact'))+'</button>'+
     '</div>';
 }
+window.ambOpenReturns = function(){
+  var pol=BUILDING.policy;
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:28px 26px 22px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.6rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+esc(pol.returnsTitle||L('returnsTitle'))+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid);margin-bottom:18px">'+(state.lang==='am'?'ስለ ክፍያ ደህንነት፣ ተመላሽ እና ድጋፍ ያንብቡ።':'How payments are protected, how returns work, and how to reach support.')+'</p>'+
+      '<div class="amb-help-grid" style="grid-template-columns:1fr">'+policyCardsHTML()+'</div>'+
+    '</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
 
 /* ════ SEARCH DROPDOWN (grouped typeahead) ════ */
 window.ambSearchInput = function(){
@@ -2994,19 +3110,17 @@ function renderHeroVisual(){
       '</div>';
   }
 
-  var qrUrl = (typeof location!=='undefined') ? (location.origin+location.pathname) : '';
+  var totalUnits = BUILDING.tenants.length;
+  var totalFloors = floorList.length;
   el.innerHTML =
-    '<div class="welcome-left">'+
-      '<div class="mobile-frame-container"><div class="mobile-screen">'+
-        '<div class="mobile-header"><h3>Ambassador Mall</h3><p>Digital Directory</p></div>'+
-        '<div class="mobile-body">'+
-          '<div class="qr-code-container"><a href="'+esc(qrUrl)+'" target="_blank"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(qrUrl)+'&color=7a1a44&bgcolor=ffffff" alt="QR Code"></a></div>'+
-          '<div class="nfc-tag"><i class="fas fa-wifi"></i><span>NFC Tag</span><i class="fas fa-chevron-right" style="font-size:.55rem;opacity:.5"></i><span class="nfc-highlight">'+(state.lang==='am'?'በአጭሩ ይንኩ':'short scan & tap it')+'</span></div>'+
-          '<p class="qr-instruction">'+(state.lang==='am'?'ሙሉውን ማውጫ ለማየት QR ኮዱን ይቃኙ ወይም ስልክዎን ይንኩ።':'Scan the QR code or tap your phone to access the full mall directory.')+'</p>'+
+    '<div class="amb-floor-directory">'+
+      '<div class="amb-fd-head">'+
+        '<div class="amb-fd-head-ic"><i class="fas fa-building-columns"></i></div>'+
+        '<div class="amb-fd-head-txt">'+
+          '<h3>'+(state.lang==='am'?'የፎቅ ማውጫ':'Building Directory')+'</h3>'+
+          '<span>'+totalFloors+' '+(state.lang==='am'?'ፎቆች':'floors')+' · '+totalUnits+' '+(state.lang==='am'?'ቢሮዎች':'offices')+'</span>'+
         '</div>'+
-      '</div></div>'+
-    '</div>'+
-    '<div class="welcome-right">'+
+      '</div>'+
       '<div class="floor-vertical-list">'+floorsHTML+'</div>'+
     '</div>';
   initExploreCarousel();
@@ -4245,22 +4359,31 @@ window.ambReorder = function(tid){ ambCloseAll(); ambFilterToShop(tid); };
 function ambFilterToShop(tid){ if(window.ambFilter){ window.ambFilter(tid); } window.ambScrollTo('ambShop'); }
 
 /* ── ADMIN / MARKETPLACE SUPPORT CONTACT ── */
-window.ambOpenAdmin = function(){
+window.ambOpenAdmin = function(topic){
   var a=BUILDING.admin; if(!a) return;
-  var waMsg = encodeURIComponent('Hello '+a.name+' — I have a question about '+BUILDING.name+' online store.');
+  var am = state.lang==='am';
+  var topics = am
+    ? [['Order issue','ትዕዛዝ ችግር'],['Payment issue','የክፍያ ችግር'],['Seller complaint','ስለ ሻጭ ቅሬታ'],['General question','አጠቃላይ ጥያቄ']]
+    : [['Order issue','Order issue'],['Payment issue','Payment issue'],['Seller complaint','Seller complaint'],['General question','General question']];
+  var msgBase = topic ? topic+' — ' : '';
+  var waMsg = encodeURIComponent('Hello '+a.name+', '+msgBase+'I have a question about '+BUILDING.name+' online store.');
   $('ambProdModalBox').innerHTML =
     '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
     '<div class="amb-admin-modal">'+
-      '<div class="amb-admin-ic"><i class="fas fa-headset"></i></div>'+
-      '<div class="amb-admin-name">'+esc(state.lang==='am'&&a.nameAm?a.nameAm:a.name)+'</div>'+
+      '<div class="amb-admin-ic"><i class="fas fa-headset"></i><span class="amb-admin-dot"></span></div>'+
+      '<div class="amb-admin-name">'+esc(am&&a.nameAm?a.nameAm:a.name)+'</div>'+
       '<div class="amb-admin-role">'+esc(a.role)+'</div>'+
+      '<div class="amb-admin-badge"><i class="fas fa-circle"></i> '+esc(a.responseTime || (am?'ብዙ ጊዜ በደቂቃዎች ውስጥ ምላሽ ይሰጣል':'Usually replies within minutes'))+'</div>'+
+      '<div class="amb-admin-topics">'+
+        topics.map(function(tp){ return '<button class="amb-admin-topic" onclick="ambOpenAdmin(\''+tp[0].replace(/'/g,"\\'")+'\')">'+esc(tp[1])+'</button>'; }).join('')+
+      '</div>'+
       '<div class="amb-admin-rows">'+
         '<a class="amb-admin-row" href="tel:'+esc(a.phone)+'"><span><i class="fas fa-phone"></i> '+L('callUs')+'</span><b>'+esc(a.phone)+'</b></a>'+
         '<a class="amb-admin-row" href="https://wa.me/'+esc(a.whatsapp)+'?text='+waMsg+'" target="_blank" rel="noopener"><span><i class="fab fa-whatsapp"></i> WhatsApp</span><b>'+esc(a.phone)+'</b></a>'+
         '<a class="amb-admin-row" href="https://t.me/'+esc(a.telegram)+'" target="_blank" rel="noopener"><span><i class="fab fa-telegram"></i> Telegram</span><b>@'+esc(a.telegram)+'</b></a>'+
         '<a class="amb-admin-row" href="mailto:'+esc(a.email)+'"><span><i class="fas fa-envelope"></i> '+L('emailUs')+'</span><b>'+esc(a.email)+'</b></a>'+
       '</div>'+
-      '<div class="amb-admin-note"><i class="fas fa-circle-info"></i> '+(state.lang==='am'
+      '<div class="amb-admin-note"><i class="fas fa-circle-info"></i> '+(am
         ? 'ስለ ሻጭ ወይም ምርት ጥያቄ ካለዎት መጀመሪያ በቀጥታ ሻጩን ያግኙ። ቢሲንካ የገበያ ቦታውን ያስተዳድራል።'
         : 'For questions about a specific product, contact the seller directly first. Bisinka operates the marketplace platform.')+'</div>'+
     '</div>';
@@ -4279,6 +4402,79 @@ function legalModal(title, items, updated){
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
 }
+/* ── OFFICE FOR RENT — unoccupied units gallery ── */
+var AVAILABLE_OFFICES = [
+  { unit:'304', floor:'3rd Floor', floorAm:'3ኛ ፎቅ', size:'28 m²', price:'ETB 22,000/mo', img:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80' },
+  { unit:'406', floor:'4th Floor', floorAm:'4ኛ ፎቅ', size:'34 m²', price:'ETB 26,500/mo', img:'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=500&q=80' },
+  { unit:'505', floor:'5th Floor', floorAm:'5ኛ ፎቅ', size:'20 m²', price:'ETB 17,000/mo', img:'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80' },
+  { unit:'606', floor:'6th Floor', floorAm:'6ኛ ፎቅ', size:'42 m²', price:'ETB 31,000/mo', img:'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500&q=80' }
+];
+window.ambOpenAvailableOffices = function(){
+  var am = state.lang==='am';
+  var cards = AVAILABLE_OFFICES.map(function(o){
+    var waMsg = encodeURIComponent((am?'ሰላም፣ ስለ ቢሮ ':'Hello, I am interested in office ')+o.unit+' ('+o.floor+') '+(am?'ፍላጎት አለኝ።':'that is for rent.'));
+    return '<div class="amb-off-card">'+
+      '<div class="amb-off-pic" style="background-image:url(\''+o.img+'\')"><span class="amb-off-badge">'+(am?'ክፍት':'Available')+'</span></div>'+
+      '<div class="amb-off-body">'+
+        '<h5>'+(am?'ቢሮ ':'Office ')+esc(o.unit)+'</h5>'+
+        '<div class="amb-off-meta">'+esc(am?o.floorAm:o.floor)+' · '+esc(o.size)+'</div>'+
+        '<div class="amb-off-price">'+esc(o.price)+'</div>'+
+        '<a href="https://wa.me/251926785987?text='+waMsg+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> '+(am?'ይጠይቁ':'Inquire')+'</a>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:26px 24px 6px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+(am?'ክፍት ቢሮዎች':'Available Offices')+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid)">'+(am?'በአሁኑ ጊዜ ለኪራይ ክፍት የሆኑ ቢሮዎች — ለመጎብኘት ይደውሉልን ወይም መልዕክት ይላኩ።':'Currently unoccupied offices open for rent — call or message us to arrange a visit.')+'</p>'+
+    '</div>'+
+    '<div class="amb-off-grid">'+cards+'</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
+
+/* ── SHARE YOUR EXPERIENCE — feedback form (mailto, no backend needed) ── */
+/* pure builder (kept separate from the DOM/navigation side effect so it can be unit-tested) */
+function buildFeedbackMailto(name, email, phone, msg){
+  var to = (BUILDING.admin && BUILDING.admin.email) || 'support@ambassadormall.et';
+  var subject = 'Feedback from ' + (name || 'a visitor') + ' — ' + (BUILDING.name || 'Ambassador Mall');
+  var bodyLines = [msg, ''];
+  if (name) bodyLines.push('Name: ' + name);
+  if (email) bodyLines.push('Email: ' + email);
+  if (phone) bodyLines.push('Phone: ' + phone);
+  return 'mailto:' + encodeURIComponent(to) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyLines.join('\n'));
+}
+A.buildFeedbackMailto = buildFeedbackMailto;
+window.ambSubmitFeedback = function(){
+  var name = ($('ambFbName')||{}).value || '';
+  var email = ($('ambFbEmail')||{}).value || '';
+  var phone = ($('ambFbPhone')||{}).value || '';
+  var msg = (($('ambFbMsg')||{}).value || '').trim();
+  if (!msg) {
+    ambToast(state.lang==='am' ? 'እባክዎ መልዕክትዎን ይጻፉ' : 'Please write your message', 'err');
+    var ta=$('ambFbMsg'); if(ta) ta.focus();
+    return;
+  }
+  window.location.href = buildFeedbackMailto(name, email, phone, msg);
+  ambToast(state.lang==='am' ? 'ኢሜይል ተከፍቷል — ልከው ይላኩ!' : 'Your email app is opening — hit send!', 'suc');
+};
+window.ambShareMall = function(){
+  var url = (typeof location!=='undefined') ? (location.origin+location.pathname) : '';
+  var text = state.lang==='am'
+    ? 'ለተጠቃሚው ምቹ የሆነውን Ambassador Shopping Mall ድህረገፅ ይመልከቱ'
+    : 'Check out Ambassador Shopping Mall — verified tenants, real addresses:';
+  if (navigator.share) {
+    navigator.share({ title: BUILDING.name || 'Ambassador Shopping Mall', text: text, url: url }).catch(function(){});
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function(){
+      ambToast(state.lang==='am' ? 'ማገናኛ ተቀድቷል!' : 'Link copied!');
+    }).catch(function(){ window.open('sms:?body='+encodeURIComponent(text+' '+url)); });
+    return;
+  }
+  window.open('sms:?body='+encodeURIComponent(text+' '+url));
+};
 window.ambOpenHow = function(){
   var steps = state.lang==='am' ? [
     ['fa-cart-plus','ወደ ጋሪ ያክሉ','ከማንኛውም ሻጭ ምርቶችን ይመልከቱና የሚወዱትን ያክሉ። ጋሪዎ ዕቃዎችን በሻጭ በራስ-ሰር ይመድባል።'],
@@ -4287,7 +4483,7 @@ window.ambOpenHow = function(){
     ['fa-box-open','ይረከቡ','ሻጩ አረጋግጦ መረከቢያ ወይም መላኪያ ያዘጋጃል። ትዕዛዙ በጀርባ ይመዘገባል።']
   ] : [
     ['fa-cart-plus','Add to Cart','Browse products from any seller and add what you like. Your cart groups items by tenant automatically.'],
-    ['fa-building-columns','Pick a Bank','Each tenant lists their own CBE, Awash, BOA & Telebirr accounts. Choose one and transfer the total.'],
+    ['fa-building-columns','Pick a Bank','Each tenant lists their own CBE, Bank of Abyssinia & Telebirr accounts. Choose one and transfer the total.'],
     ['fab fa-whatsapp','Confirm Order','Send your payment proof to the seller on WhatsApp — or just download your invoice if you prefer.'],
     ['fa-box-open','Get It','The seller confirms and arranges pickup or delivery. The order is logged to them in the background.']
   ];
@@ -4312,17 +4508,40 @@ window.ambOpenPrivacy = function(){ var lg=BUILDING.legal; legalModal(lg.privacy
 /* ── ACCOUNT: Google sign-in ──
    REAL when the server has GOOGLE_CLIENT_ID: loads Google Identity Services,
    renders the official button, and the server verifies the ID token + sets a
-   session cookie. Without a client ID, a clearly-labeled demo session is used. */
-var gsiLoaded = false;
-function loadGsi(cb){
-  if (window.google && window.google.accounts) { cb(); return; }
-  if (gsiLoaded) { setTimeout(function(){ loadGsi(cb); }, 200); return; }
+   session cookie. Without a client ID, a clearly-labeled demo session is used.
+   Every failure mode (script blocked, init throws, slow network) surfaces a
+   visible fallback instead of leaving a blank box — see ambGsiFallback(). */
+var gsiLoaded = false, gsiFailed = false;
+function loadGsi(cb, onerr){
+  if (gsiFailed) { onerr && onerr(); return; }
+  if (window.google && window.google.accounts && window.google.accounts.id) { cb(); return; }
+  if (gsiLoaded) { setTimeout(function(){ loadGsi(cb, onerr); }, 200); return; }
   gsiLoaded = true;
   var s=document.createElement('script');
   s.src='https://accounts.google.com/gsi/client'; s.async=true; s.defer=true;
-  s.onload=cb; s.onerror=function(){ gsiLoaded=false; };
+  s.onload=cb;
+  s.onerror=function(){ gsiLoaded=false; gsiFailed=true; onerr && onerr(); };
   document.head.appendChild(s);
+  // belt-and-braces: some ad/privacy blockers neither fire onerror nor onload —
+  // if nothing has happened in 6s, treat it as failed so the UI doesn't hang blank
+  setTimeout(function(){
+    if (!(window.google && window.google.accounts && window.google.accounts.id)) {
+      gsiFailed = true; onerr && onerr();
+    }
+  }, 6000);
 }
+function ambGsiFallback(reason){
+  var host=$('ambGsiHost'); if(!host) return;
+  var am = state.lang==='am';
+  host.innerHTML =
+    '<div style="width:100%;text-align:center">'+
+      '<div style="font-size:.74rem;color:var(--mid);margin-bottom:10px">'+
+        (am ? 'የGoogle ግባ ማገልገል አልተጫነም (ምናልባት ማገጃ ወይም የግንኙነት ችግር)።' : 'Google sign-in couldn\'t load (maybe a blocker or connection issue).')+
+      '</div>'+
+      '<button class="amb-google-btn" onclick="ambOpenSignIn()"><i class="fas fa-rotate-right"></i> '+(am?'እንደገና ይሞክሩ':'Try again')+'</button>'+
+    '</div>';
+}
+A.ambGsiFallback = ambGsiFallback;   // exposed for testability
 window.ambOpenSignIn = function(){
   if(state.user){ return window.ambOpenAccount(); }
   var hasGoogle = !!(A.cfg && A.cfg.googleClientId);
@@ -4333,7 +4552,7 @@ window.ambOpenSignIn = function(){
       '<div class="amb-auth-t">'+L('signInTitle')+'</div>'+
       '<div class="amb-auth-s">'+L('signInSub')+'</div>'+
       (hasGoogle
-        ? '<div id="ambGsiHost" style="display:flex;justify-content:center;min-height:44px"></div>'
+        ? '<div id="ambGsiHost" style="display:flex;justify-content:center;min-height:44px"><div class="amb-gsi-spinner"></div></div>'
         : '<button class="amb-google-btn" onclick="ambDoGoogleSignIn()">'+
           '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>'+
           ' '+L('signInGoogle')+' <span style="font-size:.66rem;opacity:.6">(demo)</span></button>')+
@@ -4355,9 +4574,16 @@ window.ambOpenSignIn = function(){
           }
         });
         var host=$('ambGsiHost');
-        if(host) google.accounts.id.renderButton(host, { theme:'outline', size:'large', shape:'pill', width:280 });
-      }catch(e){}
-    });
+        if(host){
+          host.innerHTML='';
+          google.accounts.id.renderButton(host, { theme:'outline', size:'large', shape:'pill', width:280 });
+          // renderButton fails silently on a bad/misconfigured client_id (e.g. wrong
+          // Authorized JavaScript origin) — if the host is still empty a beat later,
+          // treat it the same as a load failure instead of leaving a blank box
+          setTimeout(function(){ if(host && !host.firstChild){ ambGsiFallback('render-empty'); } }, 1200);
+        }
+      }catch(e){ ambGsiFallback('init-threw'); }
+    }, function(){ ambGsiFallback('load-failed'); });
   }
 };
 function ambSetUser(u){
@@ -4413,12 +4639,50 @@ function renderAccountUI(){
       btn.title=L('signIn');
     }
   }
+  // mirror the same state into the mobile hamburger drawer's account row
+  var dIc=$('ambMDrawerAccount'), dName=$('ambMDrawerAcctName'), dSub=$('ambMDrawerAcctSub');
+  if(dIc){
+    var icEl = dIc.querySelector('.amb-mdrawer-account-ic');
+    if(state.user){
+      var ini2=(state.user.name||'?').split(' ').slice(0,2).map(function(w){return w.charAt(0);}).join('');
+      if(icEl) icEl.innerHTML = esc(ini2);
+      if(dName) dName.textContent = state.user.name || L('myAccount');
+      if(dSub) dSub.textContent = state.user.email || '';
+      dIc.onclick = function(){ ambCloseMobileMenu(); window.ambOpenAccount(); };
+    } else {
+      if(icEl) icEl.innerHTML = '<i class="fas fa-user"></i>';
+      if(dName) dName.textContent = L('signIn');
+      if(dSub) dSub.textContent = state.lang==='am' ? 'ለፈጣን ክፍያ ዝርዝሮችዎን ያስቀምጡ' : 'Save details for faster checkout';
+      dIc.onclick = function(){ ambCloseMobileMenu(); window.ambOpenSignIn(); };
+    }
+  }
   // prefill checkout name/phone if empty
   if(state.user){
     if(!state.coData.name && state.user.name) state.coData.name=state.user.name;
   }
 }
 A.renderAccountUI = renderAccountUI;
+
+/* ── mobile hamburger drawer: login, tenants, shop, services, orders, cart, wishlist, language ── */
+window.ambOpenMobileMenu = function(){
+  var d=$('ambMDrawer'), sc=$('ambMDrawerScrim'); if(!d) return;
+  var logo=$('ambMDrawerLogo'), nm=$('ambMDrawerName');
+  if(logo && BUILDING.logo) logo.src = BUILDING.logo;
+  if(nm && BUILDING.name) nm.textContent = BUILDING.name;
+  var cb=$('ambMDrawerCartBadge'); if(cb) cb.textContent = ($('ambCartBadge')||{}).textContent || '0';
+  var wb=$('ambMDrawerWishBadge'); if(wb) wb.textContent = ($('ambWishBadge')||{}).textContent || '0';
+  var lt=$('ambMDrawerLangTxt'); if(lt) lt.textContent = state.lang==='am' ? 'English / አማርኛ' : 'አማርኛ / English';
+  d.classList.add('open'); if(sc) sc.classList.add('on');
+  document.body.style.overflow='hidden';
+};
+window.ambCloseMobileMenu = function(){
+  var d=$('ambMDrawer'), sc=$('ambMDrawerScrim'); if(!d) return;
+  d.classList.remove('open'); if(sc) sc.classList.remove('on');
+  var modalOpen = document.querySelector('#amb-store .amb-modal.on, #amb-store .amb-cart.open, #amb-store .amb-floor-panel.open, #amb-store .amb-msearch.on');
+  if(!modalOpen) document.body.style.overflow='';
+};
+window.ambMNav = function(id){ ambCloseMobileMenu(); ambScrollTo(id); };
+
 
 /* ── ABANDONED CART RECOVERY ──
    On load, if the cart has items and was last touched over the threshold ago,
@@ -4577,6 +4841,8 @@ function boot(){
   // Escape closes floor panel / mobile search / search dropdown; Enter picks first result
   document.addEventListener('keydown', function(e){
     if(e.key==='Escape'){
+      var md=A.$('ambMDrawer');
+      if(md && md.classList.contains('open')){ window.ambCloseMobileMenu(); return; }
       var ms=A.$('ambMSearch');
       if(ms && ms.classList.contains('on')){ window.ambCloseMSearch(); return; }
       var fp=A.$('ambFloorPanel');
