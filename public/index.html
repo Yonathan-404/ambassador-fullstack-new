@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1569,7 +1570,7 @@ html.lenis, html.lenis body{height:auto}
     <div class="amb-hero-veil"></div>
     <div class="amb-hero-inner amb-hero-split">
       <div class="amb-hero-copy">
-        <h2 data-i18n-html="heroTitle">Shop from sellers with a <em>real address</em>.</h2>
+        <h2 data-i18n-html="heroTitle">Shop the city— <em>from verified sellers with real addresses.</em>.</h2>
         <div class="amb-hero-carousel-slot" id="ambHeroCarouselSlot"></div>
       </div>
       <div class="amb-hero-visual" id="ambHeroVisual"></div>
@@ -1680,13 +1681,13 @@ html.lenis, html.lenis body{height:auto}
         <h3 class="amb-title">Visit Our Mall</h3>
       </div>
       <div class="amb-mosaic">
-        <img class="tall" src="https://i.postimg.cc/NMLJc5qx/main.jpg" alt="Ambassador Mall building" loading="lazy">
+        <img class="tall" src="https://z-p3-scontent.fadd2-1.fna.fbcdn.net/v/t39.30808-6/481330609_612230315001264_6960595267124178072_n.jpg?stp=dst-jpg_tt6&cstp=mx1638x2048&ctp=s640x640&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=l_qyaIF5p3cQ7kNvwFDzg6R&_nc_oc=Adra7ZBnkYLxFZHgv4TieiaD3Js0NxntiBnd6EDqsZ-_sd09l4iCVjX_kXZPL8bt2Fg&_nc_zt=23&_nc_ht=z-p3-scontent.fadd2-1.fna&_nc_gid=cX97BbZXQTky0no1N8f17Q&_nc_ss=7b289&oh=00_AQEDMUdYzdw8XxMN_OXj-zEpjMiKoBdRnkPG26E5XC4Lhg&oe=6A715A20" alt="Ambassador Mall building" loading="lazy">
         <img src="https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg" alt="Inside the mall" loading="lazy">
         <img src="https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?auto=format&fit=crop&w=800&q=80" alt="Cultural wear" loading="lazy">
-        <img class="tall" src="https://i.postimg.cc/L6PzMmcM/shinegold.jpg" alt="Gold Mart" loading="lazy">
+        <img class="tall" src="https://z-p3-scontent.fadd1-1.fna.fbcdn.net/v/t39.30808-6/481270745_613331918224437_4926823184136285259_n.jpg?stp=dst-jpg_tt6&cstp=mx1638x2048&ctp=s640x640&_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=7-DXus-kknUQ7kNvwGaH9xK&_nc_oc=AdoFIVALkbydbGrorYhF7t3UfqsRIssXQ3kjc36w8gyoVEKxI0CLuBBLdyGd8dBMiy8&_nc_zt=23&_nc_ht=z-p3-scontent.fadd1-1.fna&_nc_gid=CwtzBnffjf7jy4sp_rLm8g&_nc_ss=7b289&oh=00_AQGVYsfMYZRRAK-8ilmbDwhV7QXMWKP4eDfZL-QTU4oqPw&oe=6A71732F" alt="Gold Mart" loading="lazy">
         <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80" alt="Bookstore" loading="lazy">
         <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=800&q=80" alt="Electronics" loading="lazy">
-        <img class="wide" src="https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900" alt="Ambassador Mall location" loading="lazy">
+        <img class="wide" src="https://belayabfoods.com/_next/image?url=%2Fimages%2Fburger-king-hero.png&w=3840&q=75" alt="Ambassador Mall location" loading="lazy">
       </div>
     </div>
   </section>
@@ -2254,7 +2255,7 @@ var I18N = {
     resetFilters:'Reset', minPh:'Min', maxPh:'Max', close:'Close',
     floorsGroup:'Floors', unitsFound:'{n} units',
     startShopping:'Start Shopping', meetTenants:'Meet the Sellers',
-    heroTitle:"Shop from sellers with a <em>real address</em>.",
+    heroTitle:"Shop the city— <em>from verified sellers with real addresses.</em>.",
     heroSub:'Every product here is sold by a verified tenant inside Ambassador Shopping Center. Visit them in person or buy online — your choice.',
     statTenants:'Verified Tenants', statOnline:'Online Stores', statFloors:'Floors', statDaily:'Daily Visitors',
     statProducts:'Products', statVerified:'Verified',
@@ -2669,7 +2670,7 @@ function renderAbout(){
   var stat = function(n,l){ return '<div class="amb-about-stat"><div class="amb-about-stat-n">'+esc(n)+'</div><div class="amb-about-stat-l">'+esc(l)+'</div></div>'; };
   el.innerHTML =
     '<div class="amb-about-media">'+
-      '<img src="https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=800&q=80" alt="'+esc(BUILDING.name)+'" onerror="this.style.display=\'none\'">'+
+      '<img src="https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8432-1024x731.jpg" alt="'+esc(BUILDING.name)+'" onerror="this.style.display=\'none\'">'+
       '<div class="amb-about-badge"><i class="fas fa-shield-halved"></i> '+esc(t('aboutTrust'))+'</div>'+
     '</div>'+
     '<div class="amb-about-body">'+
@@ -3090,11 +3091,11 @@ function renderHeroVisual(){
   }).join('');
 
   var carouselImages = [
-    { src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall', sub:'' },
-    { src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall', sub:'' },
-    { src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors', sub:'' },
-    { src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart', sub:'' },
-    { src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location', sub:'' }
+    { src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3PoQYr-aaJ1gOG-gXRxKCo1hrDDXa8cfj5-GVFjwdhL8fN1AS9WxxwKLK&s=10', label:'Ambassador Mall', sub:'' },
+    { src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbIDOMs4qrgU2QmOIKWVPmfQc4hso-ZguVZyuqa_Dfv4ljWZ6M7pzpxYpT&s=10', label:'Inside the Mall', sub:'' },
+    { src:'https://img.magnific.com/free-photo/room-decor-with-potted-plants-sofa_23-2149428021.jpg?semt=ais_hybrid&w=740&q=80', label:'Shopping Floors', sub:'' },
+    { src:'https://static.vecteezy.com/system/resources/thumbnails/059/164/397/small/elegant-jewelry-display-featuring-necklaces-earrings-and-rings-on-a-stylish-table-photo.jpeg', label:'Gold Mart', sub:'' },
+    { src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgUxnHHPKBNeV7GCBQve6mTjmFgDF-ELLMZZsoF-joYw&s=10', label:'Our Location', sub:'' }
   ];
   var carouselHTML = carouselImages.map(function(img,idx){
     return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy"></div>';
