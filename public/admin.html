@@ -446,14 +446,17 @@ function editTenant(tid){
       <input id="et-icon-${tid}" value="${esc(t.icon||'fa-store')}" placeholder="Icon (fa-…)">
       <input id="et-photo-${tid}" value="${esc((t.photo||'').slice(0,80))}" placeholder="Photo URL">
     </div>
-    <div class="muted" style="margin-top:8px"><b>Social links</b> — handle or full URL, blank to remove.</div>
+    <div class="muted" style="margin-top:8px"><b>Social links</b> — handle or full URL; check the box to show it on the storefront.</div>
     <div class="formgrid">
-      <input id="et-sc-instagram-${tid}" value="${esc((t.socials||{}).instagram||'')}" placeholder="Instagram">
-      <input id="et-sc-facebook-${tid}" value="${esc((t.socials||{}).facebook||'')}" placeholder="Facebook">
-      <input id="et-sc-tiktok-${tid}" value="${esc((t.socials||{}).tiktok||'')}" placeholder="TikTok">
-      <input id="et-sc-youtube-${tid}" value="${esc((t.socials||{}).youtube||'')}" placeholder="YouTube">
-      <input id="et-sc-telegram-${tid}" value="${esc((t.socials||{}).telegram||'')}" placeholder="Telegram">
-      <input id="et-sc-x-${tid}" value="${esc((t.socials||{}).x||'')}" placeholder="X (Twitter)">
+      ${['instagram','facebook','tiktok','telegram','youtube','website'].map(k=>{
+        const entry=(t.socials||{})[k];
+        const val = entry ? (typeof entry==='object'?entry.value:entry) : '';
+        const on = entry ? (typeof entry==='object'?entry.on!==false:true) : true;
+        return `<span style="display:flex;align-items:center;gap:6px">
+          <input id="et-sc-${k}-${tid}" value="${esc(val)}" placeholder="${k.charAt(0).toUpperCase()+k.slice(1)}" style="flex:1">
+          <label style="display:flex;align-items:center;gap:3px;font-size:.72rem;color:#666;white-space:nowrap"><input type="checkbox" id="et-scon-${k}-${tid}" ${on?'checked':''}> on</label>
+        </span>`;
+      }).join('')}
     </div>
     <textarea id="et-blurb-${tid}" rows="2" placeholder="Short blurb">${esc(t.blurb||'')}</textarea>
     <div style="margin-top:10px;text-align:right"><button onclick="saveTenantEdit('${tid}')">Save changes</button></div>
@@ -464,17 +467,18 @@ async function saveTenantEdit(tid){
   try{
     const photoV=g('et-photo-'+tid);
     const t=(window.__sellers||[]).find(x=>x.id===tid)||{};
+    const socials={};
+    ['instagram','facebook','tiktok','telegram','youtube','website'].forEach(k=>{
+      const v=g('et-sc-'+k+'-'+tid);
+      if(v) socials[k]={value:v, on:document.getElementById('et-scon-'+k+'-'+tid).checked};
+    });
     await api('/api/admin/tenant',{method:'PUT',body:{tenant:{
       id:tid, name:g('et-name-'+tid), nameAm:g('et-nameAm-'+tid), unit:g('et-unit-'+tid),
       floor:g('et-floor-'+tid), cat:g('et-cat-'+tid), owner:g('et-owner-'+tid),
       whatsapp:g('et-wa-'+tid), mobile:g('et-mobile-'+tid), color:g('et-color-'+tid),
       icon:g('et-icon-'+tid), photo:photoV.startsWith('http')?photoV:(t.photo||''),
       blurb:document.getElementById('et-blurb-'+tid).value.trim(),
-      socials:{
-        instagram:g('et-sc-instagram-'+tid), facebook:g('et-sc-facebook-'+tid),
-        tiktok:g('et-sc-tiktok-'+tid), youtube:g('et-sc-youtube-'+tid),
-        telegram:g('et-sc-telegram-'+tid), x:g('et-sc-x-'+tid)
-      }
+      socials
     }}});
     show('sellers');
   }catch(e){ alert(e.message); }

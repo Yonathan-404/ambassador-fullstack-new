@@ -1,4 +1,4 @@
-# Ambassador Shopping Center — Full-Stack Marketplace Storefront
+# Ambassador Shopping Mall — Full-Stack Marketplace Storefront
 
 A complete e-commerce storefront for a multi-tenant shopping building (Bisinka
 directory template). Buyers browse every shop in the building, build a cart,
@@ -30,6 +30,43 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   active-filter counter and one-tap reset. Collapses behind a "Filters"
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
+
+### v19 — real tenant data migration, e-commerce on hold, seller self-service
+
+**Real data replaces all demo content.** Renamed "Ambassador Shopping Center"
+to **Ambassador Shopping Mall** everywhere. Replaced the entire fictional
+44-tenant dataset with **130 real tenants across 5 real floors** (Ground 27,
+1st 33, 2nd 40, 3rd 12, 4th 18 — sourced directly from Ambassador's own floor
+listings; the 2nd floor's stated count of 41 is 40 in practice because the
+source data explicitly marks its 41st row as a duplicate to omit). Building
+info updated to the real address (Arat Kilo, Addis Ababa), phone
+(+251926785987), and hours (Mon–Sun 9AM–9PM). Marketplace categories rebuilt
+to match the real mix — Jewelry & Accessories is now the dominant category
+(81 of 130 tenants), matching this being a real gold/jewelry market, and
+fictional categories like Gaming were removed since no real tenant fits them.
+
+**No fabricated data about real businesses.** Fake TIN numbers, star
+ratings, review counts, and "usually replies within X" claims are gone
+entirely for real tenants — a genuinely-unrated shop now shows a "New" pill
+instead of a fake ★0, and any profile row with no real data (owner name,
+WhatsApp) simply doesn't render instead of showing a blank/broken field.
+Product catalogs start empty for all 130 tenants rather than inventing
+specific items or prices for real shops that never provided them.
+
+**E-commerce is on hold.** Add to Cart and the cart icon show a stylish,
+animated "Something Amazing Is Coming Soon" modal instead of functioning.
+The backend order endpoint is also locked behind a `CHECKOUT_ENABLED`
+environment flag (default off, returns HTTP 423) — so even a direct API
+call can't place a real order right now. Flip one env var when checkout is
+ready to go live.
+
+**Sellers can now self-manage their shop profile.** A new "Shop Profile" tab
+in the seller portal lets each tenant write their own brief description and
+manage social links (Instagram, Facebook, TikTok, Telegram, YouTube,
+Website) — each with an individual on/off toggle so a link can be hidden
+without retyping it later. New `/api/seller/profile` endpoint; the admin
+tenant-edit form was updated to match the same `{value, on}` schema so admin
+and seller edits stay consistent.
 
 ### v18 — mobile hamburger menu, Google sign-in hardening, commission reports
 

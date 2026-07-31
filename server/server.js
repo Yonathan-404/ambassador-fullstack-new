@@ -19,6 +19,12 @@ const PORT       = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
 const GOOGLE_ID  = process.env.GOOGLE_CLIENT_ID || '';
 const ADMIN_KEY  = process.env.ADMIN_KEY || '';
+/* ── E-COMMERCE HOLD ──
+   Checkout/order placement is paused while Ambassador's real tenant
+   directory is being rolled out — the storefront is directory + seller
+   self-listing only for now. Flip CHECKOUT_ENABLED=true in the environment
+   whenever real online ordering is ready to go live; no code change needed. */
+const CHECKOUT_ENABLED = /^true$/i.test(process.env.CHECKOUT_ENABLED || '');
 const TG_TOKEN   = process.env.TELEGRAM_BOT_TOKEN || '';
 const TG_CHAT    = process.env.TELEGRAM_CHAT_ID || '';
 const DATA_FILE  = process.env.DATA_FILE || path.join(__dirname, 'data.json');
@@ -584,15 +590,23 @@ function normTenant(input, existing){
   set('name', 'New Shop'); set('nameAm', t.name); set('cat', 'General'); set('catKey', 'other');
   set('floor', 'Ground Floor'); set('color', '#8a1450'); set('icon', 'fa-store');
   set('unit', t.id.toUpperCase());
-  set('whatsapp', ''); set('mobile', ''); set('owner', ''); set('manager', ''); set('tin', '');
-  set('photo', ''); set('blurb', ''); set('rating', 4.8); set('reviews', 0);
-  set('reviewLink', ''); set('responseTime', 'usually replies within a few hours');
+  set('whatsapp', ''); set('mobile', ''); set('owner', ''); set('manager', '');
+  set('photo', ''); set('blurb', ''); set('rating', 0); set('reviews', 0);
+  set('reviewLink', ''); set('responseTime', '');
   t.active = input.active !== undefined ? !!input.active : (t.active !== undefined ? t.active : true);
   t.hidden = input.hidden !== undefined ? !!input.hidden : !!t.hidden;
   if (input.socials && typeof input.socials === 'object') {
+    // each platform is stored as { value, on } so a link can be turned off
+    // without losing it; a plain string is still accepted for convenience
+    // and normalized into the same shape.
     const soc = {};
     ['telegram','facebook','instagram','tiktok','whatsapp','youtube','pinterest','linkedin','x','snapchat','website','email'].forEach(k => {
-      if (input.socials[k]) soc[k] = ('' + input.socials[k]).slice(0, 200);
+      const entry = input.socials[k];
+      if (!entry) return;
+      const value = ('' + (typeof entry === 'object' ? entry.value : entry) || '').trim().slice(0, 200);
+      if (!value) return;
+      const on = typeof entry === 'object' ? entry.on !== false : true;
+      soc[k] = { value, on };
     });
     t.socials = soc;
   }
@@ -710,7 +724,8 @@ app.disable('x-powered-by');
 
 app.get('/api/health', (req, res) => res.json({ ok: true, db: db.kind }));
 app.get('/api/config', (req, res) => res.json({
-  googleClientId: GOOGLE_ID || null, demoAuth: !GOOGLE_ID, building: { name: B.name }
+  googleClientId: GOOGLE_ID || null, demoAuth: !GOOGLE_ID, building: { name: B.name },
+  checkoutEnabled: CHECKOUT_ENABLED
 }));
 app.get('/api/catalog', (req, res) => res.json(publicCatalog()));
 
@@ -746,6 +761,12 @@ app.post('/api/auth/logout', (req, res) => { clearCookie(res, 'amb_session'); re
 
 /* ── orders ── */
 app.post('/api/orders', async (req, res) => {
+  if (!CHECKOUT_ENABLED) {
+    return res.status(423).json({
+      error: 'checkout_on_hold',
+      message: 'Online checkout isn\u2019t live yet \u2014 something amazing is coming soon. Please contact the seller directly for now.'
+    });
+  }
   try {
     const order = computeOrder(req.body || {});
     const s = getSession(req);
@@ -880,6 +901,31 @@ app.post('/api/seller/product', requireSeller, async (req, res) => {
     if (gallery !== undefined) { prod.gallery = gallery.length ? gallery : prod.gallery; if (gallery[0]) prod.img = gallery[0]; }
   });
   res.json({ ok: true, product: PRODUCTS[pid] });
+});
+app.post('/api/seller/profile', requireSeller, async (req, res) => {
+  // sellers can update their OWN shop's brief description and social links.
+  // Each social platform is stored as { value, on } so a seller can turn a
+  // link off without losing/retyping it later.
+  const SOCIAL_KEYS = ['instagram','facebook','tiktok','telegram','youtube','website'];
+  const blurb = req.body && typeof req.body.blurb === 'string' ? req.body.blurb.slice(0, 240) : undefined;
+  const socialsIn = (req.body && req.body.socials) || null;
+  let socials;
+  if (socialsIn && typeof socialsIn === 'object') {
+    socials = {};
+    SOCIAL_KEYS.forEach(k => {
+      const entry = socialsIn[k];
+      if (!entry) return;
+      const value = ('' + (entry.value || '')).trim().slice(0, 120);
+      if (!value) return;
+      socials[k] = { value, on: entry.on !== false };
+    });
+  }
+  await mutateCatalog(c => {
+    const t = c.building.tenants.find(x => x.id === req.sellerTid);
+    if (blurb !== undefined) t.blurb = blurb;
+    if (socials !== undefined) t.socials = socials;
+  });
+  res.json({ ok: true, tenant: TENANTS[req.sellerTid] });
 });
 
 /* ════════ ADMIN (x-admin-key) — catalog CRUD + seller codes ════════ */
