@@ -31,6 +31,90 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v21 — marketplace visibility fix, services rebuild, call buttons
+
+**Marketplace products were invisible on most days — fixed.** The root
+cause: only 24/130 tenants had any sample products, and "Some of our
+products" only shows 1 product from tenants that are BOTH in today's
+rotating 10%-per-floor sample AND have products — with such thin coverage,
+that intersection was often empty. Expanded product coverage to 93/130
+tenants (weighted toward Jewelry & Accessories since it's 62% of the real
+mall), then stress-tested across 10 simulated days spanning different
+months — every single day now shows products (6–11 per day), none show
+zero. Category chips (Jewelry, Food & Beverage, Banking, Beauty, etc.) were
+already correctly wired from v20; the real problem was empty results making
+it look like nothing had changed.
+
+**Building Services rebuilt with corrected, justified filtering.** Per
+Ambassador's direction: banks are voided (none have a confirmed real office
+number — only the 4th floor's source data included real "F0-xx" unit
+codes), Beauty & Cosmetics is voided except genuine salon/wellness
+businesses (Ashara Nails, Ashara Wellness — the rest of that category is
+product retail: perfume, cosmetics, oils), and other genuine service-type
+tenants with real office numbers are included (Nasam Print, Buna Sport
+Club). The result is a small, honest pool of 4 real tenants — shown in full
+rather than hidden behind unnecessary rotation. Also gets a dedicated,
+enhanced card design (distinct from the plain seller kiosk card) with a
+category badge, location, and a direct Call button.
+
+**Call buttons added.** Both the tenant profile modal's phone row and every
+Building Services card now have a one-tap Call button (green, `tel:` link)
+next to the number — not just plain text. WhatsApp rows are similarly
+actionable now.
+
+**Ratings hardened.** Backend was already verified working end-to-end in
+v20; this round adds optimistic UI — stars fill and lock instantly on
+click, before the network round-trip completes, with an automatic rollback
+if the save fails (e.g. an expired session mid-click) — so the interaction
+feels immediately responsive rather than waiting on a request.
+
+### v20 — live-data sync fix, real ratings, daily rotation, vacant offices
+
+**The "live site shows old data" bug is fixed at the root.** Traced to the
+database only ever seeding from `catalog.json` once, on the very first boot
+ever — every later catalog update silently had zero effect on the live site.
+Added a `dataVersion` field to `catalog.json` and a boot-time check: if the
+shipped file has a newer version than what's live, the server automatically
+reseeds. Verified by simulating a stale pre-existing database (old fake
+tenant, no version field) and confirming the next boot correctly replaces it
+with the current 130-tenant real dataset. A manual "Reseed live data now"
+button and a green/red sync-status banner were also added to the admin
+dashboard as a backup and for visibility.
+
+**Real, user-submitted tenant ratings.** Signed-in buyers can now rate a
+*shop* (not individual products) from its profile modal — one rating per
+user, updatable any time, aggregated live into that tenant's public
+rating/review count. Backed by a real `tenant_ratings` table (Postgres) with
+an in-memory equivalent for dev, gated behind sign-in, and verified end-to-end
+against a live server (rate → persists → re-rate updates instead of
+duplicating → unauthenticated attempts correctly rejected).
+
+**Daily-rotating storefront.** "Our Sellers" now shows a deterministic ~10%
+sample from *each floor*, refreshing at local midnight (seeded by date, so
+every visitor sees the same picks today and different ones tomorrow) —
+relabeled "Some of our shops you can visit." The marketplace default
+("Some of our products," replacing "Verified Sellers Product") now shows
+exactly one product from each of today's sampled sellers rather than the
+full catalog. Building Services was rebuilt to pull from real Banking &
+Finance and Beauty & Cosmetics tenants (no more invented services list) and
+rotates the same way.
+
+**Vacant offices are real, editable data.** The 6 known-vacant units
+(G-25, G-27, F-26, S-20, S-32, FO-01) replaced the old fictional sample
+listings, sourced from `catalog.json` with an admin editor to add/remove
+entries — no fabricated size or price shown where none was given. Note:
+Ground/1st/2nd floor unit codes elsewhere in the directory were sequentially
+generated (the original tenant list didn't include real unit numbers for
+those floors), so a couple of these vacancy codes don't yet have a confirmed
+cross-reference — flagged rather than guessed.
+
+**Other fixes.** Hero background grid is now clearly visible (was ~3%
+opacity, now bolder and two-tone in the brand colors). Product cards no
+longer show a fabricated 4.8-star default — genuinely unrated products show
+a "New" pill, matching the tenant treatment. Added sample products to 24 of
+130 tenants (clearly demo content, spread across floors/categories) so the
+new rotation and marketplace views have something real to demonstrate.
+
 ### v19 — real tenant data migration, e-commerce on hold, seller self-service
 
 **Real data replaces all demo content.** Renamed "Ambassador Shopping Center"

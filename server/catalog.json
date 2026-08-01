@@ -1,4 +1,5 @@
 {
+  "dataVersion": 4,
   "building": {
     "id": "ambassador",
     "name": "Ambassador Shopping Mall",
@@ -191,7 +192,48 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-soshca-cafe-and-restaurant-1",
+            "name": "Ethiopian Coffee Ceremony Set",
+            "cat": "Food & Beverage",
+            "price": 350,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional buna ceremony for two, served fresh.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          },
+          {
+            "id": "gf-soshca-cafe-and-restaurant-2",
+            "name": "Special Combo Meal",
+            "cat": "Food & Beverage",
+            "price": 420,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Chef's daily special with a soft drink included.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-lalibela-jewelry",
@@ -218,7 +260,48 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-lalibela-jewelry-1",
+            "name": "18K Gold Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 68000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Handcrafted 18K gold necklace, classic Ethiopian design.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          },
+          {
+            "id": "gf-lalibela-jewelry-2",
+            "name": "Gold Wedding Ring Set",
+            "cat": "Jewelry & Accessories",
+            "price": 42000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Matching pair of 18K gold wedding bands.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-dagim-jewelry",
@@ -245,7 +328,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-dagim-jewelry-1",
+            "name": "22K Gold Bangle",
+            "cat": "Jewelry & Accessories",
+            "price": 55000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional 22K gold bangle, sold by weight.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-eyersusalem-jewelry",
@@ -299,7 +403,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-ambassador-garment-1",
+            "name": "Custom Tailored Suit",
+            "cat": "Fashion & Apparel",
+            "price": 8500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Made-to-measure suit, fitting included.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-stare-jewelry",
@@ -326,7 +451,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-stare-jewelry-1",
+            "name": "22K Gold Bangle",
+            "cat": "Jewelry & Accessories",
+            "price": 36500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "22K Gold Bangle from Stare Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-lion-jewelry",
@@ -353,7 +499,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-lion-jewelry-1",
+            "name": "Gold Pendant Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 20500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Pendant Necklace from Lion Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-nigat-jewelry",
@@ -407,7 +574,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-dashn-jewelry-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 56000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Engagement Ring from Dashn Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-sara-jewelry",
@@ -434,7 +622,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-sara-jewelry-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 14000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Sara Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-raki-jewelry",
@@ -461,7 +670,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-raki-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 7700,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Raki Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-getahune-jewelry",
@@ -488,7 +718,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-getahune-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 5200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Getahune Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-arsema-jewelry",
@@ -596,7 +847,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-tana-jewelry-1",
+            "name": "Gold Hoop Earrings",
+            "cat": "Jewelry & Accessories",
+            "price": 14500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Hoop Earrings from Tana Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-rahmete-jewelry",
@@ -623,7 +895,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-rahmete-jewelry-1",
+            "name": "18K Gold Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 49500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "18K Gold Necklace from Rahmete Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-promise-jewelry",
@@ -677,7 +970,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-beta-meresa-1",
+            "name": "Assorted Retail Goods",
+            "cat": "General Retail & Apparel",
+            "price": 300,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Assorted Retail Goods from Beta meresa.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-christal-jewelry",
@@ -704,7 +1018,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-christal-jewelry-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 14000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Christal Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-zemzem-bank",
@@ -758,7 +1093,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-hosahena-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 4700,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Hosahena Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-wow-jewelry",
@@ -812,7 +1168,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-ezana-jewelry-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 45000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Engagement Ring from Ezana Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-zenju-jewelry",
@@ -839,7 +1216,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-zenju-jewelry-1",
+            "name": "Traditional Cross Pendant",
+            "cat": "Jewelry & Accessories",
+            "price": 17000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional Cross Pendant from Zenju Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-wisdom-flower",
@@ -866,7 +1264,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "gf-wisdom-flower-1",
+            "name": "Fresh Flower Bouquet",
+            "cat": "Home & Living",
+            "price": 900,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Seasonal fresh-cut flower arrangement.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "gf-grand-jewelry",
@@ -920,7 +1339,48 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-t-sige-jewelry-1",
+            "name": "Gold Pendant Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 31000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Delicate gold pendant on a fine chain.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          },
+          {
+            "id": "f1-t-sige-jewelry-2",
+            "name": "Gold Hoop Earrings",
+            "cat": "Jewelry & Accessories",
+            "price": 18500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Classic gold hoop earrings, everyday wear.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-getahune-jewelry",
@@ -947,7 +1407,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-getahune-jewelry-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 16500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Getahune Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-bazen-jewelry",
@@ -974,7 +1455,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-bazen-jewelry-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 24000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Solid gold chain bracelet, adjustable clasp.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-gift-jewelry",
@@ -1001,7 +1503,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-gift-jewelry-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 10500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Gift Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-bethelhem-jewelry",
@@ -1028,7 +1551,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-bethelhem-jewelry-1",
+            "name": "Gold Signet Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 21000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Signet Ring from Bethelhem Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-habesha-jewelry",
@@ -1082,7 +1626,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-homefer-furniture-1",
+            "name": "Decorative Home Set",
+            "cat": "Home & Living",
+            "price": 2300,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Decorative Home Set from Homefer Furniture.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-sara-jewelry",
@@ -1109,7 +1674,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-sara-jewelry-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 69000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Engagement Ring from Sara Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-banchi-jewelry",
@@ -1136,7 +1722,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-banchi-jewelry-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 15500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Chain Bracelet from Banchi Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-fasika-jewelry",
@@ -1163,7 +1770,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-fasika-jewelry-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 9500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Fasika Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-debol-jewelry",
@@ -1190,7 +1818,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-debol-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 6200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Debol Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-abreham-jewelry",
@@ -1271,7 +1920,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-tsegaye-jewelry-1",
+            "name": "Gold Pendant Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 22000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Pendant Necklace from Tsegaye Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-ethio-jewelry",
@@ -1298,7 +1968,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-ethio-jewelry-1",
+            "name": "Gold Stud Earrings",
+            "cat": "Jewelry & Accessories",
+            "price": 7000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Stud Earrings from Ethio Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-shukri-jewelry",
@@ -1325,7 +2016,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-shukri-jewelry-1",
+            "name": "Gold Pendant Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 19000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Pendant Necklace from shukri Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-fasil-fasi-jewelry",
@@ -1379,7 +2091,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-kaleb-jewelry-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 62500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Engagement Ring from Kaleb Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-sabian-jewelry",
@@ -1460,7 +2193,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-galaxy-jewelry-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 14500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Chain Bracelet from Galaxy Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-sheger-jewelry",
@@ -1487,7 +2241,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-sheger-jewelry-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 53000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Engagement Ring from Sheger Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-sammer-jewelry",
@@ -1541,7 +2316,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-bela-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 8200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Bela jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-yordanos-jewelry",
@@ -1595,7 +2391,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-mikael-jewelry-1",
+            "name": "22K Gold Bangle",
+            "cat": "Jewelry & Accessories",
+            "price": 40500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "22K Gold Bangle from Mikael Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-jolly-jewelry",
@@ -1622,7 +2439,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-jolly-jewelry-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 17000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Chain Bracelet from Jolly Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-joni-jewelry",
@@ -1649,7 +2487,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-joni-jewelry-1",
+            "name": "Traditional Cross Pendant",
+            "cat": "Jewelry & Accessories",
+            "price": 19000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional Cross Pendant from Joni Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-arsema-jewelry",
@@ -1703,7 +2562,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-sunpher-jewelry-1",
+            "name": "Traditional Cross Pendant",
+            "cat": "Jewelry & Accessories",
+            "price": 20000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional Cross Pendant from Sunpher jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-crowen-jewelry",
@@ -1730,7 +2610,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f1-crowen-jewelry-1",
+            "name": "Gold Signet Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 26500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Signet Ring from Crowen jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f1-kalit-wach",
@@ -1811,7 +2712,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-hagos-jewelery-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 75000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Made-to-order engagement ring — bring your design.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-ask-jewelery",
@@ -1838,7 +2760,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-ask-jewelery-1",
+            "name": "Custom Engagement Ring",
+            "cat": "Jewelry & Accessories",
+            "price": 61000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Engagement Ring from Ask Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-root-jewelery",
@@ -1865,7 +2808,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-root-jewelery-1",
+            "name": "Gold Pendant Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 23000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Pendant Necklace from Root Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-homefer-furniture",
@@ -1892,7 +2856,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-homefer-furniture-1",
+            "name": "Decorative Home Set",
+            "cat": "Home & Living",
+            "price": 1800,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Decorative Home Set from Homefer Furniture.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-loti-jewelery",
@@ -1919,7 +2904,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-loti-jewelery-1",
+            "name": "Traditional Cross Pendant",
+            "cat": "Jewelry & Accessories",
+            "price": 20500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional Cross Pendant from Loti Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-helen-jewelery",
@@ -1946,7 +2952,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-helen-jewelery-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 16500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Fine gold anklet with bell charm detail.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-zemenawi-jewelery",
@@ -2000,7 +3027,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-parsegian-jewelery-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 18000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Chain Bracelet from Parsegian Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-new-jewelery",
@@ -2108,7 +3156,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-shewa-jewelery-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 13000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Shewa Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-mulu-jewelery",
@@ -2135,7 +3204,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-mulu-jewelery-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 26000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Chain Bracelet from Mulu Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-valentino-jewelery",
@@ -2162,7 +3252,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-valentino-jewelery-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 5700,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Valentino Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-geez-jewelery",
@@ -2189,7 +3300,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-geez-jewelery-1",
+            "name": "18K Gold Necklace",
+            "cat": "Jewelry & Accessories",
+            "price": 60500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "18K Gold Necklace from Geez Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-tesfaye-jewelery",
@@ -2270,7 +3402,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-yosan-jewelery-1",
+            "name": "Gold Hoop Earrings",
+            "cat": "Jewelry & Accessories",
+            "price": 17500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Hoop Earrings from Yosan Jewelery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-melat-jewelry",
@@ -2297,7 +3450,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-melat-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 8200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Silver Charm Bracelet from Melat Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-selamawit-jewelry",
@@ -2351,7 +3525,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-teklu-desta-jewelry-1",
+            "name": "22K Gold Bangle",
+            "cat": "Jewelry & Accessories",
+            "price": 43500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "22K Gold Bangle from Teklu Desta Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-perfect-book",
@@ -2378,7 +3573,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-perfect-book-1",
+            "name": "Amharic-English Dictionary",
+            "cat": "Books & Stationery",
+            "price": 480,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Updated bilingual dictionary, paperback.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-naile-jewelry",
@@ -2405,7 +3621,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-naile-jewelry-1",
+            "name": "Silver Charm Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 8200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Sterling silver bracelet with interchangeable charms.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-ramada-jewelry",
@@ -2513,7 +3750,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-bego-jewelry-1",
+            "name": "Gold Wedding Ring Set",
+            "cat": "Jewelry & Accessories",
+            "price": 31000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Wedding Ring Set from Bego Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-essential-oil",
@@ -2540,7 +3798,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-essential-oil-1",
+            "name": "Pure Frankincense Oil (30ml)",
+            "cat": "Beauty & Cosmetics",
+            "price": 650,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Ethiopian frankincense essential oil.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-noli-speciality-dental-clinic",
@@ -2648,7 +3927,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-geez-jewellery-1",
+            "name": "Gold Wedding Ring Set",
+            "cat": "Jewelry & Accessories",
+            "price": 28500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Wedding Ring Set from Geez jewellery.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-mohammed",
@@ -2675,7 +3975,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-mohammed-1",
+            "name": "Assorted Retail Goods",
+            "cat": "General Retail & Apparel",
+            "price": 300,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Assorted Retail Goods from Mohammed.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-mahir",
@@ -2702,7 +4023,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-mahir-1",
+            "name": "Assorted Retail Goods",
+            "cat": "General Retail & Apparel",
+            "price": 800,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Assorted Retail Goods from Mahir.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-werku-afework-jewelry",
@@ -2729,7 +4071,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-werku-afework-jewelry-1",
+            "name": "Gold Chain Bracelet",
+            "cat": "Jewelry & Accessories",
+            "price": 17000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Chain Bracelet from Werku Afework Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-kalebyans-jewelry",
@@ -2783,7 +4146,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-rimna-jewelry-1",
+            "name": "Gold Anklet",
+            "cat": "Jewelry & Accessories",
+            "price": 12500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Gold Anklet from Rimna Jewelry.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-phone-drip",
@@ -2810,7 +4194,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-phone-drip-1",
+            "name": "Phone Screen Protector",
+            "cat": "Electronics & Technology",
+            "price": 350,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Tempered glass, fits most phone models.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-eyosiyas-cosmetics",
@@ -2837,7 +4242,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-eyosiyas-cosmetics-1",
+            "name": "Skincare Gift Set",
+            "cat": "Beauty & Cosmetics",
+            "price": 1450,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Cleanser, toner, and moisturizer trio.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f2-perfume-by-merwan",
@@ -2864,7 +4290,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f2-perfume-by-merwan-1",
+            "name": "Signature Oud Perfume (50ml)",
+            "cat": "Beauty & Cosmetics",
+            "price": 2200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Long-lasting oud-based fragrance.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-sahnis-juice",
@@ -2891,7 +4338,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-sahnis-juice-1",
+            "name": "Fresh Mixed Fruit Juice",
+            "cat": "Food & Beverage",
+            "price": 180,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Seasonal fruit blend, made fresh to order.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-long-tea",
@@ -2918,7 +4386,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-long-tea-1",
+            "name": "Spiced Ethiopian Tea",
+            "cat": "Food & Beverage",
+            "price": 90,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional spiced black tea, served hot.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-faresegna-restaurant",
@@ -2945,7 +4434,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-faresegna-restaurant-1",
+            "name": "Spiced Ethiopian Tea",
+            "cat": "Food & Beverage",
+            "price": 70,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Spiced Ethiopian Tea from Faresegna Restaurant.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-smile-burger",
@@ -2972,7 +4482,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-smile-burger-1",
+            "name": "Classic Beef Burger",
+            "cat": "Food & Beverage",
+            "price": 320,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Beef patty, cheese, and fresh vegetables.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-nona-s-restaurant",
@@ -2999,7 +4530,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-nona-s-restaurant-1",
+            "name": "Classic Beef Burger",
+            "cat": "Food & Beverage",
+            "price": 260,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Classic Beef Burger from Nona's Restaurant.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-chow-mein-noodles-and-salad",
@@ -3026,7 +4578,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-chow-mein-noodles-and-salad-1",
+            "name": "Grilled Chicken Plate",
+            "cat": "Food & Beverage",
+            "price": 300,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Grilled Chicken Plate from Chow Mein Noodles and Salad.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-chito-buna",
@@ -3053,7 +4626,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-chito-buna-1",
+            "name": "Special Combo Meal",
+            "cat": "Food & Beverage",
+            "price": 320,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Special Combo Meal from Chito Buna.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-lego",
@@ -3080,7 +4674,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-lego-1",
+            "name": "Margherita Pizza (Medium)",
+            "cat": "Food & Beverage",
+            "price": 550,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Margherita Pizza (Medium) from LEGO.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-pizza-hut",
@@ -3107,7 +4722,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-pizza-hut-1",
+            "name": "Margherita Pizza (Medium)",
+            "cat": "Food & Beverage",
+            "price": 650,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Classic tomato and mozzarella, wood-fired.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-amifa-chicken",
@@ -3134,7 +4770,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-amifa-chicken-1",
+            "name": "Special Combo Meal",
+            "cat": "Food & Beverage",
+            "price": 320,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Special Combo Meal from Amifa Chicken.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-chocolate-shop",
@@ -3161,7 +4818,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-chocolate-shop-1",
+            "name": "Spiced Ethiopian Tea",
+            "cat": "Food & Beverage",
+            "price": 70,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Spiced Ethiopian Tea from Chocolate Shop.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f3-yihun-leljochachen",
@@ -3188,7 +4866,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f3-yihun-leljochachen-1",
+            "name": "Fresh Mixed Fruit Juice",
+            "cat": "Food & Beverage",
+            "price": 140,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Fresh Mixed Fruit Juice from Yihun Leljochachen.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-yaya-mobile",
@@ -3215,7 +4914,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-yaya-mobile-1",
+            "name": "Wireless Earbuds",
+            "cat": "Electronics & Technology",
+            "price": 2800,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Bluetooth earbuds with charging case.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-glamour",
@@ -3242,7 +4962,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-glamour-1",
+            "name": "Skincare Gift Set",
+            "cat": "Beauty & Cosmetics",
+            "price": 1450,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Skincare Gift Set from Glamour.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-cosmetics",
@@ -3269,7 +5010,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-cosmetics-1",
+            "name": "Signature Perfume (50ml)",
+            "cat": "Beauty & Cosmetics",
+            "price": 2500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Signature Perfume (50ml) from Cosmetics.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-lilac-beauty",
@@ -3296,7 +5058,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-lilac-beauty-1",
+            "name": "Face Cream",
+            "cat": "Beauty & Cosmetics",
+            "price": 1150,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Face Cream from Lilac Beauty.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-fikir-design",
@@ -3323,7 +5106,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-fikir-design-1",
+            "name": "Custom Habesha Dress",
+            "cat": "Fashion & Apparel",
+            "price": 6200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Traditional Ethiopian dress, made to order.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-ashara-wellness",
@@ -3404,7 +5208,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-eyosiyas-cosmetics-1",
+            "name": "Skincare Gift Set",
+            "cat": "Beauty & Cosmetics",
+            "price": 950,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Skincare Gift Set from Eyosiyas Cosmetics.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-tilla-cosmetics",
@@ -3458,7 +5283,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-ayine-tibeb-1",
+            "name": "Custom Tailored Suit",
+            "cat": "Fashion & Apparel",
+            "price": 8000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Tailored Suit from Ayine Tibeb.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-kal-obtics",
@@ -3485,7 +5331,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-kal-obtics-1",
+            "name": "Prescription Eyeglasses",
+            "cat": "Eyewear & Optics",
+            "price": 3500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Frame + lenses, eye test included.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-eros-perfume",
@@ -3512,7 +5379,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-eros-perfume-1",
+            "name": "Skincare Gift Set",
+            "cat": "Beauty & Cosmetics",
+            "price": 1450,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Skincare Gift Set from Eros perfume.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-tschay-perfume",
@@ -3539,7 +5427,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-tschay-perfume-1",
+            "name": "Signature Perfume (50ml)",
+            "cat": "Beauty & Cosmetics",
+            "price": 2000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Signature Perfume (50ml) from Tschay perfume.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-shanti-perfum",
@@ -3566,7 +5475,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-shanti-perfum-1",
+            "name": "Signature Perfume (50ml)",
+            "cat": "Beauty & Cosmetics",
+            "price": 1500,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Signature Perfume (50ml) from Shanti Perfum.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-buna-sport-club",
@@ -3593,7 +5523,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-buna-sport-club-1",
+            "name": "Football Jersey (Club Edition)",
+            "cat": "Sports & Fitness",
+            "price": 1200,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Official club jersey, various sizes.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-shanti-perfum-2",
@@ -3620,7 +5571,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-shanti-perfum-2-1",
+            "name": "Signature Perfume (50ml)",
+            "cat": "Beauty & Cosmetics",
+            "price": 2000,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Signature Perfume (50ml) from Shanti Perfum.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-fillon-fashion",
@@ -3647,7 +5619,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-fillon-fashion-1",
+            "name": "Custom Habesha Dress",
+            "cat": "Fashion & Apparel",
+            "price": 5300,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Custom Habesha Dress from Fillon Fashion.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       },
       {
         "id": "f4-nasam-print",
@@ -3674,7 +5667,28 @@
         "active": true,
         "hidden": false,
         "banks": [],
-        "products": []
+        "products": [
+          {
+            "id": "f4-nasam-print-1",
+            "name": "Custom Business Cards (100pc)",
+            "cat": "Books & Stationery",
+            "price": 550,
+            "old": null,
+            "badge": null,
+            "rating": 0,
+            "reviews": 0,
+            "img": "",
+            "gallery": [],
+            "desc": "Full-color printing, same-day service.",
+            "specs": {},
+            "stock": {
+              "state": "in",
+              "label": ""
+            },
+            "active": true,
+            "hidden": false
+          }
+        ]
       }
     ],
     "services": [],
@@ -3686,7 +5700,33 @@
       "2nd Floor": 40,
       "3rd Floor": 12,
       "4th Floor": 18
-    }
+    },
+    "vacantUnits": [
+      {
+        "unit": "G-25",
+        "floor": "Ground Floor"
+      },
+      {
+        "unit": "G-27",
+        "floor": "Ground Floor"
+      },
+      {
+        "unit": "F-26",
+        "floor": "1st Floor"
+      },
+      {
+        "unit": "S-20",
+        "floor": "2nd Floor"
+      },
+      {
+        "unit": "S-32",
+        "floor": "2nd Floor"
+      },
+      {
+        "unit": "FO-01",
+        "floor": "4th Floor"
+      }
+    ]
   },
   "services": []
 }

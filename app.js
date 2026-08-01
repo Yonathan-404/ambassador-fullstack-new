@@ -332,9 +332,9 @@ var I18N = {
     statProducts:'Products', statVerified:'Verified',
     aboutEyebrow:'The Building', aboutVisit:'Visit in person', aboutTrust:'Trust-first shopping',
     onSale:'On Sale Now', onSaleSub:'Limited-time deals from verified sellers across the building.',
-    tenantsTitle:'Verified Sellers You Can Visit', tenantsSub:'Browse trusted tenants inside Ambassador Shopping Mall — tap any seller to shop their products or visit them in person.', tenantsEyebrow:'Our Sellers',
+    tenantsTitle:'Some of our shops you can visit', tenantsSub:'A fresh sample from every floor, updated daily — tap any seller to shop their products or visit them in person.', tenantsEyebrow:'Our Sellers',
     shopTitle:'Shop All Products', shopSub:'Filter by floor, tenant, or category. Items from different tenants check out separately — straight to each shop.', shopEyebrow:'The Marketplace',
-    servicesTitle:'Services in the Building', servicesSub:'Banking, health, beauty and more — handy services inside Ambassador Mall.', servicesEyebrow:'Building Services',
+    servicesTitle:'Services in the Building', servicesSub:'Banking and beauty & cosmetics tenants inside Ambassador Mall — a fresh sample shown daily.', servicesEyebrow:'Building Services',
     howTitle:'How Ordering Works', howSub:'No middleman holding your money — you pay each tenant directly.', howEyebrow:'Simple & Direct',
     addToCart:'Add', viewQuick:'Quick view', cart:'My Cart', wishlist:'Wishlist',
     checkout:'Checkout', continue:'Continue', back:'Back', cancel:'Cancel', placeOrder:'Place Order',
@@ -385,9 +385,9 @@ var I18N = {
     statProducts:'ምርቶች', statVerified:'የተረጋገጠ',
     aboutEyebrow:'ህንፃው', aboutVisit:'በአካል ይጎብኙ', aboutTrust:'በመተማመን ላይ የተመሰረተ ግዢ',
     onSale:'አሁን በቅናሽ', onSaleSub:'ከህንፃው ውስጥ ካሉ የተረጋገጡ ሻጮች የተወሰነ ጊዜ ቅናሽ።',
-    tenantsTitle:'መጎብኘት የሚችሏቸው የተረጋገጡ ሻጮች', tenantsSub:'በአምባሳደር ሾፒንግ ሞል ውስጥ ያሉ የታመኑ ተከራዮችን ይመልከቱ — ለመግዛት ወይም በአካል ለመጎብኘት ሻጭ ይንኩ።', tenantsEyebrow:'ሻጮቻችን',
+    tenantsTitle:'ከሱቆቻችን ውስጥ አንዳንዶቹ', tenantsSub:'ከእያንዳንዱ ፎቅ በየቀኑ የሚታደስ ናሙና — ለመግዛት ወይም በአካል ለመጎብኘት ሻጭ ይንኩ።', tenantsEyebrow:'ሻጮቻችን',
     shopTitle:'ሁሉንም ምርቶች ይግዙ', shopSub:'በፎቅ፣ በተከራይ ወይም በምድብ ያጣሩ። ከተለያዩ ተከራዮች ያሉ ምርቶች ለየብቻ ይከፈላሉ።', shopEyebrow:'ገበያ',
-    servicesTitle:'በህንፃው ውስጥ ያሉ አገልግሎቶች', servicesSub:'ባንክ፣ ጤና፣ ውበት እና ሌሎች — በአምባሳደር ሞል ውስጥ ጠቃሚ አገልግሎቶች።', servicesEyebrow:'የህንፃ አገልግሎቶች',
+    servicesTitle:'በህንፃው ውስጥ ያሉ አገልግሎቶች', servicesSub:'ባንክ እና ውበትና ኮስሜቲክስ ተከራዮች በአምባሳደር ሞል ውስጥ — በየቀኑ የሚታደስ ናሙና።', servicesEyebrow:'የህንፃ አገልግሎቶች',
     howTitle:'ትዕዛዝ እንዴት እንደሚሰራ', howSub:'ገንዘብዎን የሚይዝ አማላጅ የለም — በቀጥታ ለእያንዳንዱ ተከራይ ይከፍላሉ።', howEyebrow:'ቀላል እና ቀጥተኛ',
     addToCart:'ጨምር', viewQuick:'በፍጥነት ይዩ', cart:'የእኔ ጋሪ', wishlist:'ተወዳጆች',
     checkout:'ክፍያ', continue:'ቀጥል', back:'ተመለስ', cancel:'ሰርዝ', placeOrder:'ትዕዛዝ ስጥ',
@@ -570,7 +570,7 @@ function api(path, opts){
 function applyCatalog(cat){
   if (!cat || !cat.building) return;
   var b = cat.building;
-  ['name','nameAm','tagline','taglineAm','location','phone','logo','stats','geo','tax','areas','delivery','admin','policy','legal','quickLinks','tenants','floorStats','sections'].forEach(function(k){
+  ['name','nameAm','tagline','taglineAm','location','phone','hours','logo','stats','geo','tax','areas','delivery','admin','policy','legal','quickLinks','tenants','floorStats','sections','vacantUnits','commission'].forEach(function(k){
     if (b[k] !== undefined) BUILDING[k] = b[k];
   });
   var svcs = cat.services || b.services;
@@ -589,6 +589,38 @@ function fmt(n) { return 'ETB ' + Number(n).toLocaleString(); }
 function fmtN(n) { return Number(n).toLocaleString(); }
 function P(pid) { for (var i=0;i<ALL_PRODUCTS.length;i++) if (ALL_PRODUCTS[i].id===pid) return ALL_PRODUCTS[i]; return null; }
 function tenant(tid) { for (var i=0;i<BUILDING.tenants.length;i++) if (BUILDING.tenants[i].id===tid) return BUILDING.tenants[i]; return null; }
+
+/* ── daily rotation: a stable-for-today, different-tomorrow 10% sample of
+   tenants from EACH floor. Deterministic (seeded by today's date + floor
+   name) so every visitor sees the same picks today, and the picks change
+   automatically at local midnight — no server cron job needed. */
+function seededRandom(seed){
+  var s = 0; for (var i=0;i<seed.length;i++) s = (s*31 + seed.charCodeAt(i)) >>> 0;
+  return function(){ s = (s*1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+function todayKey(){
+  var d = new Date();
+  return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+}
+var __dailySubsetCache = null, __dailySubsetDay = null;
+function dailyTenantSubset(){
+  var day = todayKey();
+  if (__dailySubsetCache && __dailySubsetDay === day) return __dailySubsetCache;
+  var byFloor = {};
+  BUILDING.tenants.forEach(function(tn){ if(tn.hidden) return; (byFloor[tn.floor] = byFloor[tn.floor]||[]).push(tn); });
+  var picked = [];
+  Object.keys(byFloor).forEach(function(floor){
+    var list = byFloor[floor].slice();
+    var rnd = seededRandom(day+'|'+floor);
+    // Fisher–Yates shuffle, seeded — same order every time today, different tomorrow
+    for (var i=list.length-1; i>0; i--){ var j=Math.floor(rnd()*(i+1)); var tmp=list[i]; list[i]=list[j]; list[j]=tmp; }
+    var n = Math.max(1, Math.round(list.length*0.10));
+    picked = picked.concat(list.slice(0, n));
+  });
+  __dailySubsetCache = picked; __dailySubsetDay = day;
+  return picked;
+}
+
 function stars(r){ var n=Math.round(r), s=''; for(var i=0;i<5;i++) s += i<n?'★':'☆'; return s; }
 /* real tenants with no reviews yet show a "New" pill instead of a fake ★0 — a
    zero rating is not the same as "no ratings", so we never render it as one.
@@ -606,7 +638,7 @@ function onSaleProducts(){ return ALL_PRODUCTS.filter(function(p){ return !p.hid
 /* expose for inline handlers + later parts */
 window.__AMB = {
   BUILDING:BUILDING, SERVICES:SERVICES, I18N:I18N, state:state, ALL_PRODUCTS:ALL_PRODUCTS,
-  load:load, save:save, $:$, esc:esc, fmt:fmt, fmtN:fmtN, P:P, tenant:tenant, stars:stars, ratingLine:ratingLine, t:t,
+  load:load, save:save, $:$, esc:esc, fmt:fmt, fmtN:fmtN, P:P, tenant:tenant, stars:stars, ratingLine:ratingLine, dailyTenantSubset:dailyTenantSubset, seededRandom:seededRandom, todayKey:todayKey, t:t,
   onSaleProducts:onSaleProducts, sendOrderToTenant:sendOrderToTenant, saveOrder:saveOrder,
   saveCart:saveCart, saveNotify:saveNotify, computeTotals:computeTotals, nearestArea:nearestArea, kmBetween:kmBetween,
   api:api, cfg:{ googleClientId:null, demoAuth:true, online:false }, applyCatalog:applyCatalog, rebuildProducts:rebuildProducts
@@ -622,7 +654,7 @@ window.__AMB = {
 'use strict';
 var A = window.__AMB;
 var BUILDING=A.BUILDING, SERVICES=A.SERVICES, state=A.state, ALL_PRODUCTS=A.ALL_PRODUCTS;
-var save=A.save, $=A.$, esc=A.esc, fmt=A.fmt, fmtN=A.fmtN, P=A.P, tenant=A.tenant, stars=A.stars, ratingLine=A.ratingLine, t=A.t;
+var save=A.save, $=A.$, esc=A.esc, fmt=A.fmt, fmtN=A.fmtN, P=A.P, tenant=A.tenant, stars=A.stars, ratingLine=A.ratingLine, dailyTenantSubset=A.dailyTenantSubset, seededRandom=A.seededRandom, todayKey=A.todayKey, t=A.t;
 var onSaleProducts=A.onSaleProducts;
 
 function initials(name){ return name.split(' ').slice(0,2).map(function(w){return w.charAt(0);}).join(''); }
@@ -630,6 +662,7 @@ function nameFor(obj){ return state.lang==='am' && obj.nameAm ? obj.nameAm : obj
 function floorUnit(obj){ return obj && obj.unit ? obj.floor + ' - ' + obj.unit : (obj ? obj.floor : ''); }
 A.floorUnit = floorUnit;
 var FLOOR_AM = { 'Ground Floor':'መሬት ወለል', '1st Floor':'1ኛ ፎቅ', '2nd Floor':'2ኛ ፎቅ', '3rd Floor':'3ኛ ፎቅ', '4th Floor':'4ኛ ፎቅ', '5th Floor':'5ኛ ፎቅ', '6th Floor':'6ኛ ፎቅ' };
+A.FLOOR_AM = FLOOR_AM;
 function floorColor(floorName){ var t=BUILDING.tenants.filter(function(x){ return x.floor===floorName; })[0]; return (t&&t.color)||'var(--wine)'; }
 
 /* ── TOAST ── */
@@ -954,7 +987,8 @@ window.ambSearchPickCat = function(cat){
 
 /* ── TENANT CAROUSEL (enhanced cards w/ profile) ── */
 function renderTenants() {
-  var cards = BUILDING.tenants.filter(function(tn){ return !tn.hidden; }).map(function(tn){ return tenantCardHTML(tn); }).join('');
+  var subset = dailyTenantSubset();
+  var cards = subset.map(function(tn){ return tenantCardHTML(tn); }).join('');
   var strip=$('ambTenantStrip'); if(strip) strip.innerHTML = cards;
   var gal=$('ambTenantGallery'); if(gal) gal.innerHTML = cards;
   var cnt=$('ambHeroSellerCount'); if(cnt) cnt.textContent = BUILDING.tenants.length;
@@ -1036,14 +1070,18 @@ function shade(hex, pct){
 /* ── TENANT PROFILE MODAL ── */
 window.ambOpenTenant = function(tid){
   var tn=tenant(tid); if(!tn) return;
+  var callHref = tn.mobile ? 'tel:'+tn.mobile.replace(/\s/g,'') : '';
+  var waHref = tn.whatsapp ? 'https://wa.me/'+tn.whatsapp : '';
   var rows = [
-    ['fa-user', t('owner'), tn.owner],
-    ['fa-phone', t('mobile'), tn.mobile],
-    ['fa-building', t('floorLbl'), floorUnit(tn)],
-    ['fab fa-whatsapp', 'WhatsApp', tn.whatsapp ? '+'+tn.whatsapp : '']
+    ['fa-user', t('owner'), tn.owner, null],
+    ['fa-phone', t('mobile'), tn.mobile, callHref ? {href:callHref, cls:'call', label:(state.lang==='am'?'ይደውሉ':'Call'), icon:'fa-phone'} : null],
+    ['fa-building', t('floorLbl'), floorUnit(tn), null],
+    ['fab fa-whatsapp', 'WhatsApp', tn.whatsapp ? '+'+tn.whatsapp : '', waHref ? {href:waHref, cls:'wa', label:(state.lang==='am'?'መልእክት':'Chat'), icon:'fab fa-whatsapp', ext:true} : null]
   ].filter(function(r){ return !!r[2]; }).map(function(r){
     var fa=r[0].indexOf('fab')===0?r[0]:'fas '+r[0];
-    return '<div class="amb-tp-row"><span class="amb-tp-row-l"><i class="'+fa+'"></i> '+esc(r[1])+'</span><span class="amb-tp-row-v">'+esc(r[2])+'</span></div>';
+    var action = r[3];
+    var actionHTML = action ? '<a class="amb-tp-row-act '+action.cls+'" href="'+esc(action.href)+'"'+(action.ext?' target="_blank" rel="noopener"':'')+' onclick="event.stopPropagation()"><i class="'+action.icon+'"></i> '+esc(action.label)+'</a>' : '';
+    return '<div class="amb-tp-row"><span class="amb-tp-row-l"><i class="'+fa+'"></i> '+esc(r[1])+'</span><span class="amb-tp-row-v">'+esc(r[2])+'</span>'+actionHTML+'</div>';
   }).join('');
   $('ambProdModalBox').innerHTML =
     '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
@@ -1059,6 +1097,7 @@ window.ambOpenTenant = function(tid){
       '<div class="amb-tp-body">'+
         '<p class="amb-tp-blurb">'+esc(tn.blurb)+'</p>'+
         (tn.responseTime?'<div class="amb-tp-responds"><i class="fas fa-bolt"></i> '+t('responds')+': '+esc(tn.responseTime)+'</div>':'')+
+        '<div class="amb-tp-ratebox" id="ambTpRateBox"><i class="fas fa-spinner fa-spin"></i></div>'+
         '<div class="amb-tp-rows">'+rows+'</div>'+
         (tn.reviewLink?'<a class="amb-tp-reviews" href="'+esc(tn.reviewLink)+'" target="_blank" rel="noopener"><i class="fas fa-star"></i> '+t('seeReviews')+' ('+tn.reviews+') <i class="fas fa-arrow-up-right-from-square" style="font-size:.6rem"></i></a>':'')+
         '<div class="amb-tp-socials">'+socialIcons(tn.socials,tn.color)+'</div>'+
@@ -1071,41 +1110,114 @@ window.ambOpenTenant = function(tid){
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
   ambSetDeepLink('tenant', tn.id);
+  ambLoadRatingWidget(tn.id);
 };
 
-/* ── SERVICES (non-retail info cards — dual photo + details + view) ── */
+/* ── real tenant ratings: signed-in users only, one rating each, updatable ── */
+function starsInputHTML(tid, current, locked){
+  var out = '<div class="amb-rate-stars'+(locked?' locked':'')+'">';
+  for (var i=1; i<=5; i++){
+    out += '<i class="'+(i<=current?'fas':'far')+' fa-star"'+(locked?'':' onclick="ambSubmitRating(\''+tid+'\','+i+')"')+' data-n="'+i+'"></i>';
+  }
+  out += '</div>';
+  return out;
+}
+window.ambLoadRatingWidget = function(tid){
+  var box = $('ambTpRateBox'); if(!box) return;
+  var tn = tenant(tid); if(!tn) return;
+  var summary = '<div class="amb-tp-rate-summary">'+ratingLine(tn)+'</div>';
+  if (!state.user){
+    box.innerHTML = summary +
+      '<button class="amb-tp-rate-cta" onclick="ambCloseAll();ambOpenSignIn()"><i class="fas fa-star"></i> '+
+      (state.lang==='am'?'ይህን ሱቅ ለመገምገም ይግቡ':'Sign in to rate this shop')+'</button>';
+    return;
+  }
+  box.innerHTML = summary + '<div class="amb-tp-rate-label">'+(state.lang==='am'?'ይህን ሱቅ ይገምግሙ':'Rate this shop')+'</div>' + starsInputHTML(tid, 0, false);
+  A.api('/api/tenant/'+tid+'/my-rating').then(function(d){
+    var b = $('ambTpRateBox'); if(!b) return; // modal may have closed already
+    if (d.myRating){
+      var stars = b.querySelector('.amb-rate-stars');
+      if(stars) stars.outerHTML = starsInputHTML(tid, d.myRating, false);
+    }
+  }).catch(function(){});
+};
+window.ambSubmitRating = function(tid, n){
+  var box = $('ambTpRateBox');
+  // optimistic feedback: fill the stars and lock them immediately, so the
+  // click always feels instant even before the network round-trip finishes
+  if (box) {
+    var starsEl = box.querySelector('.amb-rate-stars');
+    if (starsEl) starsEl.outerHTML = starsInputHTML(tid, n, true);
+  }
+  A.api('/api/tenant/'+tid+'/rate', { method:'POST', body:{ rating:n } }).then(function(d){
+    var tn = tenant(tid);
+    if (tn){ tn.rating = d.rating; tn.reviews = d.reviews; }
+    var b = $('ambTpRateBox');
+    if (b){
+      b.innerHTML = '<div class="amb-tp-rate-summary">'+ratingLine(tn)+'</div>'+
+        '<div class="amb-tp-rate-label">'+(state.lang==='am'?'ይህን ሱቅ ይገምግሙ':'Rate this shop')+'</div>'+
+        starsInputHTML(tid, n, false);
+    }
+    window.ambToast(state.lang==='am'?'እናመሰግናለን — ደረጃዎ ተመዝግቧል!':'Thanks — your rating was saved!', 'suc');
+    // keep other visible surfaces (kiosk gallery, floor panel) in sync without a full reload
+    if (typeof renderTenants==='function') renderTenants();
+  }).catch(function(e){
+    // roll the optimistic update back so the UI never shows a rating that
+    // didn't actually save (e.g. session expired mid-click)
+    ambLoadRatingWidget(tid);
+    window.ambToast(e.message || (state.lang==='am'?'አልተሳካም':'Could not save your rating'), 'err');
+  });
+};
+
+/* ── SERVICES (dedicated enhanced card — genuine service-tenants only) ── */
+/* Building Services draws from real tenants that are ACTUAL service
+   providers, not product retailers — and, per Ambassador's own direction,
+   only those with a confirmed REAL office number. Only the 4th floor's
+   listing came with real "F0-xx" unit numbers in the source data; every
+   other floor's unit codes here were sequentially generated (the original
+   list didn't include real numbers for those floors), so services on those
+   floors are excluded until real office numbers are confirmed for them.
+   Banking tenants are voided by this same rule (none are on the 4th floor).
+   Beauty & Cosmetics is voided EXCEPT the two genuine salon/wellness
+   businesses (Ashara Nails, Ashara Wellness) — the rest of that category is
+   product retail (perfume, cosmetics), which belongs in the marketplace,
+   not here. */
+var SERVICE_TENANT_IDS = ['f4-ashara-wellness', 'f4-ashara-nails', 'f4-buna-sport-club', 'f4-nasam-print'];
+function dailyServiceSubset(){
+  var pool = BUILDING.tenants.filter(function(tn){
+    return !tn.hidden && SERVICE_TENANT_IDS.indexOf(tn.id) >= 0;
+  });
+  if (pool.length <= 6) return pool;   // small real pool — show all of it, no need to hide any
+  var rnd = seededRandom(todayKey()+'|services');
+  var list = pool.slice();
+  for (var i=list.length-1;i>0;i--){ var j=Math.floor(rnd()*(i+1)); var tmp=list[i]; list[i]=list[j]; list[j]=tmp; }
+  return list.slice(0, Math.max(4, Math.round(list.length*0.5)));
+}
+function serviceCardHTML(tn){
+  var g = 'linear-gradient(135deg,'+tn.color+','+shade(tn.color,-28)+')';
+  var callHref = tn.mobile ? 'tel:'+tn.mobile.replace(/\s/g,'') : '';
+  return '<div class="amb-svc2" onclick="ambOpenTenant(\''+tn.id+'\')">'+
+    '<div class="amb-svc2-top" style="background:'+g+'">'+
+      '<div class="amb-svc2-ic"><i class="fas '+tn.icon+'"></i></div>'+
+      '<span class="amb-svc2-badge">'+esc(tn.cat)+'</span>'+
+    '</div>'+
+    '<div class="amb-svc2-body">'+
+      '<div class="amb-svc2-name">'+esc(nameFor(tn))+'</div>'+
+      '<div class="amb-svc2-loc"><i class="fas fa-location-dot"></i> '+esc(floorUnit(tn))+'</div>'+
+      (tn.blurb?'<p class="amb-svc2-blurb">'+esc(tn.blurb)+'</p>':'')+
+      '<div class="amb-svc2-foot">'+
+        (callHref?'<a class="amb-svc2-call" href="'+callHref+'" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> '+(state.lang==='am'?'ይደውሉ':'Call')+'</a>':'')+
+        '<button class="amb-svc2-view" onclick="event.stopPropagation();ambOpenTenant(\''+tn.id+'\')"><i class="fas fa-arrow-right"></i> '+(state.lang==='am'?'ዝርዝር':'Details')+'</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
 function renderServices(){
   var el=$('ambServicesGrid'); if(!el) return;
-  el.innerHTML = SERVICES.filter(function(sv){ return !sv.hidden; }).map(function(sv){
-    var g='linear-gradient(135deg,'+sv.color+','+shade(sv.color,-25)+')';
-    return '<div class="amb-svc" onclick="ambOpenService(\''+sv.id+'\')">'+
-      '<div class="amb-svc-photos">'+
-        '<div class="amb-svc-photo main"><img src="'+esc(sv.photo)+'" alt="'+esc(sv.name)+'" loading="lazy" onerror="this.parentNode.style.background=\''+sv.color+'\'"></div>'+
-        '<div class="amb-svc-photo sub"><img src="'+esc(sv.photo2||sv.photo)+'" alt="" loading="lazy" onerror="this.parentNode.style.background=\''+shade(sv.color,-25)+'\'"></div>'+
-        '<span class="amb-svc-typebadge" style="background:'+g+'"><i class="fas '+sv.icon+'"></i> '+esc(sv.type)+'</span>'+
-      '</div>'+
-      '<div class="amb-svc-body">'+
-        '<div class="amb-svc-namerow">'+
-          '<div class="amb-svc-ic" style="background:'+g+'"><i class="fas '+sv.icon+'"></i></div>'+
-          '<div class="amb-svc-titles"><div class="amb-svc-name">'+esc(nameFor(sv))+'</div>'+
-          '<div class="amb-svc-type">'+esc(sv.floor)+' · '+esc(sv.established||'')+'</div></div>'+
-        '</div>'+
-        '<p class="amb-svc-blurb">'+esc(sv.blurb)+'</p>'+
-        '<div class="amb-svc-metarows">'+
-          '<div class="amb-svc-metarow"><i class="fas fa-clock"></i> '+esc(sv.hours)+'</div>'+
-          '<div class="amb-svc-metarow"><i class="fas fa-location-dot"></i> '+esc(sv.address||sv.floor)+'</div>'+
-          '<div class="amb-svc-metarow"><i class="fas fa-user-tie"></i> '+esc(sv.owner)+'</div>'+
-        '</div>'+
-        '<div class="amb-svc-foot">'+
-          '<a class="amb-svc-call" href="tel:'+esc(sv.mobile.replace(/\s/g,''))+'" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> '+(state.lang==='am'?'ይደውሉ':'Call')+'</a>'+
-          '<button class="amb-svc-view" onclick="event.stopPropagation();ambOpenService(\''+sv.id+'\')"><i class="fas fa-eye"></i> '+(state.lang==='am'?'ይመልከቱ':'View')+'</button>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  }).join('');
+  el.innerHTML = dailyServiceSubset().map(serviceCardHTML).join('');
 }
 
-/* ── SERVICE DETAIL MODAL ── */
+/* ── SERVICE DETAIL MODAL (legacy — kept for any future standalone services list) ── */
 window.ambOpenService = function(sid){
   var sv=null; for(var i=0;i<SERVICES.length;i++){ if(SERVICES[i].id===sid){ sv=SERVICES[i]; break; } }
   if(!sv) return;
@@ -1317,7 +1429,7 @@ function renderOnSale(){
    is the dominant category by a wide margin — this is a real gold/jewelry
    market at Arat Kilo, not a generic mall) */
 var CAT_GROUPS = [
-  ['verified',   {en:'Verified Sellers Product', am:'የተረጋገጡ ሻጮች ምርት'}, 'fa-circle-check', null],
+  ['verified',   {en:'Some of our products', am:'ከምርቶቻችን ውስጥ አንዳንዶቹ'}, 'fa-circle-check', null],
   ['jewelry',    {en:'Jewelry & Accessories', am:'ጌጣጌጥ'},          'fa-gem',              ['jewelry']],
   ['beauty',     {en:'Beauty & Cosmetics',    am:'ውበትና ኮስሜቲክስ'},  'fa-spa',              ['beauty']],
   ['food',       {en:'Food & Beverage',       am:'ምግብ እና መጠጥ'},    'fa-utensils',         ['food-beverage']],
@@ -1333,7 +1445,15 @@ function groupKeys(gid){
   return g ? g[3] : null;
 }
 function groupCount(gid){
-  if(gid==='verified') return ALL_PRODUCTS.filter(function(p){ return !p.hidden; }).length;
+  if(gid==='verified'){
+    var dailyIds = {}; dailyTenantSubset().forEach(function(tn){ dailyIds[tn.id]=true; });
+    var seenT = {}, n = 0;
+    ALL_PRODUCTS.forEach(function(p){
+      if(p.hidden || !dailyIds[p.tenantId] || seenT[p.tenantId]) return;
+      seenT[p.tenantId] = true; n++;
+    });
+    return n;
+  }
   var keys = groupKeys(gid) || [];
   return ALL_PRODUCTS.filter(function(p){
     if(p.hidden) return false;
@@ -1364,9 +1484,16 @@ window.ambFilter = function (key) {
 
 /* ── PRODUCT GRID ── */
 function visibleProducts() {
+  var dailyIds = null;
+  if (state.filter==='verified') {
+    dailyIds = {};
+    dailyTenantSubset().forEach(function(tn){ dailyIds[tn.id] = true; });
+  }
   var list = ALL_PRODUCTS.filter(function(p){
     if (p.hidden) return false;   // hidden: off the main grid, but still searchable, orderable & in floor listings
-    if (state.filter!=='all' && state.filter!=='verified') {
+    if (state.filter==='verified') {
+      if (!dailyIds[p.tenantId]) return false;   // only today's rotating 10%-per-floor sample of sellers
+    } else if (state.filter!=='all') {
       if (('' + state.filter).indexOf('floor:') === 0) {
         var fl = state.filter.slice(6);
         var tn0 = tenant(p.tenantId);
@@ -1394,6 +1521,14 @@ function visibleProducts() {
     }
     return true;
   });
+  // "Some of our products" (default view): exactly ONE product per seller in
+  // today's rotating sample — not their whole catalog. Search/other filters
+  // above still narrow within that same daily sample.
+  if (state.filter==='verified') {
+    var seen = {}, deduped = [];
+    list.forEach(function(p){ if(!seen[p.tenantId]){ seen[p.tenantId]=true; deduped.push(p); } });
+    list = deduped;
+  }
   if(state.sort==='priceLow') list.sort(function(a,b){return a.price-b.price;});
   else if(state.sort==='priceHigh') list.sort(function(a,b){return b.price-a.price;});
   else if(state.sort==='rating') list.sort(function(a,b){return b.rating-a.rating;});
@@ -1431,7 +1566,7 @@ function productCard(p, saleMode) {
     '<div class="amb-pcard-body">'+
       '<div class="amb-pcard-cat">'+esc(p.cat)+'</div>'+
       '<div class="amb-pcard-name" onclick="ambOpenProduct(\''+p.id+'\')">'+esc(p.name)+'</div>'+
-      '<div class="amb-pcard-stars"><span class="s">'+stars(p.rating)+'</span> '+p.rating+' <span style="opacity:.6">('+p.reviews+')</span></div>'+
+      '<div class="amb-pcard-stars">'+(p.reviews?('<span class="s">'+stars(p.rating)+'</span> '+p.rating+' <span style="opacity:.6">('+p.reviews+')</span>'):('<span class="amb-new-pill sm"><i class="fas fa-sparkles"></i> '+(state.lang==='am'?'አዲስ':'New')+'</span>'))+'</div>'+
       '<div class="amb-pcard-stock '+st.cls+'"><i class="fas '+(st.sold?'fa-circle-xmark':st.cls==='made'?'fa-screwdriver-wrench':'fa-circle-check')+'"></i> '+esc(st.label)+'</div>'+
       '<div class="amb-pcard-foot">'+
         '<div class="amb-pcard-price">'+fmt(p.price)+(p.old?' <span class="old">'+fmtN(p.old)+'</span>':'')+'<span class="cur">'+(state.lang==='am'?'ብር':'Ethiopian Birr')+'</span></div>'+
@@ -1784,7 +1919,7 @@ var save=A.save, $=A.$, esc=A.esc, fmt=A.fmt, fmtN=A.fmtN, P=A.P, tenant=A.tenan
 var sendOrderToTenant=A.sendOrderToTenant;
 var saveCart=A.saveCart, computeTotals=A.computeTotals, nearestArea=A.nearestArea;
 var L=A.t;                 // i18n label fn (note: local `t` = tenant in this module)
-var nameFor=A.nameFor, socialIcons=A.socialIcons;
+var nameFor=A.nameFor, socialIcons=A.socialIcons, FLOOR_AM=A.FLOOR_AM;
 
 function initials(name){ return name.split(' ').slice(0,2).map(function(w){return w.charAt(0);}).join(''); }
 
@@ -2500,22 +2635,42 @@ function legalModal(title, items, updated){
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
 }
 /* ── OFFICE FOR RENT — unoccupied units gallery ── */
+/* real vacant units — flagged directly by Ambassador management. Ground/1st/2nd
+   floor unit codes in the tenant directory were generated sequentially (the
+   original tenant list didn't include real unit numbers for those floors),
+   so these use the short-form codes as given rather than being force-matched
+   against that sequential numbering — ask Ambassador to confirm/reconcile
+   if a precise cross-reference is needed. No size/price is invented here;
+   only what was actually provided. */
 var AVAILABLE_OFFICES = [
-  { unit:'304', floor:'3rd Floor', floorAm:'3ኛ ፎቅ', size:'28 m²', price:'ETB 22,000/mo', img:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80' },
-  { unit:'406', floor:'4th Floor', floorAm:'4ኛ ፎቅ', size:'34 m²', price:'ETB 26,500/mo', img:'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=500&q=80' },
-  { unit:'505', floor:'5th Floor', floorAm:'5ኛ ፎቅ', size:'20 m²', price:'ETB 17,000/mo', img:'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80' },
-  { unit:'606', floor:'6th Floor', floorAm:'6ኛ ፎቅ', size:'42 m²', price:'ETB 31,000/mo', img:'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=500&q=80' }
+  { unit:'G-25', floor:'Ground Floor', floorAm:'መሬት ወለል' },
+  { unit:'G-27', floor:'Ground Floor', floorAm:'መሬት ወለል' },
+  { unit:'F-26', floor:'1st Floor', floorAm:'1ኛ ፎቅ' },
+  { unit:'S-20', floor:'2nd Floor', floorAm:'2ኛ ፎቅ' },
+  { unit:'S-32', floor:'2nd Floor', floorAm:'2ኛ ፎቅ' },
+  { unit:'FO-01', floor:'4th Floor', floorAm:'4ኛ ፎቅ' }
 ];
+function vacantUnitsList(){
+  var live = BUILDING.vacantUnits;
+  if (live && live.length) {
+    return live.map(function(v){ return { unit:v.unit, floor:v.floor, floorAm:FLOOR_AM[v.floor]||'' }; });
+  }
+  return AVAILABLE_OFFICES; // embedded fallback if BUILDING.vacantUnits hasn't loaded yet
+}
 window.ambOpenAvailableOffices = function(){
   var am = state.lang==='am';
-  var cards = AVAILABLE_OFFICES.map(function(o){
+  var cards = vacantUnitsList().map(function(o){
     var waMsg = encodeURIComponent((am?'ሰላም፣ ስለ ቢሮ ':'Hello, I am interested in office ')+o.unit+' ('+o.floor+') '+(am?'ፍላጎት አለኝ።':'that is for rent.'));
+    var meta = esc(am?o.floorAm:o.floor) + (o.size ? ' · '+esc(o.size) : '');
     return '<div class="amb-off-card">'+
-      '<div class="amb-off-pic" style="background-image:url(\''+o.img+'\')"><span class="amb-off-badge">'+(am?'ክፍት':'Available')+'</span></div>'+
+      '<div class="amb-off-pic'+(o.img?'':' amb-off-pic-empty')+'"'+(o.img?' style="background-image:url(\''+o.img+'\')"':'')+'>'+
+        (o.img?'':'<i class="fas fa-door-open"></i>')+
+        '<span class="amb-off-badge">'+(am?'ክፍት':'Available')+'</span>'+
+      '</div>'+
       '<div class="amb-off-body">'+
         '<h5>'+(am?'ቢሮ ':'Office ')+esc(o.unit)+'</h5>'+
-        '<div class="amb-off-meta">'+esc(am?o.floorAm:o.floor)+' · '+esc(o.size)+'</div>'+
-        '<div class="amb-off-price">'+esc(o.price)+'</div>'+
+        '<div class="amb-off-meta">'+meta+'</div>'+
+        (o.price?'<div class="amb-off-price">'+esc(o.price)+'</div>':'<div class="amb-off-price amb-off-price-tbd">'+(am?'ዋጋ ለማወቅ ያግኙን':'Contact for pricing')+'</div>')+
         '<a href="https://wa.me/251926785987?text='+waMsg+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> '+(am?'ይጠይቁ':'Inquire')+'</a>'+
       '</div>'+
     '</div>';

@@ -107,6 +107,10 @@ if (process.env.DATABASE_URL) {
       id INT PRIMARY KEY, data JSONB, updated_at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS seller_codes (
       tenant_id TEXT PRIMARY KEY, phone TEXT, code_hash TEXT, created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS tenant_ratings (
+      id SERIAL PRIMARY KEY, tenant_id TEXT NOT NULL, user_id INT NOT NULL,
+      rating SMALLINT NOT NULL, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now(),
+      UNIQUE(tenant_id, user_id));
 
     -- ═══ Ambassador BMS (building management) ═══
     CREATE TABLE IF NOT EXISTS leases (
@@ -176,6 +180,24 @@ if (process.env.DATABASE_URL) {
     async findSellerByPhone(phone){ const r = await pool.query(`SELECT * FROM seller_codes WHERE phone=$1`,[phone]); return r.rows[0]||null; },
     async deleteSellerCode(tid){ await pool.query(`DELETE FROM seller_codes WHERE tenant_id=$1`,[tid]); },
 
+    // ── tenant ratings (real, signed-in-user submitted) ──
+    async rateTenant(tenantId, userId, rating){
+      await pool.query(
+        `INSERT INTO tenant_ratings (tenant_id, user_id, rating) VALUES ($1,$2,$3)
+         ON CONFLICT (tenant_id, user_id) DO UPDATE SET rating=$3, updated_at=now()`,
+        [tenantId, userId, rating]);
+      return this.tenantRatingAgg(tenantId);
+    },
+    async myRatingForTenant(tenantId, userId){
+      const r = await pool.query(`SELECT rating FROM tenant_ratings WHERE tenant_id=$1 AND user_id=$2`, [tenantId, userId]);
+      return r.rows[0] ? r.rows[0].rating : null;
+    },
+    async tenantRatingAgg(tenantId){
+      const r = await pool.query(`SELECT COUNT(*)::int AS n, COALESCE(AVG(rating),0)::float AS avg FROM tenant_ratings WHERE tenant_id=$1`, [tenantId]);
+      const row = r.rows[0] || { n: 0, avg: 0 };
+      return { reviews: row.n, rating: row.n ? Math.round(row.avg * 10) / 10 : 0 };
+    },
+
     // ── BMS ──
     async allLeases(){ return (await pool.query(`SELECT * FROM leases ORDER BY unit`)).rows; },
     async leaseByUnit(unit){ const r = await pool.query(`SELECT * FROM leases WHERE unit=$1`,[unit]); return r.rows[0]||null; },
@@ -236,7 +258,7 @@ if (process.env.DATABASE_URL) {
   };
 } else {
   console.warn('[warn] DATABASE_URL not set — using JSON file store at ' + DATA_FILE + ' (dev only).');
-  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, catalog: null, seq: 1,
+  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], catalog: null, seq: 1,
     leases: [], invoices: [], finance: [], tickets: [], announcements: [], bmsConfig: null };
   try { mem = Object.assign(mem, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) {}
   const flush = () => { try { fs.writeFileSync(DATA_FILE, JSON.stringify(mem)); } catch (e) {} };
@@ -288,6 +310,28 @@ if (process.env.DATABASE_URL) {
     async setSellerCode(tid, phone, hash){ mem.sellerCodes[tid] = { tenant_id: tid, phone, code_hash: hash }; flush(); },
     async findSellerByPhone(phone){ return Object.values(mem.sellerCodes).find(s => s.phone === phone) || null; },
     async deleteSellerCode(tid){ delete mem.sellerCodes[tid]; flush(); },
+
+    // ── tenant ratings (real, signed-in-user submitted) ──
+    async rateTenant(tenantId, userId, rating){
+      mem.ratings = mem.ratings || [];
+      const existing = mem.ratings.find(r => r.tenant_id === tenantId && r.user_id === userId);
+      if (existing) existing.rating = rating;
+      else mem.ratings.push({ tenant_id: tenantId, user_id: userId, rating });
+      flush();
+      return this.tenantRatingAgg(tenantId);
+    },
+    async myRatingForTenant(tenantId, userId){
+      mem.ratings = mem.ratings || [];
+      const r = mem.ratings.find(r => r.tenant_id === tenantId && r.user_id === userId);
+      return r ? r.rating : null;
+    },
+    async tenantRatingAgg(tenantId){
+      mem.ratings = mem.ratings || [];
+      const rows = mem.ratings.filter(r => r.tenant_id === tenantId);
+      const n = rows.length;
+      const avg = n ? rows.reduce((s, r) => s + r.rating, 0) / n : 0;
+      return { reviews: n, rating: n ? Math.round(avg * 10) / 10 : 0 };
+    },
 
     // ── BMS ──
     async allLeases(){ return mem.leases; },
@@ -629,7 +673,7 @@ function normProduct(t, input, existing){
   const set = (k, v) => { if (input[k] !== undefined) p[k] = input[k]; else if (p[k] === undefined) p[k] = v; };
   set('name', 'New Product'); set('cat', 'General');
   p.price = Math.max(1, parseInt(input.price !== undefined ? input.price : p.price, 10) || 1);
-  set('old', null); set('badge', null); set('rating', 4.8); set('reviews', 0);
+  set('old', null); set('badge', null); set('rating', 0); set('reviews', 0);
   set('img', ''); set('desc', ''); if (!p.specs) p.specs = {};
   if (!Array.isArray(p.gallery) || !p.gallery.length) p.gallery = [p.img];
   if (input.stock !== undefined) p.stock = input.stock;
@@ -758,6 +802,34 @@ app.get('/api/auth/me', (req, res) => {
   res.json({ user: s ? { name: s.name, email: s.email, picture: s.picture || '', sub: s.sub } : null });
 });
 app.post('/api/auth/logout', (req, res) => { clearCookie(res, 'amb_session'); res.json({ ok: true }); });
+function requireBuyer(req, res, next){
+  const s = getSession(req);
+  if (!s || !s.uid) return res.status(401).json({ error: 'Please sign in to do that.' });
+  req.buyerUid = s.uid; next();
+}
+
+/* ── tenant ratings — real, one per signed-in user, updatable ──
+   Buyers rate the SHOP, not individual products (this mall's trust signal
+   is "is this seller reliable", not per-item reviews). Rating a tenant
+   they've never bought from is fine — it mirrors browsing/visiting trust,
+   same as Google Maps reviews don't require a receipt. */
+app.post('/api/tenant/:id/rate', requireBuyer, async (req, res) => {
+  const tid = req.params.id;
+  const t = TENANTS[tid];
+  if (!t) return res.status(404).json({ error: 'Shop not found' });
+  const rating = parseInt(req.body && req.body.rating, 10);
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) return res.status(400).json({ error: 'Rating must be 1–5' });
+  const agg = await db.rateTenant(tid, req.buyerUid, rating);
+  await mutateCatalog(c => {
+    const ct = c.building.tenants.find(x => x.id === tid);
+    if (ct) { ct.rating = agg.rating; ct.reviews = agg.reviews; }
+  });
+  res.json({ ok: true, rating: agg.rating, reviews: agg.reviews, myRating: rating });
+});
+app.get('/api/tenant/:id/my-rating', requireBuyer, async (req, res) => {
+  const mine = await db.myRatingForTenant(req.params.id, req.buyerUid);
+  res.json({ myRating: mine });
+});
 
 /* ── orders ── */
 app.post('/api/orders', async (req, res) => {
@@ -937,6 +1009,27 @@ function requireAdmin(req, res, next){
 app.get('/api/admin/orders', requireAdmin, async (req, res) => res.json({ orders: await db.allOrders() }));
 app.get('/api/admin/notify', requireAdmin, async (req, res) => res.json({ requests: await db.allNotify() }));
 app.get('/api/admin/sms',    requireAdmin, (req, res) => res.json({ messages: smsLog }));
+/* manual escape hatch: force-reload catalog.json into the live database right
+   now, regardless of dataVersion. Requires explicit confirm:true so this
+   can never fire by accident — it overwrites ALL live tenant/product edits
+   with whatever is currently bundled in catalog.json. */
+app.post('/api/admin/reseed', requireAdmin, async (req, res) => {
+  if (req.body?.confirm !== true) return res.status(400).json({ error: 'Pass {"confirm":true} to overwrite live data with catalog.json.' });
+  catalog = SEED;
+  await db.saveCatalog(catalog);
+  indexCatalog();
+  res.json({ ok: true, dataVersion: catalog.dataVersion || 0, tenants: (catalog.building.tenants || []).length });
+});
+app.get('/api/admin/data-status', requireAdmin, async (req, res) => {
+  const live = await db.getCatalog();
+  res.json({
+    fileVersion: SEED.dataVersion || 0,
+    liveVersion: live ? (live.dataVersion || 0) : null,
+    liveTenantCount: live ? (live.building.tenants || []).length : 0,
+    fileTenantCount: (SEED.building.tenants || []).length,
+    inSync: !!live && (live.dataVersion || 0) >= (SEED.dataVersion || 0)
+  });
+});
 app.get('/api/admin/ussd-log', requireAdmin, (req, res) => res.json({ messages: ussdLog }));
 
 /* ════════════════════════════════════════════════════════════════
@@ -1275,6 +1368,22 @@ app.put('/api/admin/sections', requireAdmin, async (req, res) => {
   res.json({ sections: clean });
 });
 
+/* ── unoccupied offices (Ground/1st/2nd/4th floor slots with no tenant) ──
+   Single source of truth for both the storefront's "See Offices" gallery
+   and the admin dashboard — no more hardcoded/sample vacancy data. */
+app.get('/api/admin/vacant-units', requireAdmin, (req, res) => {
+  res.json({ vacantUnits: B.vacantUnits || [] });
+});
+app.put('/api/admin/vacant-units', requireAdmin, async (req, res) => {
+  const input = Array.isArray(req.body && req.body.vacantUnits) ? req.body.vacantUnits : [];
+  const clean = input
+    .map(v => ({ unit: ('' + (v.unit || '')).trim().slice(0, 20), floor: ('' + (v.floor || '')).trim().slice(0, 40) }))
+    .filter(v => v.unit && v.floor)
+    .slice(0, 100);
+  await mutateCatalog(c => { c.building.vacantUnits = clean; });
+  res.json({ vacantUnits: clean });
+});
+
 /* ════════ COMMISSION & SALES REPORTS ════════
    Bisinka charges a platform commission (default 2%) on the GOODS value of
    completed sales (order subtotal) — delivery fees and VAT pass through
@@ -1409,13 +1518,23 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
-/* ── boot: load catalog from DB (seed on first run), then listen ── */
+/* ── boot: load catalog from DB, auto-reseed when catalog.json has a newer
+   dataVersion than what's live. This is what actually fixes "I updated
+   catalog.json but the live site still shows old data" — previously the DB
+   was seeded ONCE on first boot ever and catalog.json was never consulted
+   again, so every later data update silently had zero effect in production.
+   Now: bump dataVersion in catalog.json whenever you ship new real data, and
+   the next deploy/restart picks it up automatically — no manual step, no
+   wiping admin edits made after the last version bump. ── */
 db.ready()
   .then(() => db.getCatalog())
   .then(doc => {
-    if (doc) { catalog = doc; return; }
+    const fileVer = SEED.dataVersion || 0;
+    const dbVer = doc ? (doc.dataVersion || 0) : -1;
+    if (doc && dbVer >= fileVer) { catalog = doc; return; }
     catalog = SEED;
-    return db.saveCatalog(catalog).then(() => console.log('[catalog] seeded database from catalog.json'));
+    const reason = doc ? `live data was v${dbVer}, catalog.json is v${fileVer}` : 'no live data yet';
+    return db.saveCatalog(catalog).then(() => console.log(`[catalog] (re)seeded from catalog.json — ${reason}`));
   })
   .then(() => {
     indexCatalog();

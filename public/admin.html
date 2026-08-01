@@ -79,7 +79,7 @@
 <div class="wrap">
   <h1>Ambassador Store <span>ADMIN</span> <a href="/bms.html" style="font-size:.7rem;color:#8a1450;margin-left:10px">→ Building Management (BMS)</a></h1>
   <div class="bar">
-    <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
+    <input class="key" id="key" type="password" placeholder="ADMIN_KEY" onchange="checkDataSync()">
     <button onclick="show('orders')">Orders</button>
     <button class="alt" style="background:#0e7c6b" onclick="show('reports')">📊 Reports</button>
     <button class="alt" onclick="show('sellers')">Sellers</button>
@@ -90,6 +90,7 @@
     <button class="gray" onclick="show('sms')">SMS log</button>
   </div>
   <div id="cfgStatus" class="muted" style="margin-bottom:8px"></div>
+  <div id="dataSyncStatus" class="muted" style="margin-bottom:8px"></div>
   <div id="out" class="empty">Enter your ADMIN_KEY and choose a view.</div>
 </div>
 <script>
@@ -198,6 +199,7 @@ async function show(view){
     }
     else if(view==='storefront'){
       const d=await api('/api/admin/sections'); const sec=d.sections||{}; out.className='';
+      const vac=await api('/api/admin/vacant-units'); window.__vac = vac.vacantUnits||[];
       const shop=sec.shop||{visible:true}, sellers=sec.sellers||{visible:true};
       const card=(key,o,label,hint)=>`<div class="card">
         <div class="row"><b>${label}</b>
@@ -214,10 +216,18 @@ async function show(view){
         `<h3>Storefront sections</h3>
         <p class="muted">Control the two big storefront sections. Unchecking "Visible" hides the whole section from shoppers — the items inside stay untouched and can still be reached via search and the floor panel. The items themselves (edit / hide / on-off / delete) are managed in the <b>Sellers</b>, <b>Products</b> and <b>Services</b> tabs.</p>
         <div class="secgrid">
-          ${card('shop', shop, 'Marketplace — “Shop All Products”', 'The main product grid with filters. Hiding it also hides the On-Sale strip.')}
-          ${card('sellers', sellers, '“Our Sellers — Verified Sellers You Can Visit”', 'The seller showcase gallery near the top of the page.')}
+          ${card('shop', shop, 'Marketplace — “Some of Our Products”', 'The main product grid with filters. Hiding it also hides the On-Sale strip.')}
+          ${card('sellers', sellers, '“Our Sellers — Some of Our Shops You Can Visit”', 'The seller showcase gallery near the top of the page.')}
         </div>
-        <div style="margin-top:12px;text-align:right"><button onclick="saveSections()">Save storefront settings</button></div>`;
+        <div style="margin-top:12px;text-align:right"><button onclick="saveSections()">Save storefront settings</button></div>
+
+        <h3 style="margin-top:24px">Unoccupied offices</h3>
+        <p class="muted">Shown to shoppers under "Office for Rent → See Offices" and used for leasing inquiries. Add or remove a row for each known-vacant unit.</p>
+        <div class="card" id="vacList">${renderVacRows()}</div>
+        <div style="text-align:right;margin-top:8px">
+          <button class="alt" onclick="addVacRow()">+ Add vacant unit</button>
+          <button onclick="saveVacantUnits()">Save vacant offices</button>
+        </div>`;
     }
     else if(view==='notify'){
       const d=await api('/api/admin/notify'); const list=d.requests||[]; out.className='';
@@ -562,6 +572,33 @@ async function saveSections(){
     show('storefront');
   }catch(e){ alert(e.message); }
 }
+/* ── unoccupied offices editor ── */
+function renderVacRows(){
+  const list = window.__vac||[];
+  if(!list.length) return '<div class="muted">No vacant units listed. Add one below.</div>';
+  return list.map((v,i)=>`<div class="row" style="margin-bottom:8px">
+    <input value="${esc(v.unit)}" placeholder="Unit code (e.g. G-25)" oninput="window.__vac[${i}].unit=this.value" style="width:140px">
+    <input value="${esc(v.floor)}" placeholder="Floor (e.g. Ground Floor)" oninput="window.__vac[${i}].floor=this.value" style="flex:1">
+    <button class="danger" onclick="removeVacRow(${i})">Remove</button>
+  </div>`).join('');
+}
+function addVacRow(){
+  window.__vac = window.__vac||[];
+  window.__vac.push({unit:'', floor:'Ground Floor'});
+  document.getElementById('vacList').innerHTML = renderVacRows();
+}
+function removeVacRow(i){
+  window.__vac.splice(i,1);
+  document.getElementById('vacList').innerHTML = renderVacRows();
+}
+async function saveVacantUnits(){
+  try{
+    const clean = (window.__vac||[]).filter(v=>v.unit && v.floor);
+    await api('/api/admin/vacant-units',{method:'PUT',body:{vacantUnits:clean}});
+    alert('Saved — the "See Offices" gallery updates on next storefront load.');
+    show('storefront');
+  }catch(e){ alert(e.message); }
+}
 /* ── Reports: date-range presets, live polling, stat cards, tenant table ── */
 const REP_PRESETS = [
   ['today','Today'], ['yesterday','Yesterday'], ['week','This Week'],
@@ -737,6 +774,38 @@ const v = id => document.getElementById(id).value.trim();
     el.textContent = '';
   }
 })();
+
+/* self-diagnostic: is the LIVE database actually running the tenant data
+   that's currently in catalog.json? This is what silently broke before —
+   the DB was seeded once, ever, and later catalog.json updates had zero
+   effect on the live site until this version-check + reseed path existed. */
+async function checkDataSync(){
+  const el = document.getElementById('dataSyncStatus');
+  const k = K();
+  if(!k){ el.textContent = ''; return; }
+  try{
+    const r = await fetch('/api/admin/data-status', {headers:{'x-admin-key':k}});
+    if(!r.ok){ el.textContent=''; return; }
+    const d = await r.json();
+    if(d.inSync){
+      el.innerHTML = `✅ <b>Live data is up to date</b> — v${d.liveVersion}, ${d.liveTenantCount} tenants.`;
+      el.style.color = '#1d9e54';
+    } else {
+      el.innerHTML = `⚠️ <b>Live site is running OLD data</b> — live is v${d.liveVersion===null?'none':d.liveVersion} `+
+        `(${d.liveTenantCount} tenants) but catalog.json on this deploy is v${d.fileVersion} (${d.fileTenantCount} tenants). `+
+        `<button onclick="forceReseed()" style="margin-left:6px;background:#c2185b;color:#fff;border:0;border-radius:6px;padding:5px 12px;font-size:.76rem;font-weight:700;cursor:pointer">Reseed live data now</button>`;
+      el.style.color = '#9a6b00';
+    }
+  }catch(e){ el.textContent=''; }
+}
+async function forceReseed(){
+  if(!confirm('This overwrites ALL live tenant/product data with the catalog.json bundled in this deploy. Any edits made directly on the live site since the last update will be lost. Continue?')) return;
+  try{
+    const d = await api('/api/admin/reseed', {method:'POST', body:{confirm:true}});
+    alert(`Reseeded — now running v${d.dataVersion} with ${d.tenants} tenants.`);
+    checkDataSync();
+  }catch(e){ alert(e.message); }
+}
 </script>
 </body>
 </html>
