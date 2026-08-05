@@ -1512,6 +1512,17 @@ app.post('/api/admin/report/send', requireAdmin, async (req, res) => {
 });
 
 /* ── static frontend ── */
+/* the service worker must never be cached long or clients get stuck on an
+   old shell; the manifest needs its proper MIME type to be installable */
+app.get('/sw.js', (req, res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.type('application/javascript');
+  res.sendFile(path.join(__dirname, '..', 'public', 'sw.js'));
+});
+app.get('/manifest.webmanifest', (req, res) => {
+  res.type('application/manifest+json');
+  res.sendFile(path.join(__dirname, '..', 'public', 'manifest.webmanifest'));
+});
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '1h', index: 'index.html' }));
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });

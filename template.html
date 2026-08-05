@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#8a1450">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ambassador">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <title>Ambassador Shopping Mall — Online Store | Powered by Bisinka</title>
 <meta name="description" content="Shop from verified sellers with a real address inside Ambassador Shopping Mall — gold &amp; jewelry, fashion, food, electronics, furniture &amp; more. Visit in person or buy online. Built on the Bisinka directory.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,27 +24,33 @@
    Ambassador directory as a section without colliding.
 ═══════════════════════════════════════════════════════════════════ */
 #amb-store {
-  /* Ambassador palette */
+  /* ══ Ambassador palette — wine/burgundy (from the mall logo) + gold ══ */
   --wine:#8a1450; --wine-l:#a83269; --wine-d:#5e1338; --burgundy:#5e1338;
+  --wine-deep:#420d27; --wine-rose:#c25b86; --wine-blush:#e8a9c4;
   --gold:#D4AF37; --gold-l:#e8c96e; --gold-d:#b8941f;
-  /* Bisinka brand — teal */
-  --teal:#0D7A6F; --teal-l:#14a394; --teal-d:#0a5d55; --teal-bright:#5eead4;
-  --teal-tint:#eef8f6; --teal-pale:#dcf0ec;
+  --gold-deep:#8a6d12; --gold-champagne:#f2e3b8; --gold-bright:#ffd97a;
+  /* accent family — plum/rose, replaces the old teal accent (no green tones) */
+  --accent:#9c2f63; --accent-l:#bb5183; --accent-d:#6d1a42;
+  --accent-tint:#fdf2f7; --accent-pale:#f9e3ee; --accent-bright:#e88ab5;
+  /* legacy aliases kept so existing rules keep working — all now plum, not teal */
+  --teal:var(--accent); --teal-l:var(--accent-l); --teal-d:var(--accent-d);
+  --teal-bright:var(--accent-bright); --teal-tint:var(--accent-tint); --teal-pale:var(--accent-pale);
   --ink:#241a26; --ink2:#5a4a55; --mid:#7a6a74; --muted:#a294a0;
   --wine-tint:#fcf4f8; --wine-pale:#f9eaf1; --gold-tint:#fdf9ee;
   --paper:#fcfaf9; --surface:#ffffff; --surface2:#f7f2f4;
-  --footer:#232946; --footer-d:#121629; --footer-link:#b8c1ec;
+  --footer:#2b0f1e; --footer-d:#1a0812; --footer-link:#e8b9cd;
   --shop-dark:#1e1e1e; --shop-frame:#2d2d2d;
   --line:#f0e6eb; --line2:#f7f1f4;
-  /* status */
-  --danger:#d6336c; --success:#2f9e44; --warn:#e8a317;
+  /* status — success is a warm gold-olive, not green */
+  --danger:#d6336c; --success:#a8871c; --warn:#e8a317;
+  --wa:#25D366;   /* WhatsApp brand green — used ONLY for real WhatsApp actions */
   /* geometry */
   --r:16px; --rs:9px; --rl:24px;
   --tr:all .3s cubic-bezier(.34,1.56,.64,1);
   --ease:cubic-bezier(.22,1,.36,1);
-  --sm:0 2px 10px rgba(40,40,50,.06);
-  --md:0 10px 28px rgba(40,40,50,.09);
-  --lg:0 24px 56px rgba(30,40,40,.14);
+  --sm:0 2px 10px rgba(60,20,40,.06);
+  --md:0 10px 28px rgba(60,20,40,.10);
+  --lg:0 24px 56px rgba(50,15,35,.16);
 
   font-family:'Outfit','Noto Sans Ethiopic',sans-serif;
   color:var(--ink);
@@ -53,6 +67,7 @@
 #amb-store .amh{font-family:'Noto Sans Ethiopic',sans-serif}
 #amb-store .hidden{display:none!important}
 #amb-store ::selection{background:var(--gold);color:var(--wine-d)}
+#amb-store a:focus-visible,#amb-store button:focus-visible,#amb-store input:focus-visible,#amb-store [tabindex]:focus-visible{outline:2.5px solid var(--gold-d);outline-offset:2px;border-radius:4px}
 
 /* ── scoped scrollbars ── */
 #amb-store .scroll-x::-webkit-scrollbar{height:5px}
@@ -61,9 +76,11 @@
 
 /* ════ TOP RIBBON ════ */
 #amb-store .amb-ribbon{
-  background:linear-gradient(90deg,var(--teal-d),var(--teal) 40%,var(--wine) 100%);
+  background:linear-gradient(90deg,var(--wine-deep) 0%,var(--wine) 38%,var(--accent) 68%,var(--wine-d) 100%);
   color:#fff;height:38px;overflow:hidden;position:relative;
-  display:flex;align-items:center;border-bottom:2px solid var(--gold)
+  display:flex;align-items:center;
+  border-bottom:2px solid transparent;
+  border-image:linear-gradient(90deg,var(--gold-d),var(--gold-bright),var(--gold-d)) 1
 }
 #amb-store .amb-ribbon-track{
   white-space:nowrap;position:absolute;display:flex;gap:48px;
@@ -74,9 +91,9 @@
 
 /* ════ NAV ════ */
 #amb-store .amb-nav{
-  position:sticky;top:0;z-index:300;background:rgba(255,255,255,.96);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:300;background:rgba(255,252,248,.94);
+  backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+  border-bottom:1px solid rgba(212,175,55,.32);
   padding:0 clamp(1rem,3vw,2rem);height:74px;display:flex;align-items:center;gap:16px;
   transition:box-shadow .3s
 }
@@ -101,8 +118,10 @@
 #amb-store .amb-search-ic{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem;pointer-events:none}
 
 #amb-store .amb-nav-links{display:flex;list-style:none;gap:2px;margin-left:auto}
-#amb-store .amb-nav-links a{color:var(--ink2);font-size:.83rem;font-weight:600;padding:7px 12px;border-radius:8px;transition:var(--tr)}
+#amb-store .amb-nav-links a{color:var(--ink2);font-size:.83rem;font-weight:600;padding:7px 12px;border-radius:8px;transition:var(--tr);position:relative}
+#amb-store .amb-nav-links a::after{content:'';position:absolute;left:12px;right:12px;bottom:2px;height:2px;background:linear-gradient(90deg,var(--wine),var(--gold));border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .32s var(--ease)}
 #amb-store .amb-nav-links a:hover{color:var(--wine);background:var(--wine-tint)}
+#amb-store .amb-nav-links a:hover::after{transform:scaleX(1)}
 #amb-store .amb-nav-actions{display:flex;align-items:center;gap:8px}
 #amb-store .amb-icon-btn{
   position:relative;width:40px;height:40px;border-radius:11px;background:var(--surface2);
@@ -116,45 +135,104 @@
   opacity:0;transform:scale(0);transition:var(--tr)
 }
 #amb-store .amb-badge.vis{opacity:1;transform:scale(1)}
-#amb-store .amb-menu-btn{display:none;color:var(--wine);font-size:1.4rem;padding:6px}
+#amb-store .amb-menu-btn{display:none;align-items:center;justify-content:center;color:var(--wine);font-size:1.4rem;padding:6px;background:none;border:none;cursor:pointer;min-width:44px;min-height:44px;flex-shrink:0}
 
-/* ════ HERO ════ */
+/* ════ HERO — layered wine & gold composition ════ */
 #amb-store .amb-hero{
-  position:relative;min-height:520px;display:flex;flex-direction:column;justify-content:center;
-  padding:clamp(3rem,7vw,6rem) clamp(1.2rem,4vw,3rem) clamp(5rem,8vw,7rem);overflow:hidden
+  position:relative;min-height:600px;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(3.5rem,8vw,7rem) clamp(1.2rem,4vw,3rem) clamp(5rem,8vw,7rem);overflow:hidden
 }
+/* base wash: warm champagne → blush rose, no green anywhere */
 #amb-store .amb-hero-bg{
   position:absolute;inset:0;
   background:
-    radial-gradient(circle at 85% 15%,rgba(20,163,148,.16),transparent 45%),
-    radial-gradient(circle at 12% 85%,rgba(212,175,55,.14),transparent 42%),
-    linear-gradient(160deg,#fdf9ee 0%,#fbf4f7 45%,#eef8f6 100%)
+    radial-gradient(ellipse 70% 55% at 82% 8%,rgba(212,175,55,.30),transparent 62%),
+    radial-gradient(ellipse 60% 50% at 8% 92%,rgba(138,20,80,.20),transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,rgba(232,201,110,.12),transparent 70%),
+    linear-gradient(155deg,#fffaf0 0%,#fdf3ea 30%,#fbeef4 65%,#f7e6ee 100%)
 }
+/* slow-drifting aurora ribbons in wine + gold */
+#amb-store .amb-hero-bg::before,#amb-store .amb-hero-bg::after{
+  content:'';position:absolute;border-radius:48% 52% 60% 40%/45% 55% 45% 55%;pointer-events:none;
+  filter:blur(6px);animation:ambAurora 16s ease-in-out infinite
+}
+#amb-store .amb-hero-bg::before{
+  width:min(46vw,560px);aspect-ratio:1.3;top:-14%;right:-8%;
+  background:radial-gradient(circle at 40% 40%,rgba(212,175,55,.34),rgba(232,201,110,.10) 55%,transparent 72%)
+}
+#amb-store .amb-hero-bg::after{
+  width:min(38vw,460px);aspect-ratio:1.15;bottom:-16%;left:-10%;animation-delay:-8s;
+  background:radial-gradient(circle at 55% 45%,rgba(156,47,99,.26),rgba(194,91,134,.10) 55%,transparent 74%)
+}
+@keyframes ambAurora{
+  0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+  33%{transform:translate3d(-18px,26px,0) rotate(8deg) scale(1.08)}
+  66%{transform:translate3d(22px,-18px,0) rotate(-6deg) scale(.96)}
+}
+/* concentric gold rings echoing the Ambassador logo mark */
+#amb-store .amb-hero-rings{
+  position:absolute;top:50%;right:clamp(-260px,-6vw,-80px);transform:translateY(-50%);
+  width:640px;height:640px;pointer-events:none;opacity:.5
+}
+#amb-store .amb-hero-rings span{
+  position:absolute;inset:0;margin:auto;border-radius:50%;
+  border:1.5px solid rgba(212,175,55,.42);animation:ambRingPulse 7s ease-in-out infinite
+}
+#amb-store .amb-hero-rings span:nth-child(1){width:100%;height:100%}
+#amb-store .amb-hero-rings span:nth-child(2){width:72%;height:72%;border-color:rgba(138,20,80,.24);animation-delay:-2.3s}
+#amb-store .amb-hero-rings span:nth-child(3){width:46%;height:46%;border-color:rgba(212,175,55,.55);animation-delay:-4.6s}
+@keyframes ambRingPulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.06);opacity:.9}}
+/* fine gold grid, wine cross-hatch */
 #amb-store .amb-hero-grid{
-  position:absolute;inset:0;opacity:.85;
-  background-image:linear-gradient(rgba(13,122,111,.11) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(138,20,80,.09) 1.5px,transparent 1.5px);
-  background-size:54px 54px
+  position:absolute;inset:0;opacity:.7;
+  background-image:linear-gradient(rgba(184,148,31,.10) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(138,20,80,.08) 1.5px,transparent 1.5px);
+  background-size:54px 54px;
+  mask-image:radial-gradient(ellipse 80% 70% at 40% 45%,#000 35%,transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 40% 45%,#000 35%,transparent 78%)
 }
-#amb-store .amb-hero-glow{position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.16),transparent 68%);top:-160px;right:-120px;pointer-events:none}
+#amb-store .amb-hero-glow{position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.22),transparent 66%);top:-180px;right:-130px;pointer-events:none}
+/* soft gold hairline separating hero from the page below */
+#amb-store .amb-hero::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.55) 25%,rgba(138,20,80,.35) 50%,rgba(212,175,55,.55) 75%,transparent)
+}
+@media(prefers-reduced-motion:reduce){
+  #amb-store .amb-hero-bg::before,#amb-store .amb-hero-bg::after,#amb-store .amb-hero-rings span{animation:none}
+}
 #amb-store .amb-hero-inner{position:relative;z-index:1;max-width:1340px;margin:0 auto;width:100%}
 #amb-store .amb-eyebrow{
-  display:inline-flex;align-items:center;gap:7px;background:var(--teal-pale);
-  border:1px solid rgba(13,122,111,.28);color:var(--teal-d);font-size:.7rem;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;padding:6px 15px;border-radius:100px;margin-bottom:1.4rem
+  display:inline-flex;align-items:center;gap:7px;
+  background:linear-gradient(120deg,rgba(212,175,55,.20),rgba(156,47,99,.14));
+  border:1px solid rgba(212,175,55,.55);color:var(--wine-d);font-size:.7rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:1.4rem;
+  box-shadow:0 4px 14px -6px rgba(138,20,80,.35)
 }
-#amb-store .amb-eyebrow i{color:var(--teal)}
+#amb-store .amb-eyebrow i{color:var(--gold-d)}
 #amb-store .amb-hero h2{
-  font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:900;
-  color:var(--wine-d);line-height:1.02;letter-spacing:-1px;margin-bottom:1.1rem;max-width:14ch
+  font-family:'Cormorant Garamond',serif;font-size:clamp(2.7rem,6.2vw,4.9rem);font-weight:900;
+  color:var(--wine-deep);line-height:1.02;letter-spacing:-1px;margin-bottom:1.1rem;max-width:14ch;
+  text-shadow:0 1px 0 rgba(255,255,255,.6)
 }
-#amb-store .amb-hero h2 em{font-style:italic;color:var(--teal);background:linear-gradient(120deg,var(--teal),var(--teal-l));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* the emphasised phrase gets a live gold shimmer */
+#amb-store .amb-hero h2 em{
+  font-style:italic;position:relative;
+  /* the h2's white text-shadow would show THROUGH the transparent
+     gradient-clipped glyphs and wash the shimmer out — cancel it here */
+  text-shadow:none;
+  background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 16%,var(--gold-deep) 34%,var(--gold-d) 48%,var(--gold-deep) 62%,var(--wine) 82%,var(--wine-deep) 100%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:ambShimmer 7s ease-in-out infinite
+}
+@keyframes ambShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media(prefers-reduced-motion:reduce){#amb-store .amb-hero h2 em{animation:none}}
 #amb-store .amb-hero p{color:var(--ink2);font-size:clamp(.95rem,1.8vw,1.12rem);max-width:540px;line-height:1.7;margin-bottom:2rem}
 #amb-store .amb-hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:2.2rem}
 #amb-store .amb-cta{padding:13px 26px;border-radius:13px;font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:8px;transition:var(--tr)}
-#amb-store .amb-cta-gold{background:linear-gradient(135deg,var(--wine),var(--wine-l));color:#fff}
-#amb-store .amb-cta-gold:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(138,20,80,.32)}
-#amb-store .amb-cta-ghost{background:#fff;color:var(--teal-d);border:1.5px solid rgba(13,122,111,.3)}
-#amb-store .amb-cta-ghost:hover{background:var(--teal-tint);border-color:var(--teal)}
+#amb-store .amb-cta-gold{background:linear-gradient(135deg,var(--wine),var(--wine-l));color:#fff;box-shadow:0 10px 26px -8px rgba(138,20,80,.55)}
+#amb-store .amb-cta-gold:hover{transform:translateY(-3px);box-shadow:0 16px 34px -8px rgba(138,20,80,.6)}
+#amb-store .amb-cta-ghost{background:#fff;color:var(--teal-d);border:1.5px solid rgba(156,47,99,.3)}
+#amb-store .amb-cta-ghost:hover{background:var(--teal-tint);border-color:var(--teal);transform:translateY(-3px);box-shadow:0 12px 26px -10px rgba(156,47,99,.3)}
 #amb-store .amb-hero-stats{display:flex;gap:14px;flex-wrap:wrap}
 #amb-store .amb-hstat{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);padding:9px 16px;border-radius:13px;box-shadow:var(--sm)}
 #amb-store .amb-hstat-n{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:900;color:var(--teal)}
@@ -164,32 +242,55 @@
 #amb-store .amb-hero-split{display:grid;grid-template-columns:1.06fr .94fr;gap:clamp(1.5rem,4vw,3.2rem);align-items:stretch}
 #amb-store .amb-hero-visual{max-width:100%;display:flex}
 #amb-store .amb-floor-directory{
-  flex:1;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);border-radius:26px;
-  padding:1.3rem 1.2rem 1.4rem;backdrop-filter:blur(16px);
-  box-shadow:0 30px 70px -30px rgba(40,40,70,.32),0 0 0 1px rgba(122,26,68,.06);
+  position:relative;flex:1;background:rgba(255,255,255,.80);
+  border:1px solid rgba(212,175,55,.42);border-radius:26px;
+  padding:1.4rem 1.3rem 1.5rem;backdrop-filter:blur(20px) saturate(1.15);
+  box-shadow:0 34px 80px -34px rgba(66,13,39,.42),0 0 0 1px rgba(255,255,255,.6) inset;
   display:flex;flex-direction:column;gap:1rem
 }
-#amb-store .amb-fd-head{display:flex;align-items:center;gap:12px}
-#amb-store .amb-fd-head-ic{
-  width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--wine),var(--wine-d));
-  color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;
-  box-shadow:0 8px 18px -6px rgba(122,26,68,.5)
+/* thin gold gradient crown along the top edge */
+#amb-store .amb-floor-directory::before{
+  content:'';position:absolute;top:0;left:16%;right:16%;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold-bright),var(--gold),transparent)
 }
-#amb-store .amb-fd-head-txt h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:800;color:var(--ink);line-height:1.1}
-#amb-store .amb-fd-head-txt span{font-size:.72rem;font-weight:600;color:var(--wine-d);text-transform:uppercase;letter-spacing:.4px}
-#amb-store .floor-vertical-list{display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;padding-right:6px}
+#amb-store .amb-fd-head{display:flex;align-items:center;gap:12px;padding-bottom:.9rem;border-bottom:1px solid rgba(212,175,55,.28)}
+#amb-store .amb-fd-head-ic{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(140deg,var(--wine-l),var(--wine) 45%,var(--wine-deep));
+  color:var(--gold-bright);display:flex;align-items:center;justify-content:center;font-size:1.18rem;flex-shrink:0;
+  box-shadow:0 10px 22px -8px rgba(66,13,39,.65),0 0 0 1px rgba(212,175,55,.45)
+}
+#amb-store .amb-fd-head-txt h3{font-family:'Cormorant Garamond',serif;font-size:1.38rem;font-weight:800;color:var(--wine-deep);line-height:1.1}
+#amb-store .amb-fd-head-txt span{font-size:.72rem;font-weight:700;color:var(--gold-deep);text-transform:uppercase;letter-spacing:.6px}
+#amb-store .floor-vertical-list{display:flex;flex-direction:column;gap:7px;max-height:340px;overflow-y:auto;padding-right:6px}
 #amb-store .floor-vertical-list::-webkit-scrollbar{width:4px}
-#amb-store .floor-vertical-list::-webkit-scrollbar-track{background:var(--wine-tint);border-radius:4px}
-#amb-store .floor-vertical-list::-webkit-scrollbar-thumb{background:var(--wine-l);border-radius:4px}
-#amb-store .floor-vertical-item{background:#fff;padding:12px 16px;border-radius:12px;color:var(--wine-d);font-weight:700;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:var(--tr);border-left:4px solid var(--fc,var(--wine));box-shadow:var(--sm);font-size:.9rem}
-#amb-store .floor-vertical-item:hover{background:var(--wine);color:#fff;transform:translateX(4px) scale(1.015);box-shadow:0 10px 24px -8px rgba(122,26,68,.5)}
+#amb-store .floor-vertical-list::-webkit-scrollbar-track{background:var(--gold-tint);border-radius:4px}
+#amb-store .floor-vertical-list::-webkit-scrollbar-thumb{background:linear-gradient(var(--gold),var(--wine-l));border-radius:4px}
+#amb-store .floor-vertical-item{
+  position:relative;overflow:hidden;background:#fff;padding:13px 16px;border-radius:13px;
+  color:var(--wine-d);font-weight:700;display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;transition:var(--tr);border-left:4px solid var(--fc,var(--wine));
+  box-shadow:0 2px 8px rgba(66,13,39,.06);font-size:.9rem
+}
+/* gold sheen sweeps across on hover */
+#amb-store .floor-vertical-item::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .35s var(--ease);
+  background:linear-gradient(105deg,transparent 30%,rgba(255,217,122,.30) 50%,transparent 70%)
+}
+#amb-store .floor-vertical-item:hover{
+  background:linear-gradient(120deg,var(--wine),var(--wine-deep));color:#fff;
+  transform:translateX(5px) scale(1.02);
+  box-shadow:0 14px 30px -10px rgba(66,13,39,.6);border-left-color:var(--gold-bright)
+}
+#amb-store .floor-vertical-item:hover::after{opacity:1}
 #amb-store .floor-vertical-item .amh-inline{color:var(--gold-d);font-size:.82em}
-#amb-store .floor-vertical-item:hover .amh-inline{color:#fff}
+#amb-store .floor-vertical-item:hover .amh-inline{color:var(--gold-bright)}
 #amb-store .floor-vertical-item .floor-occ{font-size:.68rem;color:var(--muted);display:flex;align-items:center;gap:4px;font-weight:600}
-#amb-store .floor-vertical-item:hover .floor-occ{color:rgba(255,255,255,.85)}
-#amb-store .floor-vertical-item .floor-occ i{color:var(--success);font-size:.6rem}
+#amb-store .floor-vertical-item:hover .floor-occ{color:rgba(255,255,255,.9)}
+#amb-store .floor-vertical-item .floor-occ i{color:var(--gold-d);font-size:.6rem}
+#amb-store .floor-vertical-item:hover .floor-occ i{color:var(--gold-bright)}
 #amb-store .floor-vertical-item .floor-arrow{opacity:.4;transition:.2s;font-size:.75rem;margin-left:8px}
-#amb-store .floor-vertical-item:hover .floor-arrow{opacity:1;transform:translateX(3px)}
+#amb-store .floor-vertical-item:hover .floor-arrow{opacity:1;transform:translateX(3px);color:var(--gold-bright)}
 
 /* explore carousel — prev/next now overlaid on the image itself (left/right), dots stay below */
 #amb-store .explore-carousel-wrap{position:relative;overflow:hidden;border-radius:16px;background:var(--wine-tint);width:100%;height:190px;box-shadow:inset 0 2px 8px rgba(0,0,0,.03);flex-shrink:0}
@@ -243,7 +344,7 @@
   display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;border:1.5px solid var(--line);
   background:#fff;color:var(--ink2);font-size:.8rem;font-weight:600;white-space:nowrap;flex-shrink:0;transition:var(--tr)
 }
-#amb-store .amb-chip:hover{border-color:var(--wine);color:var(--wine)}
+#amb-store .amb-chip:hover{border-color:var(--wine);color:var(--wine);transform:translateY(-2px);box-shadow:var(--sm)}
 #amb-store .amb-chip.active{background:var(--wine);border-color:var(--wine);color:#fff}
 #amb-store .amb-chip.active i{color:var(--gold)}
 #amb-store .amb-chip i{font-size:.74rem}
@@ -259,7 +360,8 @@
   display:inline-flex;align-items:center;gap:.5rem;color:var(--wine);font-size:.72rem;font-weight:700;
   letter-spacing:2px;text-transform:uppercase;margin-bottom:.8rem
 }
-#amb-store .amb-eyebrow2::before,#amb-store .amb-eyebrow2::after{content:'';width:22px;height:1px;background:var(--teal)}
+#amb-store .amb-eyebrow2::before,#amb-store .amb-eyebrow2::after{content:'';width:26px;height:1.5px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--gold-d))}
+#amb-store .amb-eyebrow2::after{background:linear-gradient(90deg,var(--gold-d),transparent)}
 #amb-store .amb-head.left .amb-eyebrow2::before{display:none}
 #amb-store .amb-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.6vw,2.8rem);font-weight:700;color:var(--ink);line-height:1.12;margin-bottom:.7rem}
 #amb-store .amb-sub{color:var(--mid);font-size:.95rem;max-width:560px;margin:0 auto;line-height:1.7}
@@ -359,7 +461,7 @@
   max-width:1340px;margin:0 auto;border-top:1px solid rgba(255,255,255,.1);padding-top:1.4rem;
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;font-size:.72rem
 }
-#amb-store .amb-bisinka-mark{display:flex;align-items:center;gap:7px;background:rgba(20,163,148,.2);border:1px solid rgba(94,234,212,.4);border-radius:9px;padding:7px 14px;color:var(--teal-bright);font-size:.72rem;font-weight:600}
+#amb-store .amb-bisinka-mark{display:flex;align-items:center;gap:7px;background:rgba(194,91,134,.2);border:1px solid rgba(232,138,181,.4);border-radius:9px;padding:7px 14px;color:var(--teal-bright);font-size:.72rem;font-weight:600}
 #amb-store .amb-bisinka-mark i{color:var(--teal-bright)}
 #amb-store .amb-bisinka-mark b{color:#fff;font-weight:700}
 
@@ -374,7 +476,7 @@
 }
 #amb-store .amb-toast.show{transform:none;opacity:1}
 #amb-store .amb-toast i{color:var(--gold)}
-#amb-store .amb-toast.suc i{color:#69db7c}
+#amb-store .amb-toast.suc i{color:var(--gold-bright)}
 #amb-store .amb-toast.err i{color:#ff8787}
 
 /* ════ CART PANEL ════ */
@@ -539,7 +641,7 @@
 
 /* invoice / confirmation */
 #amb-store .amb-confirm{text-align:center;padding:14px 0}
-#amb-store .amb-confirm-ic{width:68px;height:68px;border-radius:50%;background:#e6f8ec;color:var(--success);display:flex;align-items:center;justify-content:center;font-size:1.7rem;margin:0 auto 14px;animation:amb-pop .5s var(--ease)}
+#amb-store .amb-confirm-ic{width:68px;height:68px;border-radius:50%;background:#fbf3dc;color:var(--success);display:flex;align-items:center;justify-content:center;font-size:1.7rem;margin:0 auto 14px;animation:amb-pop .5s var(--ease)}
 @keyframes amb-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 #amb-store .amb-confirm-t{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:6px}
 #amb-store .amb-confirm-s{color:var(--mid);font-size:.84rem;margin-bottom:14px;max-width:38ch;margin-left:auto;margin-right:auto;line-height:1.6}
@@ -575,6 +677,30 @@
   #amb-store .amb-nav-actions > button[onclick^="ambOpenOrders"],
   #amb-store .amb-nav-actions > button[onclick*="Tap the"],
   #amb-store .amb-nav-actions > #ambAccountBtn{display:none}
+  /* ── the long mall name used to push search/cart/menu off-screen ──
+     the brand now shrinks and truncates so the action buttons are
+     ALWAYS reachable, never clipped past the right edge */
+  #amb-store .amb-nav{gap:8px;padding:0 12px;height:64px}
+  #amb-store .amb-brand{min-width:0;flex:1 1 auto;overflow:hidden}
+  #amb-store .amb-brand-txt{min-width:0;overflow:hidden}
+  #amb-store .amb-brand-txt h1{
+    font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  #amb-store .amb-brand-logo,#amb-store .amb-brand img{width:36px;height:36px;flex-shrink:0}
+  #amb-store .amb-nav-actions{flex-shrink:0;margin-left:auto;gap:4px}
+  #amb-store .amb-nav-actions .amb-icon-btn{width:40px;height:40px;min-width:40px;font-size:.95rem;flex-shrink:0}
+  #amb-store .amb-menu-btn{font-size:1.25rem;padding:4px 2px}
+}
+@media(max-width:400px){
+  /* very small phones: drop to the icon mark only so cart + menu still fit */
+  #amb-store .amb-brand-txt h1{font-size:.9rem}
+  #amb-store .amb-nav{padding:0 8px}
+  #amb-store .amb-nav-actions .amb-icon-btn{width:35px;height:35px}
+}
+/* honour iOS safe areas when installed as a standalone app */
+@supports(padding:max(0px)){
+  #amb-store .amb-nav{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+  #amb-store .amb-mdrawer{padding-bottom:env(safe-area-inset-bottom)}
 }
 
 /* ── mobile hamburger drawer ── */
@@ -653,16 +779,16 @@
 #amb-store .amb-hero{min-height:600px;padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:clamp(2.5rem,5vw,4rem)}
 #amb-store .amb-hero-bg{
   background:
-    radial-gradient(ellipse 70% 60% at 80% 0%,rgba(20,163,148,.20),transparent 60%),
-    radial-gradient(ellipse 60% 50% at 5% 100%,rgba(212,175,55,.16),transparent 55%),
-    radial-gradient(ellipse 50% 40% at 50% 50%,rgba(138,20,80,.05),transparent 70%),
-    linear-gradient(165deg,#fefcf6 0%,#fdf5f8 42%,#ecf8f5 100%)
+    radial-gradient(ellipse 70% 60% at 80% 0%,rgba(212,175,55,.30),transparent 60%),
+    radial-gradient(ellipse 60% 50% at 5% 100%,rgba(156,47,99,.20),transparent 58%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,rgba(232,201,110,.12),transparent 70%),
+    linear-gradient(165deg,#fffaf0 0%,#fdf4ea 34%,#fbeef4 68%,#f6e4ed 100%)
 }
 #amb-store .amb-hero-veil{
   position:absolute;inset:0;pointer-events:none;overflow:hidden;
   background-image:
-    linear-gradient(rgba(13,122,111,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(13,122,111,.035) 1px,transparent 1px);
+    linear-gradient(rgba(184,148,31,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(184,148,31,.05) 1px,transparent 1px);
   background-size:60px 60px;
   -webkit-mask-image:radial-gradient(ellipse 80% 80% at 60% 40%,#000,transparent 75%);
   mask-image:radial-gradient(ellipse 80% 80% at 60% 40%,#000,transparent 75%)
@@ -670,7 +796,7 @@
 #amb-store .amb-hero-veil::before,#amb-store .amb-hero-veil::after{
   content:'';position:absolute;border-radius:50%;filter:blur(46px);opacity:.5;animation:ambFloat 14s ease-in-out infinite
 }
-#amb-store .amb-hero-veil::before{width:320px;height:320px;background:radial-gradient(circle,rgba(20,163,148,.4),transparent 70%);top:-60px;right:8%}
+#amb-store .amb-hero-veil::before{width:320px;height:320px;background:radial-gradient(circle,rgba(194,91,134,.42),transparent 70%);top:-60px;right:8%}
 #amb-store .amb-hero-veil::after{width:280px;height:280px;background:radial-gradient(circle,rgba(212,175,55,.34),transparent 70%);bottom:-40px;left:4%;animation-delay:-7s}
 @keyframes ambFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(0,-26px)}}
 
@@ -683,7 +809,7 @@
 #amb-store .amb-hero-sellers{
   position:relative;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.8);
   border-radius:30px;padding:1.3rem 1.1rem 1.1rem;backdrop-filter:blur(14px);
-  box-shadow:0 30px 70px -30px rgba(40,40,70,.32),0 0 0 1px rgba(13,122,111,.06)
+  box-shadow:0 30px 70px -30px rgba(40,40,70,.32),0 0 0 1px rgba(156,47,99,.06)
 }
 #amb-store .amb-hero-sellers-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;padding:0 .35rem}
 #amb-store .amb-hsh-titles{display:flex;flex-direction:column;gap:3px}
@@ -711,14 +837,15 @@
 
 /* trust band (light teal strip) */
 #amb-store .amb-trust-band{
-  background:linear-gradient(90deg,var(--teal-tint),var(--wine-tint));
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px clamp(1rem,3vw,2rem)
+  background:linear-gradient(90deg,var(--gold-tint),var(--wine-tint) 55%,var(--accent-tint));
+  border-top:1px solid rgba(212,175,55,.30);border-bottom:1px solid rgba(212,175,55,.30);
+  padding:15px clamp(1rem,3vw,2rem)
 }
 #amb-store .amb-trust-inner{justify-content:center;gap:10px}
 #amb-store .amb-trust-band .amb-trust-chip{
   background:#fff;border:1px solid var(--line);color:var(--ink2);font-size:.72rem;padding:7px 14px;font-weight:600;box-shadow:var(--sm)
 }
-#amb-store .amb-trust-band .amb-trust-chip i{color:var(--teal)}
+#amb-store .amb-trust-band .amb-trust-chip i{color:var(--gold-d)}
 
 /* section row header with arrows */
 #amb-store .amb-row-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}
@@ -801,7 +928,7 @@
 #amb-store .amb-about{display:grid;grid-template-columns:1fr 1.1fr;gap:2.5rem;align-items:center}
 #amb-store .amb-about-media{position:relative;border-radius:var(--rl);overflow:hidden;min-height:300px;box-shadow:var(--md);background:var(--wine)}
 #amb-store .amb-about-media img{width:100%;height:100%;object-fit:cover;min-height:300px}
-#amb-store .amb-about-badge{position:absolute;bottom:14px;left:14px;background:rgba(13,122,111,.92);color:#fff;font-size:.72rem;font-weight:700;padding:7px 14px;border-radius:100px;backdrop-filter:blur(6px);display:flex;align-items:center;gap:7px}
+#amb-store .amb-about-badge{position:absolute;bottom:14px;left:14px;background:rgba(156,47,99,.92);color:#fff;font-size:.72rem;font-weight:700;padding:7px 14px;border-radius:100px;backdrop-filter:blur(6px);display:flex;align-items:center;gap:7px}
 #amb-store .amb-about-badge i{color:var(--teal-bright)}
 #amb-store .amb-about-desc{font-size:1rem;color:var(--mid);line-height:1.8;margin-bottom:1.4rem}
 #amb-store .amb-about-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.3rem}
@@ -853,9 +980,9 @@
 #amb-store .amb-tp-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surface2);border-radius:10px;font-size:.82rem}
 #amb-store .amb-tp-row-v{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #amb-store .amb-tp-row-act{flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;padding:6px 12px;border-radius:100px;transition:var(--tr)}
-#amb-store .amb-tp-row-act.call{background:var(--success);color:#fff}
-#amb-store .amb-tp-row-act.call:hover{background:#268a3a}
-#amb-store .amb-tp-row-act.wa{background:#25D366;color:#fff}
+#amb-store .amb-tp-row-act.call{background:linear-gradient(135deg,var(--gold-d),var(--gold-deep));color:#fff}
+#amb-store .amb-tp-row-act.call:hover{background:linear-gradient(135deg,var(--gold),var(--gold-d))}
+#amb-store .amb-tp-row-act.wa{background:var(--wa);color:#fff}
 #amb-store .amb-tp-row-act.wa:hover{background:#1fb355}
 #amb-store .amb-tp-row-l{color:var(--mid);display:flex;align-items:center;gap:8px;font-weight:500}
 #amb-store .amb-tp-row-l i{color:var(--wine);width:16px;text-align:center}
@@ -883,6 +1010,7 @@
 /* enhanced Building Services card — visually distinct from the seller kiosk card */
 #amb-store .amb-svc2{background:var(--surface,#fff);border:1px solid var(--line,#eee);border-radius:18px;overflow:hidden;cursor:pointer;transition:var(--tr);box-shadow:var(--sm)}
 #amb-store .amb-svc2:hover{transform:translateY(-4px);box-shadow:var(--md);border-color:transparent}
+#amb-store .amb-svc2:hover .amb-svc2-ic{transform:scale(1.08)}
 #amb-store .amb-svc2-top{position:relative;height:92px;display:flex;align-items:flex-end;padding:14px 16px}
 #amb-store .amb-svc2-top::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% -10%,rgba(255,255,255,.28),transparent 60%)}
 #amb-store .amb-svc2-ic{width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.15rem;position:relative;z-index:1}
@@ -892,8 +1020,8 @@
 #amb-store .amb-svc2-loc{font-size:.74rem;color:var(--wine-d);font-weight:700;display:flex;align-items:center;gap:5px;margin-bottom:8px}
 #amb-store .amb-svc2-blurb{font-size:.78rem;color:var(--mid);line-height:1.55;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #amb-store .amb-svc2-foot{display:flex;gap:8px}
-#amb-store .amb-svc2-call{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--success);color:#fff;font-size:.76rem;font-weight:700;padding:9px;border-radius:10px;transition:var(--tr)}
-#amb-store .amb-svc2-call:hover{background:#268a3a}
+#amb-store .amb-svc2-call{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,var(--gold-d),var(--gold-deep));color:#fff;font-size:.76rem;font-weight:700;padding:9px;border-radius:10px;transition:var(--tr);box-shadow:0 6px 16px -8px rgba(138,109,18,.7)}
+#amb-store .amb-svc2-call:hover{background:linear-gradient(135deg,var(--gold),var(--gold-d));transform:translateY(-2px)}
 #amb-store .amb-svc2-view{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--wine-tint);color:var(--wine-d);font-size:.76rem;font-weight:700;padding:9px;border-radius:10px;border:none;cursor:pointer;transition:var(--tr)}
 #amb-store .amb-svc2-view:hover{background:var(--wine);color:#fff}
 #amb-store .amb-svc{background:#fff;border:1px solid var(--line);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sm);transition:var(--tr);display:flex;flex-direction:column;cursor:pointer}
@@ -918,7 +1046,7 @@
 #amb-store .amb-svc-call:hover{background:var(--wine-pale)}
 #amb-store .amb-svc-call i{font-size:.74rem}
 #amb-store .amb-svc-view{flex:1;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;padding:10px;border-radius:11px;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;transition:var(--tr)}
-#amb-store .amb-svc-view:hover{filter:brightness(1.08);box-shadow:0 5px 14px rgba(13,122,111,.3)}
+#amb-store .amb-svc-view:hover{filter:brightness(1.08);box-shadow:0 5px 14px rgba(156,47,99,.3)}
 
 /* service detail modal */
 #amb-store .amb-sv-modal{display:flex;flex-direction:column}
@@ -960,13 +1088,13 @@
 #amb-store .amb-geo-btn{width:100%;padding:11px;border-radius:11px;border:1.5px dashed var(--wine);background:var(--wine-tint);color:var(--wine);font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr);margin-bottom:6px}
 #amb-store .amb-geo-btn:hover{background:var(--wine-pale)}
 #amb-store .amb-geo-btn:disabled{opacity:.7;cursor:default}
-#amb-store .amb-geo-pin{font-size:.74rem;color:var(--success);display:flex;align-items:center;gap:7px;padding:8px 12px;background:#e6f8ec;border-radius:9px}
+#amb-store .amb-geo-pin{font-size:.74rem;color:var(--success);display:flex;align-items:center;gap:7px;padding:8px 12px;background:#fbf3dc;border-radius:9px}
 #amb-store .amb-geo-pin a{color:var(--wine);font-weight:700;text-decoration:underline}
 
 /* footer quick links */
 #amb-store .amb-quicklinks{display:flex;flex-direction:column;gap:.6rem}
 #amb-store .amb-quicklinks a{display:flex;align-items:center;gap:9px;font-size:.78rem;color:rgba(255,255,255,.62);transition:var(--tr);padding:7px 11px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
-#amb-store .amb-quicklinks a:hover{color:var(--teal-bright);background:rgba(20,163,148,.12);border-color:rgba(94,234,212,.35)}
+#amb-store .amb-quicklinks a:hover{color:var(--teal-bright);background:rgba(194,91,134,.12);border-color:rgba(232,138,181,.35)}
 #amb-store .amb-quicklinks a i{color:var(--teal-bright);width:16px;text-align:center}
 #amb-store .amb-footer-grid{grid-template-columns:2fr 1fr 1fr 1.2fr}
 
@@ -995,7 +1123,7 @@
 
 /* stock pills (card + modal) */
 #amb-store .amb-pcard-stock{display:inline-flex;align-items:center;gap:5px;font-size:.66rem;font-weight:700;margin-bottom:.6rem;padding:3px 9px;border-radius:100px;width:fit-content}
-#amb-store .amb-pcard-stock.in{color:var(--success);background:#e9f8ee}
+#amb-store .amb-pcard-stock.in{color:var(--success);background:#fbf3dc}
 #amb-store .amb-pcard-stock.low{color:#c2410c;background:#fff1e6}
 #amb-store .amb-pcard-stock.made{color:var(--teal-d);background:var(--teal-tint)}
 #amb-store .amb-pcard-stock.out{color:var(--danger);background:#fdeaf0}
@@ -1003,7 +1131,7 @@
 #amb-store .amb-pcard.is-out .amb-pcard-img img{filter:grayscale(.4)}
 #amb-store .amb-atc.soldout,#amb-store .amb-pm-add.soldout{background:var(--surface2)!important;color:var(--muted)!important;cursor:not-allowed;box-shadow:none!important}
 #amb-store .amb-pm-stock{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;margin-bottom:.7rem;padding:5px 12px;border-radius:100px;width:fit-content}
-#amb-store .amb-pm-stock.in{color:var(--success);background:#e9f8ee}
+#amb-store .amb-pm-stock.in{color:var(--success);background:#fbf3dc}
 #amb-store .amb-pm-stock.low{color:#c2410c;background:#fff1e6}
 #amb-store .amb-pm-stock.made{color:var(--teal-d);background:var(--teal-tint)}
 #amb-store .amb-pm-stock.out{color:var(--danger);background:#fdeaf0}
@@ -1049,7 +1177,7 @@
 
 /* delivery estimate box (checkout step 2) */
 #amb-store .amb-co-est{background:var(--gold-tint);border:1px solid rgba(212,175,55,.3);border-radius:12px;padding:11px 14px;margin-bottom:6px}
-#amb-store .amb-co-est.pickup{background:var(--teal-tint);border-color:rgba(13,122,111,.25)}
+#amb-store .amb-co-est.pickup{background:var(--teal-tint);border-color:rgba(156,47,99,.25)}
 #amb-store .amb-co-est-row{display:flex;align-items:center;justify-content:space-between;font-size:.8rem;color:var(--ink2);padding:3px 0}
 #amb-store .amb-co-est-row i{color:var(--wine);margin-right:6px;font-size:.78rem}
 #amb-store .amb-co-est-row b{color:var(--ink)}
@@ -1064,7 +1192,7 @@
 #amb-store .amb-order-card{border:1px solid var(--line);border-radius:14px;padding:14px}
 #amb-store .amb-order-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 #amb-store .amb-order-ref{font-family:'DM Mono','Courier New',monospace;font-size:.8rem;font-weight:700;color:var(--wine);letter-spacing:.5px}
-#amb-store .amb-order-status{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:100px;background:#e9f8ee;color:var(--success)}
+#amb-store .amb-order-status{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:100px;background:#fbf3dc;color:var(--success)}
 #amb-store .amb-order-seller{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:4px}
 #amb-store .amb-order-seller i{color:var(--muted);font-size:.72rem;margin-right:5px}
 #amb-store .amb-order-items{font-size:.74rem;color:var(--mid);line-height:1.5;margin-bottom:9px}
@@ -1097,11 +1225,11 @@
 #amb-store .amb-soon-btn{background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;font-weight:700;font-size:.88rem;padding:13px 30px;border-radius:100px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:9px;transition:var(--tr);box-shadow:0 10px 24px -8px rgba(138,20,80,.5)}
 #amb-store .amb-soon-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(138,20,80,.6)}
 #amb-store .amb-admin-ic{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 14px;position:relative}
-#amb-store .amb-admin-ic .amb-admin-dot{position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--success,#2f9e44);border:2.5px solid #fff}
+#amb-store .amb-admin-ic .amb-admin-dot{position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--success,#a8871c);border:2.5px solid #fff}
 #amb-store .amb-admin-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--ink)}
 #amb-store .amb-admin-role{font-size:.78rem;color:var(--mid);margin-bottom:10px}
 #amb-store .amb-admin-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-tint);color:var(--teal-d);font-size:.68rem;font-weight:700;padding:6px 13px;border-radius:100px;margin-bottom:16px}
-#amb-store .amb-admin-badge i{color:var(--success,#2f9e44);font-size:.55rem}
+#amb-store .amb-admin-badge i{color:var(--success,#a8871c);font-size:.55rem}
 #amb-store .amb-admin-topics{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
 #amb-store .amb-admin-topic{font-size:.72rem;font-weight:700;color:var(--wine-d);background:var(--wine-tint);border:1px solid rgba(122,26,68,.14);padding:8px 13px;border-radius:100px;cursor:pointer;transition:var(--tr)}
 #amb-store .amb-admin-topic:hover{background:var(--wine);color:#fff}
@@ -1140,7 +1268,7 @@
 #amb-store .amb-help-d{font-size:.85rem;color:var(--mid);line-height:1.7}
 #amb-store .amb-help-card.support{display:flex;flex-direction:column}
 #amb-store .amb-help-btn{margin-top:1rem;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;padding:11px;border-radius:12px;font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr)}
-#amb-store .amb-help-btn:hover{filter:brightness(1.08);box-shadow:0 6px 16px rgba(13,122,111,.3)}
+#amb-store .amb-help-btn:hover{filter:brightness(1.08);box-shadow:0 6px 16px rgba(156,47,99,.3)}
 
 /* ════════════════════════════════════════════════════════════════
    V4 ADDITIONS — graceful search, notify-me, VAT/totals, location,
@@ -1249,7 +1377,7 @@
 #amb-store .amb-order-status.confirmed{background:#e6f4ff;color:#1769aa}
 #amb-store .amb-order-status.preparing{background:#fff7e0;color:#9a6b00}
 #amb-store .amb-order-status.out_for_delivery{background:#efe9ff;color:#6b3fd1}
-#amb-store .amb-order-status.delivered{background:#e9f8ee;color:#1d9e54}
+#amb-store .amb-order-status.delivered{background:#fbf3dc;color:var(--success)}
 #amb-store .amb-order-status.cancelled{background:#fdeaf0;color:#c2185b}
 #amb-store .amb-orders-sync{font-size:.7rem;color:var(--muted);margin-left:6px}
 #amb-store .amb-sms-note{font-size:.76rem;color:var(--teal-d);background:var(--teal-tint);border-radius:10px;padding:9px 13px;margin:10px 0 2px;line-height:1.55;text-align:left}
@@ -1289,7 +1417,7 @@
 #amb-store .amb-fp-card .fp-name .amh-inline{display:block;font-size:.66rem;color:var(--wine);font-weight:600}
 #amb-store .amb-fp-card .fp-cat{font-size:.64rem;color:var(--muted);margin-top:3px;display:block}
 #amb-store .amb-fp-card .fp-meta{font-size:.62rem;color:var(--gold-d);margin-top:5px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-#amb-store .amb-fp-card .fp-badge-svc{display:inline-block;font-size:.55rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--teal,#0e7c6b);color:#fff;padding:2px 9px;border-radius:100px;margin-top:6px}
+#amb-store .amb-fp-card .fp-badge-svc{display:inline-block;font-size:.55rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:var(--accent,#9c2f63);color:#fff;padding:2px 9px;border-radius:100px;margin-top:6px}
 #amb-store .amb-fp-foot{padding:12px 20px;border-top:1px solid var(--line,#eee);flex-shrink:0;display:flex;gap:10px}
 #amb-store .amb-fp-shopbtn{flex:1;background:var(--wine);color:#fff;font-weight:700;font-size:.82rem;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr)}
 #amb-store .amb-fp-shopbtn:hover{background:var(--wine-d);transform:translateY(-1px)}
@@ -1322,7 +1450,7 @@
 #amb-store .amb-dir-card .dir-unit{font-size:.58rem;font-weight:800;letter-spacing:.4px;background:var(--ink,#241318);color:var(--gold);padding:3px 8px;border-radius:100px;flex-shrink:0}
 #amb-store .amb-dir-card .dir-arrow{color:var(--muted);font-size:.62rem;flex-shrink:0;transition:var(--tr)}
 #amb-store .amb-dir-card:hover .dir-arrow{color:var(--wine);transform:translateX(2px)}
-#amb-store .amb-dir-card.svc .dir-unit{background:var(--teal,#0e7c6b);color:#fff}
+#amb-store .amb-dir-card.svc .dir-unit{background:var(--accent,#9c2f63);color:#fff}
 #amb-store .amb-dir-empty{padding:36px 18px;text-align:center;color:var(--muted);font-size:.85rem}
 #amb-store .amb-dir-empty i{display:block;font-size:1.6rem;margin-bottom:10px;opacity:.5}
 
@@ -1350,7 +1478,7 @@
 #amb-store .amb-fchips{display:flex;gap:6px;flex-wrap:wrap}
 #amb-store .amb-fchip{font-size:.68rem;font-weight:700;padding:8px 13px;border-radius:100px;background:var(--surface2,#faf6f8);border:1.5px solid var(--line,#eee);color:var(--mid);cursor:pointer;transition:var(--tr);display:flex;align-items:center;gap:5px}
 #amb-store .amb-fchip i{font-size:.6rem}
-#amb-store .amb-fchip:hover{border-color:var(--wine-l);color:var(--wine)}
+#amb-store .amb-fchip:hover{border-color:var(--wine-l);color:var(--wine);transform:translateY(-2px)}
 #amb-store .amb-fchip.active{background:var(--wine);border-color:var(--wine);color:#fff}
 #amb-store .amb-fchip.active i{color:var(--gold)}
 
@@ -1395,16 +1523,116 @@
 }
 
 /* ── carousel slot (lives under the hero headline) ── */
-#amb-store .amb-hero-carousel-slot{margin-top:1.5rem;max-width:600px}
-#amb-store .amb-hero-carousel-slot .explore-carousel-wrap{border-radius:16px;overflow:hidden;box-shadow:var(--md);position:relative}
-#amb-store .amb-hero-carousel-slot .explore-track{display:flex;transition:transform .6s var(--ease)}
-#amb-store .amb-hero-carousel-slot .explore-slide{flex:0 0 100%;height:230px}
-#amb-store .amb-hero-carousel-slot .explore-slide img{width:100%;height:100%;object-fit:cover;display:block}
-#amb-store .amb-modal-x{width:38px;height:38px;background:var(--wine);font-size:.95rem;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-#amb-store .amb-modal-x:hover{background:var(--wine-d);transform:rotate(90deg)}
+/* ── hero showcase: mixed image + video, scales up on big screens ── */
+#amb-store .amb-hero-carousel-slot{margin-top:1.6rem;max-width:640px;width:100%}
+#amb-store .amb-hero-carousel-slot .explore-carousel-wrap{
+  position:relative;border-radius:20px;overflow:hidden;height:auto;
+  aspect-ratio:16/9;                     /* holds shape at every width */
+  background:linear-gradient(140deg,var(--wine-deep),var(--wine));
+  box-shadow:0 26px 60px -26px rgba(66,13,39,.55),0 0 0 1px rgba(212,175,55,.35)
+}
+#amb-store .amb-hero-carousel-slot .explore-track{display:flex;height:100%;transition:transform .7s var(--ease)}
+#amb-store .amb-hero-carousel-slot .explore-slide{flex:0 0 100%;height:100%;position:relative;overflow:hidden}
+#amb-store .amb-hero-carousel-slot .explore-slide img,
+#amb-store .amb-hero-carousel-slot .explore-video{width:100%;height:100%;object-fit:cover;display:block}
+/* gentle ken-burns on stills only — video shouldn't drift */
+#amb-store .amb-hero-carousel-slot .explore-slide.is-active img{animation:ambKenBurns 7s ease-out forwards}
+@keyframes ambKenBurns{from{transform:scale(1)}to{transform:scale(1.07)}}
+@media(prefers-reduced-motion:reduce){#amb-store .amb-hero-carousel-slot .explore-slide.is-active img{animation:none}}
+/* caption + video badge */
+#amb-store .explore-cap{
+  position:absolute;left:16px;bottom:14px;z-index:2;color:#fff;font-weight:700;font-size:.9rem;
+  text-shadow:0 2px 10px rgba(0,0,0,.6);padding-right:70px
+}
+#amb-store .explore-slide::after{
+  content:'';position:absolute;inset:auto 0 0 0;height:45%;pointer-events:none;
+  background:linear-gradient(transparent,rgba(40,8,24,.72))
+}
+#amb-store .explore-badge{
+  position:absolute;top:12px;left:12px;z-index:2;display:inline-flex;align-items:center;gap:6px;
+  background:rgba(212,175,55,.95);color:var(--wine-deep);font-size:.62rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.6px;padding:5px 11px;border-radius:100px;
+  box-shadow:0 4px 12px rgba(0,0,0,.3)
+}
+/* arrows: bigger, gold-on-wine, only fully opaque on hover */
+#amb-store .amb-hero-carousel-slot .explore-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.90);color:var(--wine-d);display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;border:none;cursor:pointer;z-index:3;opacity:.72;transition:var(--tr);
+  box-shadow:0 6px 18px rgba(0,0,0,.28)
+}
+#amb-store .amb-hero-carousel-slot .explore-arrow:hover{opacity:1;background:var(--gold);color:var(--wine-deep);transform:translateY(-50%) scale(1.1)}
+#amb-store .amb-hero-carousel-slot .explore-arrow.prev{left:12px}
+#amb-store .amb-hero-carousel-slot .explore-arrow.next{right:12px}
+/* slide timing bar */
+#amb-store .explore-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.18);z-index:3}
+#amb-store .explore-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-bright))}
+/* dots below the frame */
+#amb-store .amb-hero-carousel-slot .explore-dots{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px}
+#amb-store .amb-hero-carousel-slot .explore-dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(138,20,80,.24);border:none;cursor:pointer;
+  transition:.3s;padding:0
+}
+#amb-store .amb-hero-carousel-slot .explore-dot:hover{background:rgba(138,20,80,.5)}
+#amb-store .amb-hero-carousel-slot .explore-dot.active{background:linear-gradient(90deg,var(--gold-d),var(--gold));width:24px;border-radius:5px}
+/* ── large screens: let the showcase breathe ── */
+@media(min-width:1500px){
+  #amb-store .amb-hero-carousel-slot{max-width:760px}
+  #amb-store .explore-cap{font-size:1rem;left:20px;bottom:18px}
+}
+@media(min-width:1900px){
+  #amb-store .amb-hero-carousel-slot{max-width:880px}
+}
+#amb-store .amb-install-row{
+  background:linear-gradient(120deg,var(--wine),var(--wine-d));color:#fff;border-color:transparent;
+  margin-bottom:8px;box-shadow:0 8px 20px -10px rgba(66,13,39,.7)
+}
+#amb-store .amb-install-row i{color:var(--gold-bright)}
+#amb-store .amb-install-row:hover{background:linear-gradient(120deg,var(--wine-l),var(--wine));color:#fff}
+#amb-store .amb-install-btn{
+  display:none;align-items:center;gap:8px;background:linear-gradient(120deg,var(--gold-d),var(--gold-deep));
+  color:#fff;font-size:.78rem;font-weight:700;padding:9px 16px;border-radius:100px;border:none;cursor:pointer;
+  transition:var(--tr);box-shadow:0 6px 16px -8px rgba(138,109,18,.8)
+}
+#amb-store .amb-install-btn:hover{background:linear-gradient(120deg,var(--gold),var(--gold-d));transform:translateY(-2px)}
+#amb-store .amb-bisinka-logo{
+  height:26px;width:auto;border-radius:6px;background:#fff;padding:2px 4px;
+  vertical-align:middle;box-shadow:0 2px 8px rgba(0,0,0,.18)
+}
+/* ══ close buttons: always pinned to the TOP-RIGHT EDGE of the panel
+   that just opened, floating above its own content, never scrolling
+   away with it. One consistent control across every overlay. ══ */
+#amb-store .amb-modal-x{
+  position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;
+  background:var(--wine);color:#fff;font-size:1rem;z-index:20;
+  display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;
+  box-shadow:0 6px 18px rgba(66,13,39,.45),0 0 0 2px rgba(255,255,255,.9)
+}
+#amb-store .amb-modal-x:hover{background:var(--wine-d);transform:rotate(90deg) scale(1.06)}
+/* floor panel + mobile drawer: pull the X out of the header flow to the true corner */
+#amb-store .amb-fp-x,#amb-store .amb-mdrawer-x{
+  position:absolute;top:10px;right:10px;margin-left:0;width:38px;height:38px;z-index:20;
+  background:rgba(255,255,255,.22);box-shadow:0 0 0 1px rgba(255,255,255,.35)
+}
+#amb-store .amb-fp-head,#amb-store .amb-mdrawer-head{position:relative;padding-right:60px}
+/* cart + checkout sheets */
+#amb-store .amb-cart-head,#amb-store .amb-co-head{position:relative;padding-right:58px}
+#amb-store .amb-cart-x{
+  position:absolute;top:50%;right:14px;transform:translateY(-50%);
+  width:38px;height:38px;z-index:20;background:var(--wine-tint);color:var(--wine-d);border:none;cursor:pointer
+}
+#amb-store .amb-cart-x:hover{background:var(--wine);color:#fff;transform:translateY(-50%) rotate(90deg)}
+/* full-screen mobile search */
+#amb-store .amb-msearch-x{width:40px;height:40px;z-index:20}
+/* keep clear of the notch when installed as an app */
+@supports(padding:max(0px)){
+  #amb-store .amb-msearch-head{padding-top:max(14px,env(safe-area-inset-top))}
+  #amb-store .amb-fp-x,#amb-store .amb-mdrawer-x{top:max(10px,env(safe-area-inset-top))}
+}
 @media(max-width:900px){
   #amb-store .amb-hero-carousel-slot{max-width:none}
-  #amb-store .amb-hero-carousel-slot .explore-slide{height:190px}
+  #amb-store .amb-hero-carousel-slot .explore-arrow{width:36px;height:36px}
+  #amb-store .explore-cap{font-size:.82rem;left:12px;bottom:12px}
 }
 /* light-burgundy floor rows (final palette for the directory panel) */
 #amb-store .floor-vertical-item{background:#f2d9e2;color:#7a1a44}
@@ -1465,7 +1693,7 @@
 #amb-store .amb-off-pic{height:130px;background:var(--surface2,#faf6f8) center/cover no-repeat;position:relative}
 #amb-store .amb-off-pic-empty{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--wine-tint),var(--surface2,#faf6f8))}
 #amb-store .amb-off-pic-empty i{font-size:1.8rem;color:var(--wine-l);opacity:.55}
-#amb-store .amb-off-pic .amb-off-badge{position:absolute;top:8px;left:8px;background:var(--success,#2f9e44);color:#fff;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:100px}
+#amb-store .amb-off-pic .amb-off-badge{position:absolute;top:8px;left:8px;background:var(--success,#a8871c);color:#fff;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:100px}
 #amb-store .amb-off-body{padding:12px 14px 14px}
 #amb-store .amb-off-body h5{font-size:.86rem;font-weight:800;color:var(--ink);margin-bottom:2px}
 #amb-store .amb-off-body .amb-off-meta{font-size:.7rem;color:var(--muted);margin-bottom:8px}
@@ -1618,6 +1846,7 @@ html.lenis, html.lenis body{height:auto}
         <a onclick="ambToast('Tap the ♥ on any product to save it')"><i class="fas fa-heart"></i> <span>Wishlist</span><span class="amb-badge" id="ambMDrawerWishBadge">0</span></a>
       </nav>
       <div class="amb-mdrawer-divider"></div>
+      <button class="amb-mdrawer-lang amb-install-row" id="ambInstallDrawerBtn" onclick="ambInstallApp()" style="display:none"><i class="fas fa-mobile-screen-button"></i> <span>Install app</span></button>
       <button class="amb-mdrawer-lang" onclick="ambToggleLang()"><i class="fas fa-language"></i> <span id="ambMDrawerLangTxt">አማርኛ / English</span></button>
     </div>
   </aside>
@@ -1625,6 +1854,9 @@ html.lenis, html.lenis body{height:auto}
   <!-- hero (split: copy + live seller showcase) -->
   <section class="amb-hero">
     <div class="amb-hero-bg"></div>
+    <div class="amb-hero-grid"></div>
+    <div class="amb-hero-rings" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="amb-hero-glow"></div>
     <div class="amb-hero-veil"></div>
     <div class="amb-hero-inner amb-hero-split">
       <div class="amb-hero-copy">
@@ -1722,7 +1954,7 @@ html.lenis, html.lenis body{height:auto}
       <div class="amb-vibe">
         <div class="amb-vibe-lines">
           <div class="amb-vibe-line"><i class="fas fa-shopping-bag" style="background:linear-gradient(135deg,#e4406e,#a8123f)"></i> Shop Smart</div>
-          <div class="amb-vibe-line"><i class="fas fa-piggy-bank" style="background:linear-gradient(135deg,#2f9e44,#1d7a33)"></i> Save Big</div>
+          <div class="amb-vibe-line"><i class="fas fa-piggy-bank" style="background:linear-gradient(135deg,#b8941f,#8a6d12)"></i> Save Big</div>
           <div class="amb-vibe-line"><i class="fas fa-gamepad" style="background:linear-gradient(135deg,#3b82f6,#1e56c0)"></i> Play Hard</div>
           <div class="amb-vibe-line"><i class="fas fa-utensils" style="background:linear-gradient(135deg,#e8a013,#b57708)"></i> Eat Well!</div>
         </div>
@@ -1813,7 +2045,7 @@ html.lenis, html.lenis body{height:auto}
           <div class="amb-share-img"><img src="https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900" alt="Ambassador Mall location" loading="lazy"></div>
           <div class="amb-share-taglines">
             <div class="amb-share-tag"><span class="sti" style="background:linear-gradient(135deg,#e4406e,#a8123f)"><i class="fas fa-bag-shopping"></i></span><span>Come for the shopping,</span></div>
-            <div class="amb-share-tag"><span class="sti" style="background:linear-gradient(135deg,#2f9e44,#1d7a33)"><i class="fas fa-film"></i></span><span>stay for the fun!</span></div>
+            <div class="amb-share-tag"><span class="sti" style="background:linear-gradient(135deg,#9c2f63,#6d1a42)"><i class="fas fa-film"></i></span><span>stay for the fun!</span></div>
           </div>
         </div>
       </div>
@@ -1828,7 +2060,7 @@ html.lenis, html.lenis body{height:auto}
       </div>
     </div>
     <div class="amb-partners">
-      <div class="amb-partners-track"><div class="amb-partner" style="--pc:#7c3aed"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner" style="--pc:#0ea5a3"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner" style="--pc:#1a9c4a"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner" style="--pc:#d4a017"><img src="https://s3-us-west-2.amazonaws.com/cbi-image-service-prd/original/a5215cf5-f60e-4d6a-a6dd-071d5d3c67d7.png?w=3840" alt="Bank of Abyssinia" loading="lazy"></div><div class="amb-partner" style="--pc:#7e1b8f"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner" style="--pc:#0e7c6b"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner" style="--pc:#7a1a44"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10" alt="Ambassador Mall" loading="lazy"></div><div class="amb-partner" style="--pc:#6a11cb"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div><div class="amb-partner" style="--pc:#7c3aed"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner" style="--pc:#0ea5a3"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner" style="--pc:#1a9c4a"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner" style="--pc:#d4a017"><img src="https://s3-us-west-2.amazonaws.com/cbi-image-service-prd/original/a5215cf5-f60e-4d6a-a6dd-071d5d3c67d7.png?w=3840" alt="Bank of Abyssinia" loading="lazy"></div><div class="amb-partner" style="--pc:#7e1b8f"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner" style="--pc:#0e7c6b"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner" style="--pc:#7a1a44"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10" alt="Ambassador Mall" loading="lazy"></div><div class="amb-partner" style="--pc:#6a11cb"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div></div>
+      <div class="amb-partners-track"><div class="amb-partner" style="--pc:#7c3aed"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner" style="--pc:#0ea5a3"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner" style="--pc:#1a9c4a"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner" style="--pc:#d4a017"><img src="https://s3-us-west-2.amazonaws.com/cbi-image-service-prd/original/a5215cf5-f60e-4d6a-a6dd-071d5d3c67d7.png?w=3840" alt="Bank of Abyssinia" loading="lazy"></div><div class="amb-partner" style="--pc:#7e1b8f"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner" style="--pc:#8a6d12"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner" style="--pc:#7a1a44"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10" alt="Ambassador Mall" loading="lazy"></div><div class="amb-partner" style="--pc:#6a11cb"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div><div class="amb-partner" style="--pc:#7c3aed"><img src="https://yt3.googleusercontent.com/wrnnA17xJnjpmcHFlPkeis2b89ukS0ovkVBRGEWFaNJZGceHdrVYss1oMTd8mv8DCV2yQDNN=s900-c-k-c0x00ffffff-no-rj" alt="Chapa" loading="lazy"></div><div class="amb-partner" style="--pc:#0ea5a3"><img src="https://santimpay.com/assets/SP-logo-CNRob7co.jpg" alt="SantimPay" loading="lazy"></div><div class="amb-partner" style="--pc:#1a9c4a"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd6Qu6JmBmRPFRlIwOeay0u2zXQWYmfB7lAA&s" alt="Telebirr" loading="lazy"></div><div class="amb-partner" style="--pc:#d4a017"><img src="https://s3-us-west-2.amazonaws.com/cbi-image-service-prd/original/a5215cf5-f60e-4d6a-a6dd-071d5d3c67d7.png?w=3840" alt="Bank of Abyssinia" loading="lazy"></div><div class="amb-partner" style="--pc:#7e1b8f"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQF8GTU156pTlCj9ulFNDwKbmHTsftVQb4QjZf8qZQniALwtTETYr-hVrN7cE_7bS42x8&usqp=CAU" alt="CBE" loading="lazy"></div><div class="amb-partner" style="--pc:#8a6d12"><img src="https://shebapay.io/wp-content/uploads/2022/08/logooen-1536x355-1.png" alt="ShebaPay" loading="lazy"></div><div class="amb-partner" style="--pc:#7a1a44"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc2FRwDvY4BaccDBwAi9TKDXTgmw7cffqkPbLfjC5xVDG-IomQSM0KDfi3&s=10" alt="Ambassador Mall" loading="lazy"></div><div class="amb-partner" style="--pc:#6a11cb"><img src="https://dashenbanksc.com/wp-content/uploads/Amole-Payment-Services-Dashen-Bank.jpg" alt="Amole" loading="lazy"></div></div>
     </div>
   </section>
 
@@ -1880,7 +2112,8 @@ html.lenis, html.lenis body{height:auto}
         <span>·</span>
         <a onclick="ambOpenHow()" data-i18n="howTitle">How Ordering Works</a>
       </div>
-      <div class="amb-bisinka-mark"><i class="fas fa-cube"></i> Storefront by <b>Bisinka Directory</b></div>
+      <button class="amb-install-btn" id="ambInstallBtn" onclick="ambInstallApp()"><i class="fas fa-mobile-screen-button"></i> Install app</button>
+        <div class="amb-bisinka-mark"><img src="/media/bisinka-logo.png" alt="Bisinka" class="amb-bisinka-logo"> Storefront by <b>Bisinka Directory</b></div>
     </div>
   </footer>
 
@@ -2143,14 +2376,14 @@ var BUILDING = {
     { id:'f2-melat-jewelry', unit:'219', floor:'2nd Floor', name:'Melat Jewelry', nameAm:'Melat Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#C6941B', rating:0, reviews:0, whatsapp:'25191136811', mobile:'+25191136811', photo:'', socials:{}, responseTime:'', blurb:'Melat Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 219.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-selamawit-jewelry', unit:'220', floor:'2nd Floor', name:'Selamawit Jewelry', nameAm:'Selamawit Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#9C7209', rating:0, reviews:0, whatsapp:'251908212048', mobile:'+251908212048', photo:'', socials:{}, responseTime:'', blurb:'Selamawit Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 220.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-teklu-desta-jewelry', unit:'221', floor:'2nd Floor', name:'Teklu Desta Jewelry', nameAm:'Teklu Desta Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#D4A017', rating:0, reviews:0, whatsapp:'251929900092', mobile:'+251929900092', photo:'', socials:{}, responseTime:'', blurb:'Teklu Desta Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 221.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f2-perfect-book', unit:'222', floor:'2nd Floor', name:'Perfect Book', nameAm:'Perfect Book', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#0D7A6F', rating:0, reviews:0, whatsapp:'251911927558', mobile:'+251911927558', photo:'', socials:{}, responseTime:'', blurb:'Perfect Book — Books & Stationery at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 222.', active:true, hidden:false, banks:[], products:[] },
+    { id:'f2-perfect-book', unit:'222', floor:'2nd Floor', name:'Perfect Book', nameAm:'Perfect Book', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#96601F', rating:0, reviews:0, whatsapp:'251911927558', mobile:'+251911927558', photo:'', socials:{}, responseTime:'', blurb:'Perfect Book — Books & Stationery at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 222.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-naile-jewelry', unit:'223', floor:'2nd Floor', name:'Naile Jewelry', nameAm:'Naile Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#B08D57', rating:0, reviews:0, whatsapp:'251911243444', mobile:'+251911243444', photo:'', socials:{}, responseTime:'', blurb:'Naile Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 223.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-ramada-jewelry', unit:'224', floor:'2nd Floor', name:'RAMADA Jewelry', nameAm:'RAMADA Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#B8860B', rating:0, reviews:0, whatsapp:'251920477514', mobile:'+251920477514', photo:'', socials:{}, responseTime:'', blurb:'RAMADA Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 224.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-semaldon-jewelry', unit:'225', floor:'2nd Floor', name:'Semaldon Jewelry', nameAm:'Semaldon Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#A67C0A', rating:0, reviews:0, whatsapp:'251929907573', mobile:'+251929907573', photo:'', socials:{}, responseTime:'', blurb:'Semaldon Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 225.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-dubai-jewelry', unit:'226', floor:'2nd Floor', name:'Dubai Jewelry', nameAm:'Dubai Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#C6941B', rating:0, reviews:0, whatsapp:'251920891627', mobile:'+251920891627', photo:'', socials:{}, responseTime:'', blurb:'Dubai Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 226.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-bego-jewelry', unit:'227', floor:'2nd Floor', name:'Bego Jewelry', nameAm:'Bego Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#9C7209', rating:0, reviews:0, whatsapp:'25191135021', mobile:'+25191135021', photo:'', socials:{}, responseTime:'', blurb:'Bego Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 227.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-essential-oil', unit:'228', floor:'2nd Floor', name:'Essential oil', nameAm:'Essential oil', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#C13584', rating:0, reviews:0, whatsapp:'251937459252', mobile:'+251937459252', photo:'', socials:{}, responseTime:'', blurb:'Essential oil — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 228.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f2-noli-speciality-dental-clinic', unit:'229', floor:'2nd Floor', name:'Noli Speciality Dental clinic', nameAm:'Noli Speciality Dental clinic', cat:'Healthcare & Wellness', catKey:'healthcare', icon:'fa-briefcase-medical', color:'#0E7C6B', rating:0, reviews:0, whatsapp:'251918376345', mobile:'+251918376345', photo:'', socials:{}, responseTime:'', blurb:'Noli Speciality Dental clinic — Healthcare & Wellness at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 229.', active:true, hidden:false, banks:[], products:[] },
+    { id:'f2-noli-speciality-dental-clinic', unit:'229', floor:'2nd Floor', name:'Noli Speciality Dental clinic', nameAm:'Noli Speciality Dental clinic', cat:'Healthcare & Wellness', catKey:'healthcare', icon:'fa-briefcase-medical', color:'#8C2F5A', rating:0, reviews:0, whatsapp:'251918376345', mobile:'+251918376345', photo:'', socials:{}, responseTime:'', blurb:'Noli Speciality Dental clinic — Healthcare & Wellness at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 229.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-awash-bank', unit:'230', floor:'2nd Floor', name:'Awash Bank', nameAm:'Awash Bank', cat:'Banking & Finance', catKey:'banking', icon:'fa-building-columns', color:'#1E3A8A', rating:0, reviews:0, whatsapp:'251937459252', mobile:'+251937459252', photo:'', socials:{}, responseTime:'', blurb:'Awash Bank — Banking & Finance at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 230.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-melos-jewelry', unit:'231', floor:'2nd Floor', name:'Melos Jewelry', nameAm:'Melos Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#D4A017', rating:0, reviews:0, whatsapp:'2519175871976', mobile:'+2519175871976', photo:'', socials:{}, responseTime:'', blurb:'Melos Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 231.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-geez-jewellery', unit:'232', floor:'2nd Floor', name:'Geez jewellery', nameAm:'Geez jewellery', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#B08D57', rating:0, reviews:0, whatsapp:'251906646091', mobile:'+251906646091', photo:'', socials:{}, responseTime:'', blurb:'Geez jewellery — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 232.', active:true, hidden:false, banks:[], products:[] },
@@ -2188,10 +2421,10 @@ var BUILDING = {
     { id:'f4-eros-perfume', unit:'F0-10', floor:'4th Floor', name:'Eros perfume', nameAm:'Eros perfume', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#A82B70', rating:0, reviews:0, whatsapp:'251911195665', mobile:'+251911195665', photo:'', socials:{}, responseTime:'', blurb:'Eros perfume — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-10.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-tschay-perfume', unit:'F0-11', floor:'4th Floor', name:'Tschay perfume', nameAm:'Tschay perfume', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#E0579C', rating:0, reviews:0, whatsapp:'251911223718', mobile:'+251911223718', photo:'', socials:{}, responseTime:'', blurb:'Tschay perfume — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-11.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-shanti-perfum', unit:'F0-12', floor:'4th Floor', name:'Shanti Perfum', nameAm:'Shanti Perfum', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#C13584', rating:0, reviews:0, whatsapp:'251912103010', mobile:'+251912103010', photo:'', socials:{}, responseTime:'', blurb:'Shanti Perfum — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-12.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f4-buna-sport-club', unit:'F0-13 A', floor:'4th Floor', name:'Buna sport club', nameAm:'Buna sport club', cat:'Sports & Fitness', catKey:'sports', icon:'fa-dumbbell', color:'#166534', rating:0, reviews:0, whatsapp:'251313356541', mobile:'+251313356541', photo:'', socials:{}, responseTime:'', blurb:'Buna sport club — Sports & Fitness at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-13 A.', active:true, hidden:false, banks:[], products:[] },
+    { id:'f4-buna-sport-club', unit:'F0-13 A', floor:'4th Floor', name:'Buna sport club', nameAm:'Buna sport club', cat:'Sports & Fitness', catKey:'sports', icon:'fa-dumbbell', color:'#A8641C', rating:0, reviews:0, whatsapp:'251313356541', mobile:'+251313356541', photo:'', socials:{}, responseTime:'', blurb:'Buna sport club — Sports & Fitness at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-13 A.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-shanti-perfum-2', unit:'F0-13 B', floor:'4th Floor', name:'Shanti Perfum', nameAm:'Shanti Perfum', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#D4468F', rating:0, reviews:0, whatsapp:'251912103010', mobile:'+251912103010', photo:'', socials:{}, responseTime:'', blurb:'Shanti Perfum — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-13 B.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-fillon-fashion', unit:'F0-14', floor:'4th Floor', name:'Fillon Fashion', nameAm:'Fillon Fashion', cat:'Fashion & Apparel', catKey:'fashion', icon:'fa-shirt', color:'#9C2359', rating:0, reviews:0, whatsapp:'251944737268', mobile:'+251944737268', photo:'', socials:{}, responseTime:'', blurb:'Fillon Fashion — Fashion & Apparel at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-14.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f4-nasam-print', unit:'F0-15', floor:'4th Floor', name:'Nasam Print', nameAm:'Nasam Print', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#0A5D55', rating:0, reviews:0, whatsapp:'251911219787', mobile:'+251911219787', photo:'', socials:{}, responseTime:'', blurb:'Nasam Print — Books & Stationery at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-15.', active:true, hidden:false, banks:[], products:[] }
+    { id:'f4-nasam-print', unit:'F0-15', floor:'4th Floor', name:'Nasam Print', nameAm:'Nasam Print', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#7A4A1E', rating:0, reviews:0, whatsapp:'251911219787', mobile:'+251911219787', photo:'', socials:{}, responseTime:'', blurb:'Nasam Print — Books & Stationery at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-15.', active:true, hidden:false, banks:[], products:[] }
   ]
 };
 
@@ -2769,7 +3002,7 @@ function renderQuickLinks(){
 function policyCardsHTML(){
   var pol=BUILDING.policy, am=state.lang==='am';
   return '<div class="amb-help-card">'+
-      '<div class="amb-help-ic" style="background:linear-gradient(135deg,var(--teal),var(--teal-d))"><i class="fas fa-shield-halved"></i></div>'+
+      '<div class="amb-help-ic" style="background:linear-gradient(135deg,var(--gold-d),var(--gold-deep))"><i class="fas fa-shield-halved"></i></div>'+
       '<div class="amb-help-t">'+(am?'ክፍያ ደህንነት':'Payment safety')+'</div>'+
       '<p class="amb-help-d">'+esc(am?pol.safetyAm:pol.safety)+'</p>'+
     '</div>'+
@@ -3060,7 +3293,7 @@ window.ambOpenTenant = function(tid){
         '<div class="amb-tp-acts">'+
           '<button class="amb-tp-shop" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
           '<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>'+
-          '<button class="amb-tp-wa" style="background:var(--teal)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
+          '<button class="amb-tp-wa" style="background:var(--accent)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -3241,25 +3474,41 @@ function renderHeroVisual(){
       '</div>';
   }).join('');
 
-  var carouselImages = [
-    { src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall', sub:'' },
-    { src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall', sub:'' },
-    { src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors', sub:'' },
-    { src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart', sub:'' },
-    { src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location', sub:'' }
+  /* hero showcase — mixed media: short videos sit alongside stills.
+     type:'video' slides autoplay muted+inline (required for mobile autoplay),
+     pause when off-screen, and hold the carousel until they finish. */
+  var carouselMedia = [
+    { type:'video', src:'/media/ambassador-hero.mp4', poster:'/media/hero-poster.jpg', label:'Ambassador Shopping Mall' },
+    { type:'image', src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall' },
+    { type:'image', src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall' },
+    { type:'image', src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors' },
+    { type:'image', src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart' },
+    { type:'image', src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location' }
   ];
-  var carouselHTML = carouselImages.map(function(img,idx){
-    return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy"></div>';
+  var carouselHTML = carouselMedia.map(function(m,idx){
+    var inner = m.type==='video'
+      ? '<video class="explore-video" muted playsinline preload="metadata" '+
+          (m.poster?'poster="'+esc(m.poster)+'" ':'')+
+          'aria-label="'+esc(m.label)+'"><source src="'+esc(m.src)+'" type="video/mp4"></video>'+
+        '<span class="explore-badge"><i class="fas fa-play"></i> '+(state.lang==='am'?'ቪዲዮ':'Video')+'</span>'
+      : '<img src="'+esc(m.src)+'" alt="'+esc(m.label)+'" loading="lazy">';
+    return '<div class="explore-slide" data-index="'+idx+'" data-type="'+m.type+'">'+inner+
+           '<span class="explore-cap">'+esc(m.label)+'</span></div>';
   }).join('');
-  // carousel lives under the hero copy (left of the phone) — clean, no captions, no dots
+  var dotsHTML = carouselMedia.map(function(m,idx){
+    return '<button class="explore-dot'+(idx===0?' active':'')+'" data-index="'+idx+'" '+
+           'onclick="ambGoToExploreSlide('+idx+',true)" aria-label="Slide '+(idx+1)+'"></button>';
+  }).join('');
   var slot=$('ambHeroCarouselSlot');
   if(slot){
     slot.innerHTML =
       '<div class="explore-carousel-wrap">'+
         '<div class="explore-track" id="exploreTrack">'+carouselHTML+'</div>'+
-        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1)"><i class="fas fa-chevron-left"></i></button>'+
-        '<button class="explore-arrow next" onclick="ambExploreSlide(1)"><i class="fas fa-chevron-right"></i></button>'+
-      '</div>';
+        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1,true)" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>'+
+        '<button class="explore-arrow next" onclick="ambExploreSlide(1,true)" aria-label="Next"><i class="fas fa-chevron-right"></i></button>'+
+        '<div class="explore-progress"><span id="exploreBar"></span></div>'+
+      '</div>'+
+      '<div class="explore-dots" id="exploreDots">'+dotsHTML+'</div>';
   }
 
   var totalUnits = BUILDING.tenants.length;
@@ -3277,26 +3526,75 @@ function renderHeroVisual(){
     '</div>';
   initExploreCarousel();
 }
+var IMAGE_SLIDE_MS = 5200;
+var exploreObserver = null, exploreVisible = true;
 function initExploreCarousel(){
   var track=$('exploreTrack'); if(!track) return;
   var slides = track.querySelectorAll('.explore-slide');
   exploreTotal = slides.length; if(!exploreTotal) return;
-  clearInterval(exploreInterval);
-  exploreInterval = setInterval(function(){ ambExploreSlide(1); }, 5500);
+  // when a video ends, move on immediately rather than cutting it off
+  track.querySelectorAll('.explore-video').forEach(function(v){
+    v.addEventListener('ended', function(){ ambExploreSlide(1); });
+  });
+  // don't burn battery/data animating a carousel nobody can see
+  if (exploreObserver) exploreObserver.disconnect();
+  if (window.IntersectionObserver){
+    exploreObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        exploreVisible = en.isIntersecting;
+        if (!exploreVisible){ stopExploreTimer(); pauseAllExploreVideos(); }
+        else ambGoToExploreSlide(exploreIdx);
+      });
+    }, {threshold:0.15});
+    exploreObserver.observe(track);
+  }
   ambGoToExploreSlide(0);
 }
-window.ambGoToExploreSlide = function(idx){
+function stopExploreTimer(){ clearTimeout(exploreInterval); exploreInterval=null; }
+function pauseAllExploreVideos(){
+  var track=$('exploreTrack'); if(!track) return;
+  track.querySelectorAll('.explore-video').forEach(function(v){ try{ v.pause(); }catch(e){} });
+}
+function restartProgressBar(ms){
+  var bar=$('exploreBar'); if(!bar) return;
+  bar.style.transition='none'; bar.style.width='0%';
+  // force reflow so the reset takes effect before the new transition starts
+  void bar.offsetWidth;
+  if(ms){ bar.style.transition='width '+ms+'ms linear'; bar.style.width='100%'; }
+}
+window.ambGoToExploreSlide = function(idx, userInitiated){
   var track=$('exploreTrack'), dots=$('exploreDots'); if(!track) return;
   var slides=track.querySelectorAll('.explore-slide'); if(!slides.length) return;
   idx = Math.max(0, Math.min(exploreTotal-1, idx));
   exploreIdx = idx;
   track.style.transform = 'translateX(-'+(idx*100)+'%)';
   if(dots) dots.querySelectorAll('.explore-dot').forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+  slides.forEach(function(sl,i){ sl.classList.toggle('is-active', i===idx); });
+
+  pauseAllExploreVideos();
+  stopExploreTimer();
+  if (!exploreVisible) { restartProgressBar(0); return; }
+
+  var active = slides[idx];
+  var vid = active ? active.querySelector('.explore-video') : null;
+  if (vid){
+    restartProgressBar(0);   // the video itself paces this slide
+    try { vid.currentTime = 0; } catch(e){}
+    var p = vid.play();
+    // autoplay can be refused (data saver, low power) — fall back to a timer
+    if (p && p.catch) p.catch(function(){
+      restartProgressBar(IMAGE_SLIDE_MS);
+      exploreInterval = setTimeout(function(){ ambExploreSlide(1); }, IMAGE_SLIDE_MS);
+    });
+  } else {
+    restartProgressBar(IMAGE_SLIDE_MS);
+    exploreInterval = setTimeout(function(){ ambExploreSlide(1); }, IMAGE_SLIDE_MS);
+  }
 };
-window.ambExploreSlide = function(dir){
+window.ambExploreSlide = function(dir, userInitiated){
   var n = exploreIdx+dir;
   if(n<0) n=exploreTotal-1; if(n>=exploreTotal) n=0;
-  ambGoToExploreSlide(n);
+  ambGoToExploreSlide(n, userInitiated);
 };
 window.ambFilterByFloor = function(floorName){
   state.filter = 'floor:'+floorName;
@@ -5100,6 +5398,67 @@ function boot(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
 else boot();
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   PART 5 — PWA: installable app, offline shell, install prompt
+   The service worker is registered only over http(s) (never file://)
+   and only for the public storefront — admin/seller/bms stay live.
+═══════════════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  var A = window.__AMB;
+
+  // ── register the service worker ──
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){ /* offline support is optional */ });
+    });
+  }
+
+  // ── "Install app" button, shown only when the browser says it's installable ──
+  var deferredPrompt = null;
+  function installBtn(){ return document.getElementById('ambInstallBtn'); }
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();               // keep Chrome's mini-infobar from stealing the moment
+    deferredPrompt = e;
+    var b = installBtn();
+    if (b) b.style.display = 'inline-flex';
+    var d = document.getElementById('ambInstallDrawerBtn');
+    if (d) d.style.display = 'flex';
+  });
+
+  window.ambInstallApp = function(){
+    if (!deferredPrompt) {
+      // iOS Safari never fires beforeinstallprompt — tell people how to do it manually
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      window.ambToast(
+        isIOS ? (A.state.lang==='am'
+                  ? 'ለመጫን: የShare ቁልፍ ➜ "Add to Home Screen" ይንኩ'
+                  : 'To install: tap Share ➜ "Add to Home Screen"')
+              : (A.state.lang==='am'
+                  ? 'ለመጫን የአሳሽዎን ምናሌ ይጠቀሙ'
+                  : 'Use your browser menu ➜ "Install app"'),
+        'suc');
+      return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){
+      deferredPrompt = null;
+      var b = installBtn(); if (b) b.style.display = 'none';
+      var d = document.getElementById('ambInstallDrawerBtn'); if (d) d.style.display = 'none';
+    });
+  };
+
+  // once installed, stop advertising it
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    var b = installBtn(); if (b) b.style.display = 'none';
+    var d = document.getElementById('ambInstallDrawerBtn'); if (d) d.style.display = 'none';
+    if (window.ambToast) window.ambToast(
+      A.state.lang==='am' ? 'መተግበሪያው ተጭኗል!' : 'App installed — find it on your home screen!', 'suc');
+  });
 })();
 
 </script>

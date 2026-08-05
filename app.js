@@ -187,14 +187,14 @@ var BUILDING = {
     { id:'f2-melat-jewelry', unit:'219', floor:'2nd Floor', name:'Melat Jewelry', nameAm:'Melat Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#C6941B', rating:0, reviews:0, whatsapp:'25191136811', mobile:'+25191136811', photo:'', socials:{}, responseTime:'', blurb:'Melat Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 219.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-selamawit-jewelry', unit:'220', floor:'2nd Floor', name:'Selamawit Jewelry', nameAm:'Selamawit Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#9C7209', rating:0, reviews:0, whatsapp:'251908212048', mobile:'+251908212048', photo:'', socials:{}, responseTime:'', blurb:'Selamawit Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 220.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-teklu-desta-jewelry', unit:'221', floor:'2nd Floor', name:'Teklu Desta Jewelry', nameAm:'Teklu Desta Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#D4A017', rating:0, reviews:0, whatsapp:'251929900092', mobile:'+251929900092', photo:'', socials:{}, responseTime:'', blurb:'Teklu Desta Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 221.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f2-perfect-book', unit:'222', floor:'2nd Floor', name:'Perfect Book', nameAm:'Perfect Book', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#0D7A6F', rating:0, reviews:0, whatsapp:'251911927558', mobile:'+251911927558', photo:'', socials:{}, responseTime:'', blurb:'Perfect Book — Books & Stationery at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 222.', active:true, hidden:false, banks:[], products:[] },
+    { id:'f2-perfect-book', unit:'222', floor:'2nd Floor', name:'Perfect Book', nameAm:'Perfect Book', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#96601F', rating:0, reviews:0, whatsapp:'251911927558', mobile:'+251911927558', photo:'', socials:{}, responseTime:'', blurb:'Perfect Book — Books & Stationery at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 222.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-naile-jewelry', unit:'223', floor:'2nd Floor', name:'Naile Jewelry', nameAm:'Naile Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#B08D57', rating:0, reviews:0, whatsapp:'251911243444', mobile:'+251911243444', photo:'', socials:{}, responseTime:'', blurb:'Naile Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 223.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-ramada-jewelry', unit:'224', floor:'2nd Floor', name:'RAMADA Jewelry', nameAm:'RAMADA Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#B8860B', rating:0, reviews:0, whatsapp:'251920477514', mobile:'+251920477514', photo:'', socials:{}, responseTime:'', blurb:'RAMADA Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 224.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-semaldon-jewelry', unit:'225', floor:'2nd Floor', name:'Semaldon Jewelry', nameAm:'Semaldon Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#A67C0A', rating:0, reviews:0, whatsapp:'251929907573', mobile:'+251929907573', photo:'', socials:{}, responseTime:'', blurb:'Semaldon Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 225.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-dubai-jewelry', unit:'226', floor:'2nd Floor', name:'Dubai Jewelry', nameAm:'Dubai Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#C6941B', rating:0, reviews:0, whatsapp:'251920891627', mobile:'+251920891627', photo:'', socials:{}, responseTime:'', blurb:'Dubai Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 226.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-bego-jewelry', unit:'227', floor:'2nd Floor', name:'Bego Jewelry', nameAm:'Bego Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#9C7209', rating:0, reviews:0, whatsapp:'25191135021', mobile:'+25191135021', photo:'', socials:{}, responseTime:'', blurb:'Bego Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 227.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-essential-oil', unit:'228', floor:'2nd Floor', name:'Essential oil', nameAm:'Essential oil', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#C13584', rating:0, reviews:0, whatsapp:'251937459252', mobile:'+251937459252', photo:'', socials:{}, responseTime:'', blurb:'Essential oil — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 228.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f2-noli-speciality-dental-clinic', unit:'229', floor:'2nd Floor', name:'Noli Speciality Dental clinic', nameAm:'Noli Speciality Dental clinic', cat:'Healthcare & Wellness', catKey:'healthcare', icon:'fa-briefcase-medical', color:'#0E7C6B', rating:0, reviews:0, whatsapp:'251918376345', mobile:'+251918376345', photo:'', socials:{}, responseTime:'', blurb:'Noli Speciality Dental clinic — Healthcare & Wellness at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 229.', active:true, hidden:false, banks:[], products:[] },
+    { id:'f2-noli-speciality-dental-clinic', unit:'229', floor:'2nd Floor', name:'Noli Speciality Dental clinic', nameAm:'Noli Speciality Dental clinic', cat:'Healthcare & Wellness', catKey:'healthcare', icon:'fa-briefcase-medical', color:'#8C2F5A', rating:0, reviews:0, whatsapp:'251918376345', mobile:'+251918376345', photo:'', socials:{}, responseTime:'', blurb:'Noli Speciality Dental clinic — Healthcare & Wellness at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 229.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-awash-bank', unit:'230', floor:'2nd Floor', name:'Awash Bank', nameAm:'Awash Bank', cat:'Banking & Finance', catKey:'banking', icon:'fa-building-columns', color:'#1E3A8A', rating:0, reviews:0, whatsapp:'251937459252', mobile:'+251937459252', photo:'', socials:{}, responseTime:'', blurb:'Awash Bank — Banking & Finance at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 230.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-melos-jewelry', unit:'231', floor:'2nd Floor', name:'Melos Jewelry', nameAm:'Melos Jewelry', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#D4A017', rating:0, reviews:0, whatsapp:'2519175871976', mobile:'+2519175871976', photo:'', socials:{}, responseTime:'', blurb:'Melos Jewelry — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 231.', active:true, hidden:false, banks:[], products:[] },
     { id:'f2-geez-jewellery', unit:'232', floor:'2nd Floor', name:'Geez jewellery', nameAm:'Geez jewellery', cat:'Jewelry & Accessories', catKey:'jewelry', icon:'fa-gem', color:'#B08D57', rating:0, reviews:0, whatsapp:'251906646091', mobile:'+251906646091', photo:'', socials:{}, responseTime:'', blurb:'Geez jewellery — Jewelry & Accessories at Ambassador Shopping Mall. Visit us on the 2nd Floor, unit 232.', active:true, hidden:false, banks:[], products:[] },
@@ -232,10 +232,10 @@ var BUILDING = {
     { id:'f4-eros-perfume', unit:'F0-10', floor:'4th Floor', name:'Eros perfume', nameAm:'Eros perfume', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#A82B70', rating:0, reviews:0, whatsapp:'251911195665', mobile:'+251911195665', photo:'', socials:{}, responseTime:'', blurb:'Eros perfume — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-10.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-tschay-perfume', unit:'F0-11', floor:'4th Floor', name:'Tschay perfume', nameAm:'Tschay perfume', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#E0579C', rating:0, reviews:0, whatsapp:'251911223718', mobile:'+251911223718', photo:'', socials:{}, responseTime:'', blurb:'Tschay perfume — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-11.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-shanti-perfum', unit:'F0-12', floor:'4th Floor', name:'Shanti Perfum', nameAm:'Shanti Perfum', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#C13584', rating:0, reviews:0, whatsapp:'251912103010', mobile:'+251912103010', photo:'', socials:{}, responseTime:'', blurb:'Shanti Perfum — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-12.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f4-buna-sport-club', unit:'F0-13 A', floor:'4th Floor', name:'Buna sport club', nameAm:'Buna sport club', cat:'Sports & Fitness', catKey:'sports', icon:'fa-dumbbell', color:'#166534', rating:0, reviews:0, whatsapp:'251313356541', mobile:'+251313356541', photo:'', socials:{}, responseTime:'', blurb:'Buna sport club — Sports & Fitness at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-13 A.', active:true, hidden:false, banks:[], products:[] },
+    { id:'f4-buna-sport-club', unit:'F0-13 A', floor:'4th Floor', name:'Buna sport club', nameAm:'Buna sport club', cat:'Sports & Fitness', catKey:'sports', icon:'fa-dumbbell', color:'#A8641C', rating:0, reviews:0, whatsapp:'251313356541', mobile:'+251313356541', photo:'', socials:{}, responseTime:'', blurb:'Buna sport club — Sports & Fitness at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-13 A.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-shanti-perfum-2', unit:'F0-13 B', floor:'4th Floor', name:'Shanti Perfum', nameAm:'Shanti Perfum', cat:'Beauty & Cosmetics', catKey:'beauty', icon:'fa-spa', color:'#D4468F', rating:0, reviews:0, whatsapp:'251912103010', mobile:'+251912103010', photo:'', socials:{}, responseTime:'', blurb:'Shanti Perfum — Beauty & Cosmetics at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-13 B.', active:true, hidden:false, banks:[], products:[] },
     { id:'f4-fillon-fashion', unit:'F0-14', floor:'4th Floor', name:'Fillon Fashion', nameAm:'Fillon Fashion', cat:'Fashion & Apparel', catKey:'fashion', icon:'fa-shirt', color:'#9C2359', rating:0, reviews:0, whatsapp:'251944737268', mobile:'+251944737268', photo:'', socials:{}, responseTime:'', blurb:'Fillon Fashion — Fashion & Apparel at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-14.', active:true, hidden:false, banks:[], products:[] },
-    { id:'f4-nasam-print', unit:'F0-15', floor:'4th Floor', name:'Nasam Print', nameAm:'Nasam Print', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#0A5D55', rating:0, reviews:0, whatsapp:'251911219787', mobile:'+251911219787', photo:'', socials:{}, responseTime:'', blurb:'Nasam Print — Books & Stationery at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-15.', active:true, hidden:false, banks:[], products:[] }
+    { id:'f4-nasam-print', unit:'F0-15', floor:'4th Floor', name:'Nasam Print', nameAm:'Nasam Print', cat:'Books & Stationery', catKey:'books', icon:'fa-book-open', color:'#7A4A1E', rating:0, reviews:0, whatsapp:'251911219787', mobile:'+251911219787', photo:'', socials:{}, responseTime:'', blurb:'Nasam Print — Books & Stationery at Ambassador Shopping Mall. Visit us on the 4th Floor, unit F0-15.', active:true, hidden:false, banks:[], products:[] }
   ]
 };
 
@@ -813,7 +813,7 @@ function renderQuickLinks(){
 function policyCardsHTML(){
   var pol=BUILDING.policy, am=state.lang==='am';
   return '<div class="amb-help-card">'+
-      '<div class="amb-help-ic" style="background:linear-gradient(135deg,var(--teal),var(--teal-d))"><i class="fas fa-shield-halved"></i></div>'+
+      '<div class="amb-help-ic" style="background:linear-gradient(135deg,var(--gold-d),var(--gold-deep))"><i class="fas fa-shield-halved"></i></div>'+
       '<div class="amb-help-t">'+(am?'ክፍያ ደህንነት':'Payment safety')+'</div>'+
       '<p class="amb-help-d">'+esc(am?pol.safetyAm:pol.safety)+'</p>'+
     '</div>'+
@@ -1104,7 +1104,7 @@ window.ambOpenTenant = function(tid){
         '<div class="amb-tp-acts">'+
           '<button class="amb-tp-shop" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
           '<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>'+
-          '<button class="amb-tp-wa" style="background:var(--teal)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
+          '<button class="amb-tp-wa" style="background:var(--accent)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -1285,25 +1285,41 @@ function renderHeroVisual(){
       '</div>';
   }).join('');
 
-  var carouselImages = [
-    { src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall', sub:'' },
-    { src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall', sub:'' },
-    { src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors', sub:'' },
-    { src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart', sub:'' },
-    { src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location', sub:'' }
+  /* hero showcase — mixed media: short videos sit alongside stills.
+     type:'video' slides autoplay muted+inline (required for mobile autoplay),
+     pause when off-screen, and hold the carousel until they finish. */
+  var carouselMedia = [
+    { type:'video', src:'/media/ambassador-hero.mp4', poster:'/media/hero-poster.jpg', label:'Ambassador Shopping Mall' },
+    { type:'image', src:'https://i.postimg.cc/NMLJc5qx/main.jpg', label:'Ambassador Mall' },
+    { type:'image', src:'https://ketemajournal.com/wp-content/uploads/2022/11/IMG_8681-719x1024.jpg', label:'Inside the Mall' },
+    { type:'image', src:'https://i.postimg.cc/G3GmK6F2/ketemajournal-com.jpg', label:'Shopping Floors' },
+    { type:'image', src:'https://i.postimg.cc/L6PzMmcM/shinegold.jpg', label:'Gold Mart' },
+    { type:'image', src:'https://pbs.twimg.com/media/GoHFw_BXwAAsk2v?format=jpg&name=900x900', label:'Our Location' }
   ];
-  var carouselHTML = carouselImages.map(function(img,idx){
-    return '<div class="explore-slide" data-index="'+idx+'"><img src="'+img.src+'" alt="'+esc(img.label)+'" loading="lazy"></div>';
+  var carouselHTML = carouselMedia.map(function(m,idx){
+    var inner = m.type==='video'
+      ? '<video class="explore-video" muted playsinline preload="metadata" '+
+          (m.poster?'poster="'+esc(m.poster)+'" ':'')+
+          'aria-label="'+esc(m.label)+'"><source src="'+esc(m.src)+'" type="video/mp4"></video>'+
+        '<span class="explore-badge"><i class="fas fa-play"></i> '+(state.lang==='am'?'ቪዲዮ':'Video')+'</span>'
+      : '<img src="'+esc(m.src)+'" alt="'+esc(m.label)+'" loading="lazy">';
+    return '<div class="explore-slide" data-index="'+idx+'" data-type="'+m.type+'">'+inner+
+           '<span class="explore-cap">'+esc(m.label)+'</span></div>';
   }).join('');
-  // carousel lives under the hero copy (left of the phone) — clean, no captions, no dots
+  var dotsHTML = carouselMedia.map(function(m,idx){
+    return '<button class="explore-dot'+(idx===0?' active':'')+'" data-index="'+idx+'" '+
+           'onclick="ambGoToExploreSlide('+idx+',true)" aria-label="Slide '+(idx+1)+'"></button>';
+  }).join('');
   var slot=$('ambHeroCarouselSlot');
   if(slot){
     slot.innerHTML =
       '<div class="explore-carousel-wrap">'+
         '<div class="explore-track" id="exploreTrack">'+carouselHTML+'</div>'+
-        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1)"><i class="fas fa-chevron-left"></i></button>'+
-        '<button class="explore-arrow next" onclick="ambExploreSlide(1)"><i class="fas fa-chevron-right"></i></button>'+
-      '</div>';
+        '<button class="explore-arrow prev" onclick="ambExploreSlide(-1,true)" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>'+
+        '<button class="explore-arrow next" onclick="ambExploreSlide(1,true)" aria-label="Next"><i class="fas fa-chevron-right"></i></button>'+
+        '<div class="explore-progress"><span id="exploreBar"></span></div>'+
+      '</div>'+
+      '<div class="explore-dots" id="exploreDots">'+dotsHTML+'</div>';
   }
 
   var totalUnits = BUILDING.tenants.length;
@@ -1321,26 +1337,75 @@ function renderHeroVisual(){
     '</div>';
   initExploreCarousel();
 }
+var IMAGE_SLIDE_MS = 5200;
+var exploreObserver = null, exploreVisible = true;
 function initExploreCarousel(){
   var track=$('exploreTrack'); if(!track) return;
   var slides = track.querySelectorAll('.explore-slide');
   exploreTotal = slides.length; if(!exploreTotal) return;
-  clearInterval(exploreInterval);
-  exploreInterval = setInterval(function(){ ambExploreSlide(1); }, 5500);
+  // when a video ends, move on immediately rather than cutting it off
+  track.querySelectorAll('.explore-video').forEach(function(v){
+    v.addEventListener('ended', function(){ ambExploreSlide(1); });
+  });
+  // don't burn battery/data animating a carousel nobody can see
+  if (exploreObserver) exploreObserver.disconnect();
+  if (window.IntersectionObserver){
+    exploreObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        exploreVisible = en.isIntersecting;
+        if (!exploreVisible){ stopExploreTimer(); pauseAllExploreVideos(); }
+        else ambGoToExploreSlide(exploreIdx);
+      });
+    }, {threshold:0.15});
+    exploreObserver.observe(track);
+  }
   ambGoToExploreSlide(0);
 }
-window.ambGoToExploreSlide = function(idx){
+function stopExploreTimer(){ clearTimeout(exploreInterval); exploreInterval=null; }
+function pauseAllExploreVideos(){
+  var track=$('exploreTrack'); if(!track) return;
+  track.querySelectorAll('.explore-video').forEach(function(v){ try{ v.pause(); }catch(e){} });
+}
+function restartProgressBar(ms){
+  var bar=$('exploreBar'); if(!bar) return;
+  bar.style.transition='none'; bar.style.width='0%';
+  // force reflow so the reset takes effect before the new transition starts
+  void bar.offsetWidth;
+  if(ms){ bar.style.transition='width '+ms+'ms linear'; bar.style.width='100%'; }
+}
+window.ambGoToExploreSlide = function(idx, userInitiated){
   var track=$('exploreTrack'), dots=$('exploreDots'); if(!track) return;
   var slides=track.querySelectorAll('.explore-slide'); if(!slides.length) return;
   idx = Math.max(0, Math.min(exploreTotal-1, idx));
   exploreIdx = idx;
   track.style.transform = 'translateX(-'+(idx*100)+'%)';
   if(dots) dots.querySelectorAll('.explore-dot').forEach(function(d,i){ d.classList.toggle('active', i===idx); });
+  slides.forEach(function(sl,i){ sl.classList.toggle('is-active', i===idx); });
+
+  pauseAllExploreVideos();
+  stopExploreTimer();
+  if (!exploreVisible) { restartProgressBar(0); return; }
+
+  var active = slides[idx];
+  var vid = active ? active.querySelector('.explore-video') : null;
+  if (vid){
+    restartProgressBar(0);   // the video itself paces this slide
+    try { vid.currentTime = 0; } catch(e){}
+    var p = vid.play();
+    // autoplay can be refused (data saver, low power) — fall back to a timer
+    if (p && p.catch) p.catch(function(){
+      restartProgressBar(IMAGE_SLIDE_MS);
+      exploreInterval = setTimeout(function(){ ambExploreSlide(1); }, IMAGE_SLIDE_MS);
+    });
+  } else {
+    restartProgressBar(IMAGE_SLIDE_MS);
+    exploreInterval = setTimeout(function(){ ambExploreSlide(1); }, IMAGE_SLIDE_MS);
+  }
 };
-window.ambExploreSlide = function(dir){
+window.ambExploreSlide = function(dir, userInitiated){
   var n = exploreIdx+dir;
   if(n<0) n=exploreTotal-1; if(n>=exploreTotal) n=0;
-  ambGoToExploreSlide(n);
+  ambGoToExploreSlide(n, userInitiated);
 };
 window.ambFilterByFloor = function(floorName){
   state.filter = 'floor:'+floorName;
@@ -3144,4 +3209,65 @@ function boot(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
 else boot();
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   PART 5 — PWA: installable app, offline shell, install prompt
+   The service worker is registered only over http(s) (never file://)
+   and only for the public storefront — admin/seller/bms stay live.
+═══════════════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  var A = window.__AMB;
+
+  // ── register the service worker ──
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){ /* offline support is optional */ });
+    });
+  }
+
+  // ── "Install app" button, shown only when the browser says it's installable ──
+  var deferredPrompt = null;
+  function installBtn(){ return document.getElementById('ambInstallBtn'); }
+
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();               // keep Chrome's mini-infobar from stealing the moment
+    deferredPrompt = e;
+    var b = installBtn();
+    if (b) b.style.display = 'inline-flex';
+    var d = document.getElementById('ambInstallDrawerBtn');
+    if (d) d.style.display = 'flex';
+  });
+
+  window.ambInstallApp = function(){
+    if (!deferredPrompt) {
+      // iOS Safari never fires beforeinstallprompt — tell people how to do it manually
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      window.ambToast(
+        isIOS ? (A.state.lang==='am'
+                  ? 'ለመጫን: የShare ቁልፍ ➜ "Add to Home Screen" ይንኩ'
+                  : 'To install: tap Share ➜ "Add to Home Screen"')
+              : (A.state.lang==='am'
+                  ? 'ለመጫን የአሳሽዎን ምናሌ ይጠቀሙ'
+                  : 'Use your browser menu ➜ "Install app"'),
+        'suc');
+      return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){
+      deferredPrompt = null;
+      var b = installBtn(); if (b) b.style.display = 'none';
+      var d = document.getElementById('ambInstallDrawerBtn'); if (d) d.style.display = 'none';
+    });
+  };
+
+  // once installed, stop advertising it
+  window.addEventListener('appinstalled', function(){
+    deferredPrompt = null;
+    var b = installBtn(); if (b) b.style.display = 'none';
+    var d = document.getElementById('ambInstallDrawerBtn'); if (d) d.style.display = 'none';
+    if (window.ambToast) window.ambToast(
+      A.state.lang==='am' ? 'መተግበሪያው ተጭኗል!' : 'App installed — find it on your home screen!', 'suc');
+  });
 })();

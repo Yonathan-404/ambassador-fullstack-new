@@ -31,6 +31,107 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v24 — installable mobile app (PWA), video hero, corner close buttons
+
+**Installable as a real mobile app.** Added a web app manifest, service
+worker, and full icon set generated from the Bisinka logo (regular +
+maskable, plus an Apple touch icon). Visitors get an "Install app" button —
+in the mobile drawer and the footer — that appears only when the browser
+reports the site as installable, with an iOS-specific fallback message since
+Safari never fires `beforeinstallprompt`. The service worker caches the app
+shell for offline use, uses network-first for `/api/*` so the directory still
+opens on a weak signal, and **never** caches the admin/seller/BMS tools.
+`sw.js` is served with no-cache headers so clients can't get stuck on a stale
+shell, and the manifest gets its proper `application/manifest+json` type.
+
+**Mobile nav fixed — cart and hamburger are always reachable.** The long mall
+name was pushing the action buttons past the right edge. The brand now
+shrinks and truncates with an ellipsis, nav actions never shrink, and every
+control has a guaranteed 44px tap target so nothing collapses even if the
+icon font fails to load. Verified by measuring the rendered geometry at
+390px: cart, search and menu all sit fully inside the viewport. iOS safe-area
+insets are honoured for notched devices in standalone mode.
+
+**Hero showcase now carries video.** The carousel handles mixed media — the
+supplied Bisinka clip plays first (muted + `playsinline`, required for mobile
+autoplay), holds the slide until it ends rather than being cut off, and falls
+back to a timer if autoplay is refused. It pauses entirely when scrolled out
+of view. Added captions, a VIDEO badge, clickable dots, and a progress bar.
+The frame is now `aspect-ratio: 16/9` and scales up to 760px/880px on large
+screens instead of staying letterboxed at a fixed height. Still images get a
+subtle ken-burns drift; video doesn't.
+
+**Close buttons pinned to the true top-right corner** of every panel — modal,
+floor panel, mobile drawer, cart and checkout — floating above their own
+content at a consistent 10px inset, verified by measurement, and clear of the
+notch when installed.
+
+Bisinka's logo now appears in the footer attribution and is the source of
+every app icon. Verified with a 27-point suite plus live checks of all PWA
+endpoints.
+
+### v23 — wine & gold redesign (no green), dramatic hero
+
+**Palette rebuilt around the Ambassador logo.** Wine/burgundy and gold are
+now the only brand colours, each expanded into a full family — `--wine-deep`,
+`--wine-rose`, `--wine-blush` and `--gold-deep`, `--gold-champagne`,
+`--gold-bright` — so the design has depth without borrowing a foreign hue.
+The old teal accent became a plum/rose family; the legacy `--teal*` variables
+are kept as aliases pointing at it, so every existing rule keeps working.
+
+**Every green traced and removed.** Rather than trusting a find-and-replace,
+a pixel scanner measured the rendered hero and found 745 green-leaning
+pixels, then each source was traced and fixed: teal variables, hardcoded
+`rgba()` values, green category colours in tenant data (books, healthcare,
+sports → bronze, plum, copper), green "in stock" pills, green Call buttons,
+and — the stubborn one — a **duplicate `.amb-hero-bg` rule further down the
+file silently overriding the redesign** while carrying a mint `#ecf8f5`.
+Result: 745 → 1 green pixel, and that one is inside a logo image, not CSS.
+Third-party brand colours (WhatsApp, Telebirr, Chapa, Telegram, Google) were
+deliberately preserved — those are other companies' identities, not ours.
+
+**Hero transformed.** Slow-drifting gold and wine aurora ribbons, three
+concentric gold rings echoing the logo's circular mark, a masked gold/wine
+grid, a gold hairline dividing hero from page, and a live shimmer sweeping
+through the emphasised headline phrase. The Building Directory panel — the
+hero's centrepiece — gained a gold-framed glass treatment, a gradient crown
+along its top edge, and floor rows with a gold sheen that sweeps across on
+hover. Footer moved from navy to deep wine with a gold gradient edge.
+
+**One self-inflicted bug caught and fixed:** the white `text-shadow` added to
+the headline was showing *through* the transparent gradient-clipped glyphs
+and washing the shimmer out to an unreadable pale. Cancelled on the `em`.
+
+Verified with a 21-point regression suite (content integrity, all hero
+layers, palette correctness, and every interactive flow) plus visual QA
+across hero, marketplace, services, footer and mobile.
+
+### v22 — visual/CSS polish pass (no content changes)
+
+Studied the hero section, transitions, and card micro-interactions from a
+reference site (a modern travel-agency design) and selectively adopted what
+Ambassador's storefront didn't already have — verified against what already
+existed before adding anything, since several patterns (product card image
+zoom, modal scale+fade reveal, floor-item hover slide) were already in place
+and left untouched.
+
+**Added:** an animated gradient underline on nav links (was a flat
+background swap); a resting colored glow shadow on primary CTA buttons that
+deepens further on hover; two softly floating decorative orbs behind the
+hero content (pure CSS pseudo-elements, no markup added, with a
+`prefers-reduced-motion` guard the reference site didn't bother with); a
+subtle lift-on-hover for marketplace/filter chips; an icon scale-up on
+service card hover; and a site-wide `:focus-visible` outline for keyboard
+navigation, which was a real accessibility gap.
+
+**Explicitly not touched:** any text, copy, data, or JS behavior. Every
+change was a scoped CSS property edit or a purely decorative pseudo-element.
+Verified with a 15-point regression suite (confirming real tenant data,
+hero headline text, and every interactive flow — floor panel, tenant
+profile, marketplace filters, e-commerce hold modal — still work exactly as
+before) plus a full visual pass across desktop, mobile, and every major
+section (hero, marketplace, sellers, services, footer).
+
 ### v21 — marketplace visibility fix, services rebuild, call buttons
 
 **Marketplace products were invisible on most days — fixed.** The root
