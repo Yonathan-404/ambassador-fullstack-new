@@ -1103,8 +1103,17 @@ window.ambOpenTenant = function(tid){
         '<div class="amb-tp-socials">'+socialIcons(tn.socials,tn.color)+'</div>'+
         '<div class="amb-tp-acts">'+
           '<button class="amb-tp-shop" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
-          '<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>'+
+          (tn.whatsapp?'<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>':'')+
           '<button class="amb-tp-wa" style="background:var(--accent)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
+        '</div>'+
+        /* save-contact + appointment: a vCard downloads straight into the phone's
+           address book; booking opens WhatsApp pre-filled so the shop gets a
+           complete request instead of a blank "hi" */
+        '<div class="amb-tp-acts2">'+
+          '<a class="amb-tp-vcard" href="/api/tenant/'+tn.id+'/vcard" download><i class="fas fa-address-card"></i> '+
+            (state.lang==='am'?'እውቂያ አስቀምጥ':'Save Contact')+'</a>'+
+          (tn.whatsapp?'<button class="amb-tp-book" onclick="ambBookAppointment(\''+tn.id+'\')"><i class="fas fa-calendar-check"></i> '+
+            (state.lang==='am'?'ቀጠሮ ይያዙ':'Book Appointment')+'</button>':'')+
         '</div>'+
       '</div>'+
     '</div>';
@@ -1879,6 +1888,56 @@ function buildShareText(title, sub, kind, id){
 window.ambShareProduct = function(pid){
   var p=P(pid); if(!p) return; var tn=tenant(p.tenantId);
   ambShareSheet(p.name, fmt(p.price)+' · '+nameFor(tn), 'product', pid);
+};
+/* ── appointment booking — collects the details first, then hands a complete
+   request to WhatsApp. Service tenants (salons, wellness, clinics) benefit
+   most, but any shop with WhatsApp can take a booking. ── */
+window.ambBookAppointment = function(tid){
+  var tn = tenant(tid); if(!tn || !tn.whatsapp) return;
+  var am = state.lang==='am';
+  var today = new Date(); today.setDate(today.getDate()+1);
+  var min = today.toISOString().slice(0,10);
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div class="amb-book-modal">'+
+      '<div class="amb-book-ic"><i class="fas fa-calendar-check"></i></div>'+
+      '<div class="amb-book-t">'+(am?'ቀጠሮ ይያዙ':'Book an Appointment')+'</div>'+
+      '<div class="amb-book-s">'+esc(nameFor(tn))+' · '+esc(floorUnit(tn))+'</div>'+
+      '<div class="amb-book-f"><label>'+(am?'ስምዎ':'Your name')+'</label>'+
+        '<input id="ambBkName" placeholder="'+(am?'ስም':'Name')+'"></div>'+
+      '<div class="amb-book-grid">'+
+        '<div class="amb-book-f"><label>'+(am?'ቀን':'Date')+'</label>'+
+          '<input type="date" id="ambBkDate" min="'+min+'" value="'+min+'"></div>'+
+        '<div class="amb-book-f"><label>'+(am?'ሰዓት':'Time')+'</label>'+
+          '<input type="time" id="ambBkTime" value="10:00"></div>'+
+      '</div>'+
+      '<div class="amb-book-f"><label>'+(am?'የሚፈልጉት አገልግሎት':'Service or reason')+'</label>'+
+        '<input id="ambBkFor" placeholder="'+(am?'ለምሳሌ: ጸጉር፣ ምክክር':'e.g. haircut, consultation, viewing')+'"></div>'+
+      '<div class="amb-book-f"><label>'+(am?'ተጨማሪ ማስታወሻ':'Anything else (optional)')+'</label>'+
+        '<textarea id="ambBkNote" rows="2" placeholder="'+(am?'ማስታወሻ':'Notes')+'"></textarea></div>'+
+      '<button class="amb-book-btn" onclick="ambSendBooking(\''+tn.id+'\')"><i class="fab fa-whatsapp"></i> '+
+        (am?'በWhatsApp ይላኩ':'Send via WhatsApp')+'</button>'+
+      '<div class="amb-book-note">'+(am?'መልእክቱ ተሞልቶ ይከፈታል — ከመላክዎ በፊት ማረም ይችላሉ።'
+        :'WhatsApp opens pre-filled — you can edit it before sending.')+'</div>'+
+    '</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
+window.ambSendBooking = function(tid){
+  var tn = tenant(tid); if(!tn) return;
+  var am = state.lang==='am';
+  var g = function(id){ var e=$(id); return e ? e.value.trim() : ''; };
+  var name=g('ambBkName'), date=g('ambBkDate'), time=g('ambBkTime'), forWhat=g('ambBkFor'), note=g('ambBkNote');
+  if(!date || !time){ window.ambToast(am?'ቀን እና ሰዓት ይምረጡ':'Please pick a date and time','err'); return; }
+  var lines = am
+    ? ['ሰላም '+tn.name+'፣ ቀጠሮ መያዝ እፈልጋለሁ።','', 'ቀን: '+date, 'ሰዓት: '+time]
+    : ['Hello '+tn.name+', I would like to book an appointment.','', 'Date: '+date, 'Time: '+time];
+  if(forWhat) lines.push((am?'አገልግሎት: ':'For: ')+forWhat);
+  if(name)    lines.push((am?'ስም: ':'Name: ')+name);
+  if(note)    lines.push((am?'ማስታወሻ: ':'Note: ')+note);
+  lines.push('', (am?'— በአምባሳደር ሾፒንግ ሞል ማውጫ በኩል':'— via the Ambassador Shopping Mall directory'));
+  window.open('https://wa.me/'+tn.whatsapp+'?text='+encodeURIComponent(lines.join('\n')), '_blank');
+  ambCloseAll();
+  window.ambToast(am?'WhatsApp እየተከፈተ ነው…':'Opening WhatsApp…','suc');
 };
 window.ambShareTenant = function(tid){
   var tn=tenant(tid); if(!tn) return;
@@ -2722,6 +2781,69 @@ function vacantUnitsList(){
   }
   return AVAILABLE_OFFICES; // embedded fallback if BUILDING.vacantUnits hasn't loaded yet
 }
+/* ── public job / vacancy board — posted by shops, mall management, or BMS ── */
+window.ambOpenJobs = function(){
+  var am = state.lang==='am';
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:26px 24px 6px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+
+        (am?'የስራ ማስታወቂያ':'Job Vacancies')+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid)">'+
+        (am?'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።'
+           :'Openings posted by shops inside the mall, by Ambassador management, and by building operations.')+'</p>'+
+    '</div>'+
+    '<div class="amb-job-grid" id="ambJobGrid"><div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+
+      (am?'በመጫን ላይ…':'Loading…')+'</div></div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+
+  A.api('/api/jobs').then(function(d){
+    var grid=$('ambJobGrid'); if(!grid) return;          // modal may already be closed
+    var jobs=(d.jobs||[]);
+    if(!jobs.length){
+      grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
+        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም። እባክዎ በኋላ ይመልከቱ።'
+           :'No openings posted right now — please check back soon.')+'</div>';
+      return;
+    }
+    grid.innerHTML = jobs.map(function(j){
+      var badge = j.posterType==='mall' ? (am?'የሞል አስተዳደር':'Mall Management')
+                : j.posterType==='bms'  ? (am?'የህንፃ ጥገና':'Building Operations')
+                : esc(j.posterName||'');
+      /* only prefix ETB when the poster typed a bare number — otherwise we
+         end up with "ETB 8000 ETB / month" for realistic free-text input */
+      var salTxt = ('' + (j.salary || '')).trim();
+      var bareNum = /^[\d,. ]+$/.test(salTxt);
+      var pay = salTxt ? (bareNum ? 'ETB ' + esc(salTxt) : esc(salTxt))
+                       : (j.negotiable ? (am?'ሊደራደር የሚችል':'Negotiable') : '');
+      var waMsg = encodeURIComponent((am?'ሰላም፣ ስለ ':'Hello, I would like to apply for the ')+j.position+(am?' የስራ ቦታ ማመልከት እፈልጋለሁ።':' position.'));
+      var rows='';
+      if(pay)       rows+='<div class="amb-job-row"><i class="fas fa-money-bill-wave"></i><span class="amb-job-pay">'+pay+(j.salary&&j.negotiable?(am?' (ሊደራደር የሚችል)':' (negotiable)'):'')+'</span></div>';
+      if(j.hours)   rows+='<div class="amb-job-row"><i class="fas fa-clock"></i><span>'+esc(j.hours)+'</span></div>';
+      if(j.employmentType) rows+='<div class="amb-job-row"><i class="fas fa-briefcase"></i><span>'+esc(j.employmentType)+'</span></div>';
+      if(j.location)rows+='<div class="amb-job-row"><i class="fas fa-location-dot"></i><span>'+esc(j.location)+'</span></div>';
+      if(j.deadline)rows+='<div class="amb-job-row"><i class="fas fa-calendar-day"></i><span>'+(am?'እስከ ':'Apply by ')+esc(j.deadline)+'</span></div>';
+      var acts='';
+      if(j.contactPhone)    acts+='<a href="tel:'+esc(j.contactPhone.replace(/\s/g,''))+'" class="amb-job-call"><i class="fas fa-phone"></i> '+(am?'ይደውሉ':'Call')+'</a>';
+      if(j.contactWhatsapp) acts+='<a href="https://wa.me/'+esc(j.contactWhatsapp)+'?text='+waMsg+'" target="_blank" rel="noopener" class="amb-job-wa"><i class="fab fa-whatsapp"></i> '+(am?'ያመልክቱ':'Apply')+'</a>';
+      return '<div class="amb-job-card">'+
+        '<div class="amb-job-top '+esc(j.posterType)+'">'+
+          '<div class="amb-job-pos">'+esc(j.position)+'</div>'+
+          '<div class="amb-job-by"><i class="fas fa-building"></i> '+badge+'</div>'+
+        '</div>'+
+        '<div class="amb-job-body">'+
+          (rows?'<div class="amb-job-rows">'+rows+'</div>':'')+
+          (j.description?'<div class="amb-job-desc">'+esc(j.description)+'</div>':'')+
+          (acts?'<div class="amb-job-acts">'+acts+'</div>':'')+
+        '</div></div>';
+    }).join('');
+  }).catch(function(){
+    var grid=$('ambJobGrid');
+    if(grid) grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-triangle-exclamation"></i>'+
+      (am?'ማስታወቂያዎችን መጫን አልተቻለም።':'Could not load vacancies right now.')+'</div>';
+  });
+};
+
 window.ambOpenAvailableOffices = function(){
   var am = state.lang==='am';
   var cards = vacantUnitsList().map(function(o){

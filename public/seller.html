@@ -3,19 +3,37 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seller Portal · Ambassador Shopping Mall</title>
+<meta name="theme-color" content="#8a1450">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Seller Portal">
+<link rel="manifest" href="/seller-manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  :root{--wine:#8a1450;--teal:#0D7A6F;--ink:#221820;--mid:#7d6e76;--line:#e8e2e5;--bg:#f8f5f6}
+  :root{--wine:#8a1450;--wine-d:#5e1338;--wine-deep:#420d27;--gold:#D4AF37;--gold-d:#b8941f;--gold-deep:#8a6d12;
+        --accent:#9c2f63;--teal:#9c2f63;--ink:#221820;--mid:#7d6e76;--line:#efe6ea;--bg:#faf6f8;--wa:#25D366}
   *{box-sizing:border-box}
   body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0}
-  .top{background:linear-gradient(135deg,var(--wine),#5e0e38);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px}
-  .top h1{font-size:1.05rem;margin:0;flex:1}
+  .top{background:linear-gradient(135deg,var(--wine),var(--wine-deep));color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;
+       border-bottom:2px solid var(--gold);box-shadow:0 6px 20px -10px rgba(66,13,39,.7)}
+  .top .logos{display:flex;align-items:center;gap:7px;flex-shrink:0}
+  .top .logos img{height:34px;width:34px;object-fit:contain;border-radius:8px;background:#fff;padding:2px}
+  .top h1{font-size:1.02rem;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}
+  .brandbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 20px;background:#fff;
+            border-bottom:1px solid var(--line);font-size:.7rem;color:var(--mid);letter-spacing:.4px}
+  .brandbar img{height:18px;width:auto;border-radius:4px}
+  .brandbar b{color:var(--wine)}
+  .instbtn{background:linear-gradient(135deg,var(--gold-d),var(--gold-deep))!important}
   .top .shop{font-size:.8rem;opacity:.85}
   .top button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;font-size:.8rem}
   .wrap{max-width:860px;margin:0 auto;padding:18px}
   .tabs{display:flex;gap:8px;margin-bottom:16px}
   .tabs button{flex:1;padding:11px;border:1.5px solid var(--line);background:#fff;border-radius:11px;font-weight:700;font-size:.85rem;cursor:pointer;color:var(--mid)}
-  .tabs button.on{border-color:var(--wine);color:var(--wine);background:#faf2f6}
+  .tabs button.on{border-color:var(--wine);color:#fff;background:linear-gradient(135deg,var(--wine),var(--wine-d));box-shadow:0 6px 16px -8px rgba(66,13,39,.7)}
+  .tabs button{transition:.2s}
+  .tabs button:hover{border-color:var(--wine)}
   .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:12px;font-size:.86rem}
   .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
   .ref{font-family:ui-monospace,monospace;font-weight:700;color:var(--wine)}
@@ -26,8 +44,10 @@
   .pill.preparing{background:#fff7e0;color:#9a6b00}.pill.out_for_delivery{background:#efe9ff;color:#6b3fd1}
   .pill.delivered{background:#e9f8ee;color:#1d9e54}.pill.cancelled{background:#fdeaf0;color:#c2185b}
   select,input{padding:9px 12px;border:1.5px solid var(--line);border-radius:9px;font-size:.85rem;background:#fff}
-  .btn{background:var(--teal);color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.82rem}
-  .btn.wine{background:var(--wine)}
+  
+  .btn{background:linear-gradient(135deg,var(--gold-d),var(--gold-deep));color:#fff;border:0;border-radius:9px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:.82rem}
+  .btn.wine{background:linear-gradient(135deg,var(--wine),var(--wine-d))}
+  .btn:hover{filter:brightness(1.08)}
   .btn:disabled{opacity:.5}
   .login{max-width:380px;margin:8vh auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;text-align:center}
   .login .logo{width:56px;height:56px;border-radius:15px;background:linear-gradient(135deg,var(--wine),#b03d77);color:#fff;font-size:1.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
@@ -45,6 +65,10 @@
   .savebar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px;display:none;text-align:right}
   /* shop profile tab */
   textarea.desc{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.86rem;resize:vertical;min-height:80px}
+  textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.86rem;resize:vertical;background:#fff;color:var(--ink);box-sizing:border-box}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+  .grid input{width:100%}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.22)}
   .charct{text-align:right;font-size:.72rem;color:var(--mid);margin-top:4px}
   .soc-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
   .soc-row:last-child{border-bottom:0}
@@ -101,14 +125,22 @@ async function doLogout(){ await api('/api/seller/logout',{method:'POST',body:{}
 
 function shell(inner){
   $('#app').innerHTML = `
-  <div class="top"><h1><i class="fas fa-store"></i> ${esc(me.name)}</h1>
+  <div class="top">
+    <span class="logos">
+      <img src="/media/ambassador-logo.png" alt="Ambassador Shopping Mall">
+      <img src="/media/bisinka-logo.png" alt="Bisinka">
+    </span>
+    <h1>${esc(me.name)}</h1>
     <span class="shop">${esc(me.floor)} · Seller Portal</span>
+    <button id="sellerInstall" style="display:none" class="instbtn" onclick="installApp()"><i class="fas fa-mobile-screen-button"></i> Install</button>
     <button onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Sign out</button></div>
+  <div class="brandbar"><img src="/media/bisinka-logo.png" alt=""> Ambassador Shopping Mall seller portal &mdash; powered by <b>Bisinka</b></div>
   <div class="wrap">
     <div class="tabs">
       <button class="${tab==='orders'?'on':''}" onclick="tab='orders';render()"><i class="fas fa-receipt"></i> Orders</button>
-      <button class="${tab==='stock'?'on':''}" onclick="tab='stock';render()"><i class="fas fa-boxes-stacked"></i> Stock & Prices</button>
+      <button class="${tab==='stock'?'on':''}" onclick="tab='stock';render()"><i class="fas fa-boxes-stacked"></i> Products</button>
       <button class="${tab==='profile'?'on':''}" onclick="tab='profile';render()"><i class="fas fa-store-alt"></i> Shop Profile</button>
+      <button class="${tab==='jobs'?'on':''}" onclick="tab='jobs';render()"><i class="fas fa-briefcase"></i> Vacancies</button>
     </div>
     <div id="body">${inner}</div>
   </div>`;
@@ -158,9 +190,48 @@ async function render(){
           <button class="btn" onclick="saveProd('${esc(p.id)}')">Save</button>
           <button class="btn" style="background:#1769aa" onclick="editPhotos('${esc(p.id)}')"><i class="fas fa-image"></i> Photos</button>
           <button class="btn ${p.active===false?'':'wine'}" style="${p.active===false?'background:#2f9e44':''}" onclick="toggleActive('${esc(p.id)}',${p.active===false})">${p.active===false?'Turn ON':'Turn OFF'}</button>
+          <button class="btn" style="background:#1769aa" onclick="editProd('${esc(p.id)}')"><i class="fas fa-pen"></i> Edit</button>
+          <button class="btn" style="background:#c2185b" onclick="removeProd('${esc(p.id)}')"><i class="fas fa-trash"></i></button>
+          <div id="pe-${esc(p.id)}" style="width:100%"></div>
           <div id="ph-${esc(p.id)}" style="width:100%"></div>
-        </div>`).join('');
+        </div>`).join('') +
+        `<div class="card">
+          <b>Add a new product</b>
+          <div class="muted" style="margin:4px 0 10px">Your product appears on the storefront as soon as you add it.</div>
+          <div class="grid">
+            <input id="np-name" placeholder="Product name">
+            <input id="np-cat" placeholder="Category (e.g. Jewelry & Accessories)">
+            <input id="np-price" type="number" placeholder="Price (ETB)">
+            <input id="np-old" type="number" placeholder="Old price (optional — shows a discount)">
+          </div>
+          <textarea id="np-desc" rows="2" placeholder="Short description" style="margin-top:9px"></textarea>
+          <div style="text-align:right;margin-top:10px"><button class="btn wine" onclick="addProd()"><i class="fas fa-plus"></i> Add product</button></div>
+        </div>`;
       window.__prods = t.products;
+    } else if(tab==='jobs'){
+      const d = await api('/api/seller/jobs');
+      window.__jobs = d.jobs || [];
+      $('#body').innerHTML = `
+        <div class="card muted"><i class="fas fa-circle-info"></i>
+          Hiring for your shop? Post the vacancy here and it appears publicly on the mall's job board,
+          alongside openings from Ambassador management. Applicants can call or WhatsApp you directly.</div>
+        <div id="jobList">${renderJobList()}</div>
+        <div class="card">
+          <b>Post a vacancy</b>
+          <div class="grid" style="margin-top:10px">
+            <input id="jb-position" placeholder="Position (e.g. Sales Assistant)">
+            <input id="jb-type" placeholder="Full-time / Part-time / Contract">
+            <input id="jb-salary" placeholder="Salary, e.g. 6000">
+            <input id="jb-hours" placeholder="Working hours, e.g. Mon–Sat 9:00–19:00">
+            <input id="jb-deadline" placeholder="Apply by (optional)">
+            <input id="jb-phone" placeholder="Contact phone (blank = your shop phone)">
+          </div>
+          <label style="display:flex;align-items:center;gap:7px;margin-top:9px;font-size:.82rem">
+            <input type="checkbox" id="jb-negotiable"> Salary negotiable
+          </label>
+          <textarea id="jb-desc" rows="3" placeholder="Describe the role, requirements, experience needed…" style="margin-top:9px"></textarea>
+          <div style="text-align:right;margin-top:10px"><button class="btn wine" onclick="postJob()"><i class="fas fa-plus"></i> Post vacancy</button></div>
+        </div>`;
     } else if(tab==='profile'){
       const cat = await api('/api/catalog');
       const t = (cat.building.tenants||[]).find(x=>x.id===me.id) || {};
@@ -202,7 +273,18 @@ async function render(){
               </label>
             </div>`).join('')}
         </div>
-        <div style="text-align:right"><button class="btn wine" onclick="saveProfile()"><i class="fas fa-check"></i> Save shop profile</button></div>`;
+        <div style="text-align:right"><button class="btn wine" onclick="saveProfile()"><i class="fas fa-check"></i> Save shop profile</button></div>
+        <div class="card" style="margin-top:16px">
+          <b><i class="fas fa-key"></i> Change your access code</b>
+          <div class="muted" style="margin:4px 0 10px">Only you know this code — it is stored encrypted, so nobody can read it back to you. If you forget it, ask mall management to issue a new one.</div>
+          <div class="grid">
+            <input id="pw-cur" type="password" placeholder="Current access code" autocomplete="current-password">
+            <input id="pw-new" type="password" placeholder="New code (min 6 characters)" autocomplete="new-password">
+            <input id="pw-rep" type="password" placeholder="Repeat new code" autocomplete="new-password">
+          </div>
+          <div class="err" id="pw-err" style="min-height:18px"></div>
+          <div style="text-align:right"><button class="btn" onclick="changeCode()"><i class="fas fa-shield-halved"></i> Update access code</button></div>
+        </div>`;
     }
   }catch(e){
     if((''+e.message).match(/sign in/i)){ me=null; loginView('Session expired — please sign in again.'); return; }
@@ -224,6 +306,116 @@ async function saveProd(pid){
 }
 async function toggleActive(pid, turnOn){
   try{ await api('/api/seller/product',{method:'POST',body:{pid, active:turnOn}}); render(); }catch(e){ alert(e.message); }
+}
+/* full product control for the shop's own catalog */
+function editProd(pid){
+  const p=(window.__prods||[]).find(x=>x.id===pid); if(!p) return;
+  const box=document.getElementById('pe-'+pid);
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  box.innerHTML=`<div style="background:#faf6f8;border:1px dashed #dcc9d4;border-radius:11px;padding:12px;margin-top:10px">
+    <div class="grid">
+      <input id="ep-name-${pid}" value="${esc(p.name)}" placeholder="Name">
+      <input id="ep-cat-${pid}" value="${esc(p.cat||'')}" placeholder="Category">
+      <input id="ep-price-${pid}" type="number" value="${p.price}" placeholder="Price">
+      <input id="ep-old-${pid}" type="number" value="${p.old||''}" placeholder="Old price (optional)">
+    </div>
+    <textarea id="ep-desc-${pid}" rows="2" placeholder="Description" style="margin-top:9px">${esc(p.desc||'')}</textarea>
+    <div style="text-align:right;margin-top:10px"><button class="btn wine" onclick="saveProdEdit('${esc(pid)}')">Save changes</button></div>
+  </div>`;
+}
+async function saveProdEdit(pid){
+  const g=id=>document.getElementById(id).value.trim();
+  try{
+    await api('/api/seller/product',{method:'PUT',body:{product:{
+      id:pid, name:g('ep-name-'+pid), cat:g('ep-cat-'+pid),
+      price:+g('ep-price-'+pid)||1, old:+g('ep-old-'+pid)||null,
+      desc:document.getElementById('ep-desc-'+pid).value.trim()
+    }}});
+    render();
+  }catch(e){ alert(e.message); }
+}
+async function addProd(){
+  const g=id=>document.getElementById(id).value.trim();
+  if(!g('np-name')){ alert('Product name is required.'); return; }
+  try{
+    await api('/api/seller/product',{method:'PUT',body:{product:{
+      name:g('np-name'), cat:g('np-cat')||'General', price:+g('np-price')||1,
+      old:+g('np-old')||null, desc:document.getElementById('np-desc').value.trim()
+    }}});
+    render();
+  }catch(e){ alert(e.message); }
+}
+async function removeProd(pid){
+  if(!confirm('Delete this product permanently? This cannot be undone.')) return;
+  try{ await api('/api/seller/product/'+pid,{method:'DELETE'}); render(); }catch(e){ alert(e.message); }
+}
+
+function renderJobList(){
+  const list = window.__jobs || [];
+  if(!list.length) return '<div class="card muted">No vacancies posted yet.</div>';
+  return list.map(j=>`<div class="card">
+    <div class="row">
+      <div><b>${esc(j.position)}</b>
+        <div class="muted">${j.salary?('ETB '+esc(j.salary)):(j.negotiable?'Negotiable':'—')}${j.hours?(' · '+esc(j.hours)):''}${j.employmentType?(' · '+esc(j.employmentType)):''}</div>
+      </div>
+      <button class="btn" style="background:#c2185b" onclick="deleteJob('${esc(j.id)}')"><i class="fas fa-trash"></i> Remove</button>
+    </div>
+    ${j.description?`<div class="muted" style="margin-top:8px">${esc(j.description)}</div>`:''}
+  </div>`).join('');
+}
+async function postJob(){
+  const g=id=>document.getElementById(id).value.trim();
+  const position=g('jb-position');
+  if(!position){ alert('Position is required.'); return; }
+  try{
+    await api('/api/seller/jobs',{method:'POST',body:{
+      position, employmentType:g('jb-type'), salary:g('jb-salary'), hours:g('jb-hours'),
+      deadline:g('jb-deadline'), contactPhone:g('jb-phone'),
+      negotiable:document.getElementById('jb-negotiable').checked,
+      description:document.getElementById('jb-desc').value.trim()
+    }});
+    render();
+  }catch(e){ alert(e.message); }
+}
+async function deleteJob(id){
+  if(!confirm('Remove this vacancy from the public job board?')) return;
+  try{ await api('/api/seller/jobs/'+id,{method:'DELETE'}); render(); }catch(e){ alert(e.message); }
+}
+
+/* installable seller portal */
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredInstall=e;
+  const b=document.getElementById('sellerInstall'); if(b) b.style.display='inline-flex'; });
+function installApp(){
+  if(!deferredInstall){
+    alert(/iPad|iPhone|iPod/.test(navigator.userAgent)
+      ? 'To install: tap Share, then "Add to Home Screen".'
+      : 'Use your browser menu, then "Install app".');
+    return;
+  }
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(()=>{ deferredInstall=null;
+    const b=document.getElementById('sellerInstall'); if(b) b.style.display='none'; });
+}
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+}
+
+async function changeCode(){
+  const cur=document.getElementById('pw-cur').value.trim();
+  const nw =document.getElementById('pw-new').value.trim();
+  const rp =document.getElementById('pw-rep').value.trim();
+  const err=document.getElementById('pw-err');
+  err.style.color=''; err.textContent='';
+  if(!cur||!nw){ err.textContent='Enter your current code and a new one.'; return; }
+  if(nw!==rp){ err.textContent='The two new codes do not match.'; return; }
+  if(nw.length<6){ err.textContent='New code must be at least 6 characters.'; return; }
+  try{
+    await api('/api/seller/change-code',{method:'POST',body:{current:cur,next:nw}});
+    err.style.color='#1d7a33';
+    err.textContent='Access code updated. Use the new code next time you sign in.';
+    ['pw-cur','pw-new','pw-rep'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){ err.textContent=e.message; }
 }
 async function saveProfile(){
   const blurb = document.getElementById('pf-blurb').value.trim();

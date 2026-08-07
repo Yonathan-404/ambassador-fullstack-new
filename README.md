@@ -31,6 +31,39 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v25 — vacancies, vCards, appointments, seller self-service
+
+**Job vacancy board.** Shops, mall management and building operations can all
+post openings — position, salary (fixed or negotiable), working hours,
+employment type, location, description, deadline and contact. Posts appear on
+one public board with Call and WhatsApp-Apply buttons. Tenants manage their
+own posts from a Vacancies tab; admin and BMS can post as the mall or
+building operations and edit or pause anything.
+
+**vCard contact saving.** Every shop profile has a Save Contact button that
+downloads a proper `.vcf` — name, category, phone, WhatsApp, mall address and
+unit — straight into the phone's address book.
+
+**WhatsApp appointment booking** for service tenants: the visitor picks a date
+and time first, then the app hands WhatsApp a complete, pre-written message.
+
+**Seller self-service.** Tenants now have the same catalog control admin has
+over their own shop — create, edit and delete products with photos — plus a
+Shop Profile tab and the ability to **change their own access code**. Codes
+are stored only as SHA-256 hashes, so a forgotten code cannot be read back;
+admin issues a fresh one instead. Verified end-to-end: changing the code
+invalidates the old one and the new one works.
+
+**Staff pages** (seller, admin, BMS) share a wine-and-gold shell carrying both
+the Ambassador and Bisinka logos, and seller/admin are installable as apps.
+
+**Three real bugs found and fixed during verification:** both header logos
+were rendering the Bisinka mark (the Ambassador slot pointed at an app icon
+generated from the Bisinka logo); the modal close button was anchoring to the
+viewport corner instead of the modal's, because the modal box was not a
+positioning context; and free-text salaries rendered as "ETB 8000 ETB /
+month" — the currency prefix is now added only to bare numbers.
+
 ### v24 — installable mobile app (PWA), video hero, corner close buttons
 
 **Installable as a real mobile app.** Added a web app manifest, service

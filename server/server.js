@@ -107,6 +107,12 @@ if (process.env.DATABASE_URL) {
       id INT PRIMARY KEY, data JSONB, updated_at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS seller_codes (
       tenant_id TEXT PRIMARY KEY, phone TEXT, code_hash TEXT, created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS job_posts (
+      id TEXT PRIMARY KEY, poster_type TEXT NOT NULL, poster_id TEXT, poster_name TEXT,
+      position TEXT NOT NULL, salary TEXT, negotiable BOOLEAN DEFAULT false,
+      hours TEXT, location TEXT, employment_type TEXT, description TEXT,
+      contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
+      active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS tenant_ratings (
       id SERIAL PRIMARY KEY, tenant_id TEXT NOT NULL, user_id INT NOT NULL,
       rating SMALLINT NOT NULL, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now(),
@@ -178,6 +184,7 @@ if (process.env.DATABASE_URL) {
         ON CONFLICT (tenant_id) DO UPDATE SET phone=$2, code_hash=$3, created_at=now()`, [tid, phone, hash]);
     },
     async findSellerByPhone(phone){ const r = await pool.query(`SELECT * FROM seller_codes WHERE phone=$1`,[phone]); return r.rows[0]||null; },
+    async findSellerByTenant(tid){ const r = await pool.query(`SELECT * FROM seller_codes WHERE tenant_id=$1`,[tid]); return r.rows[0]||null; },
     async deleteSellerCode(tid){ await pool.query(`DELETE FROM seller_codes WHERE tenant_id=$1`,[tid]); },
 
     // ── tenant ratings (real, signed-in-user submitted) ──
@@ -197,6 +204,23 @@ if (process.env.DATABASE_URL) {
       const row = r.rows[0] || { n: 0, avg: 0 };
       return { reviews: row.n, rating: row.n ? Math.round(row.avg * 10) / 10 : 0 };
     },
+
+    // ── job / vacancy posts ──
+    async allJobs(){ return (await pool.query(`SELECT * FROM job_posts ORDER BY created_at DESC LIMIT 300`)).rows; },
+    async jobsByPoster(type,id){ return (await pool.query(
+      `SELECT * FROM job_posts WHERE poster_type=$1 AND poster_id IS NOT DISTINCT FROM $2 ORDER BY created_at DESC`,[type,id])).rows; },
+    async upsertJob(j){
+      await pool.query(`INSERT INTO job_posts
+        (id,poster_type,poster_id,poster_name,position,salary,negotiable,hours,location,employment_type,description,contact_phone,contact_whatsapp,deadline,active)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+        ON CONFLICT (id) DO UPDATE SET position=$5,salary=$6,negotiable=$7,hours=$8,location=$9,
+          employment_type=$10,description=$11,contact_phone=$12,contact_whatsapp=$13,deadline=$14,active=$15`,
+        [j.id,j.poster_type,j.poster_id,j.poster_name,j.position,j.salary,j.negotiable,j.hours,j.location,
+         j.employment_type,j.description,j.contact_phone,j.contact_whatsapp,j.deadline,j.active]);
+      return j;
+    },
+    async deleteJob(id){ await pool.query(`DELETE FROM job_posts WHERE id=$1`,[id]); },
+    async getJob(id){ const r=await pool.query(`SELECT * FROM job_posts WHERE id=$1`,[id]); return r.rows[0]||null; },
 
     // ── BMS ──
     async allLeases(){ return (await pool.query(`SELECT * FROM leases ORDER BY unit`)).rows; },
@@ -258,7 +282,7 @@ if (process.env.DATABASE_URL) {
   };
 } else {
   console.warn('[warn] DATABASE_URL not set — using JSON file store at ' + DATA_FILE + ' (dev only).');
-  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], catalog: null, seq: 1,
+  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], jobs: [], catalog: null, seq: 1,
     leases: [], invoices: [], finance: [], tickets: [], announcements: [], bmsConfig: null };
   try { mem = Object.assign(mem, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) {}
   const flush = () => { try { fs.writeFileSync(DATA_FILE, JSON.stringify(mem)); } catch (e) {} };
@@ -309,6 +333,7 @@ if (process.env.DATABASE_URL) {
     async allNotify(){ return mem.notify.slice(0, 500); },
     async setSellerCode(tid, phone, hash){ mem.sellerCodes[tid] = { tenant_id: tid, phone, code_hash: hash }; flush(); },
     async findSellerByPhone(phone){ return Object.values(mem.sellerCodes).find(s => s.phone === phone) || null; },
+    async findSellerByTenant(tid){ return mem.sellerCodes[tid] || null; },
     async deleteSellerCode(tid){ delete mem.sellerCodes[tid]; flush(); },
 
     // ── tenant ratings (real, signed-in-user submitted) ──
@@ -332,6 +357,18 @@ if (process.env.DATABASE_URL) {
       const avg = n ? rows.reduce((s, r) => s + r.rating, 0) / n : 0;
       return { reviews: n, rating: n ? Math.round(avg * 10) / 10 : 0 };
     },
+
+    // ── job / vacancy posts ──
+    async allJobs(){ mem.jobs=mem.jobs||[]; return mem.jobs.slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)); },
+    async jobsByPoster(type,id){ mem.jobs=mem.jobs||[]; return mem.jobs.filter(j=>j.poster_type===type && (j.poster_id||null)===(id||null)); },
+    async upsertJob(j){
+      mem.jobs=mem.jobs||[];
+      const i=mem.jobs.findIndex(x=>x.id===j.id);
+      if(i>=0) mem.jobs[i]=Object.assign(mem.jobs[i],j); else mem.jobs.unshift(Object.assign({created_at:new Date().toISOString()},j));
+      flush(); return j;
+    },
+    async deleteJob(id){ mem.jobs=(mem.jobs||[]).filter(j=>j.id!==id); flush(); },
+    async getJob(id){ return (mem.jobs||[]).find(j=>j.id===id)||null; },
 
     // ── BMS ──
     async allLeases(){ return mem.leases; },
@@ -931,6 +968,27 @@ app.post('/api/seller/login', async (req, res) => {
   res.json({ tenant: { id: t.id, name: t.name, floor: t.floor } });
 });
 app.post('/api/seller/logout', (req, res) => { clearCookie(res, 'amb_seller'); res.json({ ok: true }); });
+/* ── access code / password self-service ──
+   A seller changes their own code by proving they know the current one.
+   Only the SHA-256 hash is ever stored, so a forgotten code cannot be
+   recovered — admin can only issue a fresh one (see /api/admin/seller-code). */
+app.post('/api/seller/change-code', async (req, res) => {
+  const s = getSeller(req);
+  if (!s || s.role !== 'seller' || !TENANTS[s.tid]) return res.status(401).json({ error: 'Please sign in' });
+  const current = ('' + ((req.body && req.body.current) || '')).trim();
+  const next    = ('' + ((req.body && req.body.next) || '')).trim();
+  if (!current || !next) return res.status(400).json({ error: 'Both the current and the new code are required' });
+  if (next.length < 6)   return res.status(400).json({ error: 'New code must be at least 6 characters' });
+  if (next === current)  return res.status(400).json({ error: 'The new code must be different from the current one' });
+  // looked up by tenant id from the signed-in session, so a seller can only
+  // ever change their OWN shop's code
+  const stored = await db.findSellerByTenant(s.tid);
+  if (!stored) return res.status(400).json({ error: 'No access code is set for this shop yet — ask management to issue one.' });
+  if (stored.code_hash !== sha256(current)) return res.status(401).json({ error: 'Current access code is incorrect' });
+  await db.setSellerCode(s.tid, stored.phone, sha256(next));
+  res.json({ ok: true });
+});
+
 function requireSeller(req, res, next){
   const s = getSeller(req);
   if (!s || s.role !== 'seller' || !TENANTS[s.tid]) return res.status(401).json({ error: 'Please sign in' });
@@ -973,6 +1031,41 @@ app.post('/api/seller/product', requireSeller, async (req, res) => {
     if (gallery !== undefined) { prod.gallery = gallery.length ? gallery : prod.gallery; if (gallery[0]) prod.img = gallery[0]; }
   });
   res.json({ ok: true, product: PRODUCTS[pid] });
+});
+/* sellers get the same create / edit / delete power over their OWN catalog
+   that admin has over everyone's — name, category, price, description, photos */
+app.put('/api/seller/product', requireSeller, async (req, res) => {
+  const input = (req.body && req.body.product) || {};
+  const existing = input.id ? PRODUCTS[input.id] : null;
+  if (existing && existing.tenantId !== req.sellerTid)
+    return res.status(403).json({ error: 'That product belongs to another shop' });
+  if (!existing && !('' + (input.name || '')).trim())
+    return res.status(400).json({ error: 'Product name is required' });
+  let saved = null;
+  await mutateCatalog(c => {
+    const t = c.building.tenants.find(x => x.id === req.sellerTid);
+    t.products = t.products || [];
+    let prod = input.id ? t.products.find(x => x.id === input.id) : null;
+    if (!prod) {
+      // normProduct(tenant, input, existing) — it derives the next id from the
+      // tenant's own product list, so the tenant must be passed first
+      prod = normProduct(t, input, null);
+      t.products.push(prod);
+    } else {
+      Object.assign(prod, normProduct(t, input, prod), { id: prod.id });
+    }
+    saved = prod;
+  });
+  res.json({ ok: true, product: saved });
+});
+app.delete('/api/seller/product/:pid', requireSeller, async (req, res) => {
+  const p = PRODUCTS[req.params.pid];
+  if (!p || p.tenantId !== req.sellerTid) return res.status(404).json({ error: 'Product not found' });
+  await mutateCatalog(c => {
+    const t = c.building.tenants.find(x => x.id === req.sellerTid);
+    t.products = (t.products || []).filter(x => x.id !== req.params.pid);
+  });
+  res.json({ ok: true });
 });
 app.post('/api/seller/profile', requireSeller, async (req, res) => {
   // sellers can update their OWN shop's brief description and social links.
@@ -1509,6 +1602,115 @@ app.post('/api/admin/report/send', requireAdmin, async (req, res) => {
     }
     res.json({ sent, skipped, links });
   } catch (e) { res.status(500).json({ error: 'Could not send reports' }); }
+});
+
+/* ════════ JOB / VACANCY POSTS ════════
+   Three kinds of poster, one shared board:
+     • tenant  — a shop hiring its own staff (signed in on /seller.html)
+     • mall    — Ambassador management hiring (admin console)
+     • bms     — building operations hiring (BMS console)
+   Shown publicly alongside the office-for-rent listings. ══════════ */
+function normJob(input, existing, poster){
+  const j = Object.assign({}, existing || {});
+  const str=(v,n)=>('' + (v==null?'':v)).trim().slice(0,n);
+  j.id = (existing && existing.id) || 'job-' + Date.now().toString(36) + crypto.randomBytes(2).toString('hex');
+  if (poster) { j.poster_type = poster.type; j.poster_id = poster.id || null; j.poster_name = poster.name || ''; }
+  j.position    = str(input.position, 120);
+  j.salary      = str(input.salary, 60);
+  j.negotiable  = !!input.negotiable;
+  j.hours       = str(input.hours, 120);
+  j.location    = str(input.location, 120);
+  j.employment_type = str(input.employmentType || input.employment_type, 40);
+  j.description = str(input.description, 1200);
+  j.contact_phone    = str(input.contactPhone || input.contact_phone, 30);
+  j.contact_whatsapp = str(input.contactWhatsapp || input.contact_whatsapp, 30).replace(/\D/g,'');
+  j.deadline    = str(input.deadline, 30);
+  j.active      = input.active === undefined ? (existing ? existing.active : true) : !!input.active;
+  return j;
+}
+function publicJob(j){
+  return { id:j.id, posterType:j.poster_type, posterName:j.poster_name, position:j.position,
+    salary:j.salary, negotiable:j.negotiable, hours:j.hours, location:j.location,
+    employmentType:j.employment_type, description:j.description,
+    contactPhone:j.contact_phone, contactWhatsapp:j.contact_whatsapp,
+    deadline:j.deadline, createdAt:j.created_at };
+}
+/* public board — active posts only */
+app.get('/api/jobs', async (req, res) => {
+  const all = await db.allJobs();
+  res.json({ jobs: all.filter(j => j.active !== false).map(publicJob) });
+});
+/* tenant-posted vacancies (a shop hiring for itself) */
+app.get('/api/seller/jobs', requireSeller, async (req, res) => {
+  res.json({ jobs: (await db.jobsByPoster('tenant', req.sellerTid)).map(publicJob) });
+});
+app.post('/api/seller/jobs', requireSeller, async (req, res) => {
+  const t = TENANTS[req.sellerTid];
+  const body = req.body || {};
+  const existing = body.id ? await db.getJob(body.id) : null;
+  if (existing && !(existing.poster_type === 'tenant' && existing.poster_id === req.sellerTid))
+    return res.status(403).json({ error: 'That post belongs to another shop' });
+  const j = normJob(body, existing, { type:'tenant', id:t.id, name:t.name });
+  if (!j.position) return res.status(400).json({ error: 'Position is required' });
+  if (!j.contact_phone && !j.contact_whatsapp) { j.contact_phone = t.mobile || ''; j.contact_whatsapp = t.whatsapp || ''; }
+  await db.upsertJob(j);
+  res.json({ ok:true, job: publicJob(j) });
+});
+app.delete('/api/seller/jobs/:id', requireSeller, async (req, res) => {
+  const j = await db.getJob(req.params.id);
+  if (!j || j.poster_type !== 'tenant' || j.poster_id !== req.sellerTid)
+    return res.status(404).json({ error: 'Not found' });
+  await db.deleteJob(req.params.id);
+  res.json({ ok:true });
+});
+/* mall / building-operations vacancies — admin + BMS share one guard set */
+function jobAdminRoutes(prefix, guard, posterType, posterName){
+  app.get(prefix + '/jobs', guard, async (req, res) => {
+    res.json({ jobs: (await db.allJobs()).map(publicJob) });   // staff see every post, incl. paused
+  });
+  app.post(prefix + '/jobs', guard, async (req, res) => {
+    const body = req.body || {};
+    const existing = body.id ? await db.getJob(body.id) : null;
+    // staff may edit any post; a new post is attributed to whoever created it
+    const j = normJob(body, existing, existing ? null : { type: posterType, id: null, name: posterName });
+    if (!j.position) return res.status(400).json({ error: 'Position is required' });
+    await db.upsertJob(j);
+    res.json({ ok:true, job: publicJob(j) });
+  });
+  app.delete(prefix + '/jobs/:id', guard, async (req, res) => {
+    await db.deleteJob(req.params.id);
+    res.json({ ok:true });
+  });
+}
+jobAdminRoutes('/api/admin', requireAdmin, 'mall', 'Ambassador Shopping Mall');
+/* BMS shares the admin key but attributes its posts to building operations */
+jobAdminRoutes('/api/admin/bms', requireAdmin, 'bms', 'Ambassador Building Management');
+
+/* ── vCard: one tap to save a shop's contact into the phone's address book ── */
+app.get('/api/tenant/:id/vcard', (req, res) => {
+  const t = TENANTS[req.params.id];
+  if (!t) return res.status(404).send('Not found');
+  const esc = v => ('' + (v || '')).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
+  const tel = (t.mobile || (t.whatsapp ? '+' + t.whatsapp : '')).replace(/\s/g, '');
+  const where = [t.floor, t.unit].filter(Boolean).join(' - ');
+  const lines = [
+    'BEGIN:VCARD', 'VERSION:3.0',
+    'N:;' + esc(t.name) + ';;;',
+    'FN:' + esc(t.name),
+    'ORG:' + esc(t.name) + ';' + esc(B.name || 'Ambassador Shopping Mall'),
+    t.cat ? 'TITLE:' + esc(t.cat) : null,
+    tel ? 'TEL;TYPE=CELL,VOICE:' + tel : null,
+    t.whatsapp ? 'TEL;TYPE=WhatsApp:+' + t.whatsapp : null,
+    'ADR;TYPE=WORK:;;' + esc(where + ', ' + (B.name || '')) + ';' + esc((B.location || 'Addis Ababa')) + ';;;Ethiopia',
+    t.blurb ? 'NOTE:' + esc(t.blurb) : null,
+    'URL:' + (req.protocol + '://' + req.get('host') + '/#tenant=' + t.id),
+    'REV:' + new Date().toISOString(),
+    'END:VCARD'
+  ].filter(Boolean);
+  const slug = ('' + t.name).replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'contact';
+  res.setHeader('Content-Type', 'text/vcard; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + slug + '.vcf"');
+  res.send(lines.join('\r\n'));
 });
 
 /* ── static frontend ── */

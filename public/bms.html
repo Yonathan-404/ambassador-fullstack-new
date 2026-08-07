@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ambassador BMS · Building Management</title>
+<meta name="theme-color" content="#8a1450">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  :root{--wine:#8a1450;--wine-d:#5e0e38;--gold:#d4af37;--teal:#0D7A6F;--ink:#221820;--mid:#7d6e76;--line:#e8e2e5;--bg:#f6f3f4}
+  :root{--wine:#8a1450;--wine-d:#5e0e38;--gold:#d4af37;--gold-d:#b8941f;--gold-deep:#8a6d12;--teal:#9c2f63;--ink:#221820;--mid:#7d6e76;--line:#e8e2e5;--bg:#f6f3f4}
   *{box-sizing:border-box}
   body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:0}
   .top{background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -48,15 +51,25 @@
   @media(max-width:900px){.kanban{grid-template-columns:1fr}}
   .offpill{border-radius:99px;padding:2px 9px;font-size:.62rem;font-weight:800;text-transform:uppercase;background:#eee;color:#999;margin-left:6px}
   .card.is-off{opacity:.55;background:#fafafa}
+  .top .logos{display:flex;align-items:center;gap:7px;flex-shrink:0}
+  .top .logos img{height:34px;width:34px;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
+  .brandbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 20px;background:#fff;
+            border-bottom:1px solid var(--line);font-size:.7rem;color:var(--mid)}
+  .brandbar img{height:18px;border-radius:4px}
+  .brandbar b{color:var(--wine)}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
+  .grid2 input{width:100%}
 </style>
 </head>
 <body>
 <div class="top">
-  <h1><i class="fas fa-building-shield"></i> Ambassador BMS <span>BUILDING MGMT</span></h1>
+  <span class="logos"><img src="/media/ambassador-logo.png" alt="Ambassador Shopping Mall"><img src="/media/bisinka-logo.png" alt="Bisinka"></span>
+  <h1>Ambassador BMS <span>BUILDING MGMT</span></h1>
   <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
   <button class="btn" onclick="boot()">Connect</button>
   <a class="back" href="/admin.html">← Store admin</a>
 </div>
+<div class="brandbar"><img src="/media/bisinka-logo.png" alt=""> Building management console &mdash; powered by <b>Bisinka</b></div>
 <div class="tabs" id="tabs">
   <button class="on" onclick="show('dashboard')"><i class="fas fa-gauge"></i> Dashboard</button>
   <button onclick="show('tenants')"><i class="fas fa-store"></i> Tenants</button>
@@ -65,6 +78,7 @@
   <button onclick="show('finance')"><i class="fas fa-sack-dollar"></i> Finance</button>
   <button onclick="show('maintenance')"><i class="fas fa-screwdriver-wrench"></i> Maintenance</button>
   <button onclick="show('announcements')"><i class="fas fa-bullhorn"></i> Announcements</button>
+  <button onclick="show('jobs')"><i class="fas fa-briefcase"></i> Vacancies</button>
   <button onclick="show('settings')"><i class="fas fa-gear"></i> Settings</button>
 </div>
 <div class="wrap"><div id="out" class="empty">Enter your ADMIN_KEY and press Connect.</div></div>
@@ -107,6 +121,7 @@ async function render(){
     else if(view==='finance') await renderFinance();
     else if(view==='maintenance') await renderMaintenance();
     else if(view==='announcements') await renderAnnouncements();
+    else if(view==='jobs') await renderJobs();
     else if(view==='settings') await renderSettings();
   }catch(e){ fail(e); }
 }
@@ -328,6 +343,61 @@ async function moveTicket(id, status){
 }
 
 /* ═══ ANNOUNCEMENTS ═══ */
+/* ── vacancies posted by building operations (and everything else, read-only view) ── */
+async function renderJobs(){
+  const d = await api('/api/admin/bms/jobs');
+  window.__bjobs = d.jobs || [];
+  const badge = t => t==='mall' ? '<span class="pill" style="background:#fdf0d6;color:#8a6d12">MALL</span>'
+    : t==='bms' ? '<span class="pill" style="background:#f3e6ef;color:#6d1a42">BMS</span>'
+    : '<span class="pill" style="background:#e8f0fb;color:#1769aa">SHOP</span>';
+  const list = window.__bjobs.length ? window.__bjobs.map(j=>`<div class="card row">
+      <div style="flex:1">
+        <b>${esc(j.position)}</b> ${badge(j.posterType)}
+        <div class="muted">${esc(j.posterName||'')} · ${j.salary?('ETB '+esc(j.salary)):(j.negotiable?'Negotiable':'—')}${j.hours?(' · '+esc(j.hours)):''}</div>
+        ${j.description?`<div class="muted" style="margin-top:6px">${esc(j.description)}</div>`:''}
+      </div>
+      <button class="btn" style="background:#c2185b" onclick="deleteBmsJob('${esc(j.id)}')">Delete</button>
+    </div>`).join('') : '<div class="card muted">No vacancies posted yet.</div>';
+  out.innerHTML = `
+    <h2>Vacancies</h2>
+    <p class="muted">Post building-operations roles (maintenance, security, cleaning). These appear on the public job board
+    alongside shop and mall management postings. Shop-posted vacancies are shown here too.</p>
+    ${list}
+    <div class="card">
+      <b>Post a vacancy (Building Operations)</b>
+      <div class="grid2" style="margin-top:10px">
+        <input id="bj-position" placeholder="Position (e.g. Electrician)">
+        <input id="bj-type" placeholder="Full-time / Part-time / Contract">
+        <input id="bj-salary" placeholder="Salary, e.g. 9000">
+        <input id="bj-hours" placeholder="Working hours / shift">
+        <input id="bj-deadline" placeholder="Apply by (optional)">
+        <input id="bj-phone" placeholder="Contact phone">
+      </div>
+      <label style="display:flex;align-items:center;gap:7px;margin-top:9px;font-size:.82rem">
+        <input type="checkbox" id="bj-negotiable"> Salary negotiable
+      </label>
+      <textarea id="bj-desc" rows="3" placeholder="Role description, requirements…" style="width:100%;margin-top:9px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.86rem"></textarea>
+      <div style="text-align:right;margin-top:10px"><button class="btn" onclick="postBmsJob()">Post vacancy</button></div>
+    </div>`;
+}
+async function postBmsJob(){
+  const g=id=>document.getElementById(id).value.trim();
+  if(!g('bj-position')){ alert('Position is required.'); return; }
+  try{
+    await api('/api/admin/bms/jobs',{method:'POST',body:{
+      position:g('bj-position'), employmentType:g('bj-type'), salary:g('bj-salary'),
+      hours:g('bj-hours'), deadline:g('bj-deadline'), contactPhone:g('bj-phone'),
+      negotiable:document.getElementById('bj-negotiable').checked,
+      description:document.getElementById('bj-desc').value.trim()
+    }});
+    renderJobs();
+  }catch(e){ alert(e.message); }
+}
+async function deleteBmsJob(id){
+  if(!confirm('Delete this vacancy?')) return;
+  try{ await api('/api/admin/bms/jobs/'+id,{method:'DELETE'}); renderJobs(); }catch(e){ alert(e.message); }
+}
+
 async function renderAnnouncements(){
   const d = await api('/api/admin/bms/announcements');
   __announcements = d.announcements;

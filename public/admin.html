@@ -2,10 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin · Ambassador Store</title>
+<title>Admin · Ambassador Shopping Mall</title>
+<meta name="theme-color" content="#8a1450">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ambassador Admin">
+<link rel="manifest" href="/admin-manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:#f6f3f4;color:#221820;margin:0;padding:22px}
-  .wrap{max-width:1060px;margin:0 auto}
+  body{font-family:system-ui,'Segoe UI',Roboto,sans-serif;background:#faf6f8;color:#221820;margin:0;padding:0 0 26px}
+  .apphead{background:linear-gradient(135deg,#8a1450,#420d27);color:#fff;padding:13px 22px;display:flex;align-items:center;gap:12px;
+           border-bottom:2px solid #D4AF37;box-shadow:0 6px 20px -10px rgba(66,13,39,.7)}
+  .apphead .logos{display:flex;align-items:center;gap:7px}
+  .apphead .logos img{height:34px;width:34px;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
+  .apphead .ttl{font-size:1.05rem;font-weight:800;flex:1}
+  .apphead .ttl b{color:#FFD97A}
+  .apphead a.bmslink{color:#FFD97A;font-size:.78rem;text-decoration:none;font-weight:700}
+  .apphead button{background:linear-gradient(135deg,#b8941f,#8a6d12);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;font-size:.78rem;font-weight:700}
+  .brandbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 20px;background:#fff;
+            border-bottom:1px solid #efe6ea;font-size:.7rem;color:#7d6e76}
+  .brandbar img{height:18px;border-radius:4px}
+  .brandbar b{color:#8a1450}
+  .wrap{max-width:1060px;margin:0 auto;padding:20px 22px 0}
   h1{font-size:1.25rem;display:flex;align-items:center;gap:10px}
   h1 span{background:#8a1450;color:#fff;border-radius:8px;padding:4px 10px;font-size:.75rem}
   .bar{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
@@ -76,8 +96,14 @@
 </style>
 </head>
 <body>
+<div class="apphead">
+    <span class="logos"><img src="/media/ambassador-logo.png" alt="Ambassador Shopping Mall"><img src="/media/bisinka-logo.png" alt="Bisinka"></span>
+    <span class="ttl">Ambassador Shopping Mall <b>· ADMIN</b></span>
+    <a class="bmslink" href="/bms.html">→ Building Management (BMS)</a>
+    <button id="adminInstall" style="display:none" onclick="installApp()"><i class="fas fa-mobile-screen-button"></i> Install</button>
+  </div>
+<div class="brandbar"><img src="/media/bisinka-logo.png" alt=""> Management console &mdash; powered by <b>Bisinka</b></div>
 <div class="wrap">
-  <h1>Ambassador Store <span>ADMIN</span> <a href="/bms.html" style="font-size:.7rem;color:#8a1450;margin-left:10px">→ Building Management (BMS)</a></h1>
   <div class="bar">
     <input class="key" id="key" type="password" placeholder="ADMIN_KEY" onchange="checkDataSync()">
     <button onclick="show('orders')">Orders</button>
@@ -86,6 +112,7 @@
     <button class="alt" onclick="show('products')">Products</button>
     <button class="alt" onclick="show('services')">Services</button>
     <button class="alt" style="background:#5b2d8e" onclick="show('storefront')">Storefront</button>
+    <button class="alt" style="background:#b8941f" onclick="show('jobs')">Vacancies</button>
     <button class="gray" onclick="show('notify')">Notify</button>
     <button class="gray" onclick="show('sms')">SMS log</button>
   </div>
@@ -195,6 +222,32 @@ async function show(view){
           <textarea id="ns-blurb" placeholder="Short description" style="width:100%;margin-top:8px;padding:9px 12px;border:1.5px solid #ddd;border-radius:9px;font-family:inherit;font-size:.85rem" rows="2"></textarea>
           <div style="margin-top:10px;text-align:right"><button onclick="addService()">Add service</button></div>
           <div class="muted" style="margin-top:6px">New services start turned ON and appear immediately under Building Services on the storefront.</div>
+        </div>`;
+    }
+    else if(view==='jobs'){
+      const d=await api('/api/admin/jobs'); window.__ajobs=d.jobs||[]; out.className='';
+      out.innerHTML =
+        `<h3>Job vacancies</h3>
+        <p class="muted">Openings posted here appear on the public job board on the storefront, next to the office-for-rent listings.
+        Shops can post their own vacancies from the seller portal — those appear below too, and you can edit or remove any of them.</p>
+        <div id="ajobList">${renderAdminJobs()}</div>
+        <div class="card">
+          <b>Post a vacancy (Ambassador management)</b>
+          <div class="formgrid" style="margin-top:10px">
+            <input id="aj-position" placeholder="Position (e.g. Security Officer)">
+            <input id="aj-type" placeholder="Full-time / Part-time / Contract">
+            <input id="aj-salary" placeholder="Salary, e.g. 8000">
+            <input id="aj-hours" placeholder="Working hours">
+            <input id="aj-location" placeholder="Location / department (optional)">
+            <input id="aj-deadline" placeholder="Apply by (optional)">
+            <input id="aj-phone" placeholder="Contact phone">
+            <input id="aj-wa" placeholder="WhatsApp (2519…)">
+          </div>
+          <label style="display:flex;align-items:center;gap:7px;margin-top:9px;font-size:.82rem">
+            <input type="checkbox" id="aj-negotiable"> Salary negotiable
+          </label>
+          <textarea id="aj-desc" rows="3" placeholder="Role description, requirements, experience…" style="margin-top:9px"></textarea>
+          <div style="text-align:right;margin-top:10px"><button onclick="postAdminJob()">Post vacancy</button></div>
         </div>`;
     }
     else if(view==='storefront'){
@@ -572,6 +625,56 @@ async function saveSections(){
     show('storefront');
   }catch(e){ alert(e.message); }
 }
+/* ── job vacancies (mall + tenant posts, all visible to admin) ── */
+function renderAdminJobs(){
+  const list=window.__ajobs||[];
+  if(!list.length) return '<div class="card muted">No vacancies posted yet.</div>';
+  const badge=t=>t==='mall'?'<span class="hidpill" style="background:#fdf0d6;color:#8a6d12;border-color:#e8c96a">MALL</span>'
+    :t==='bms'?'<span class="hidpill" style="background:#f3e6ef;color:#6d1a42;border-color:#d9b6cb">BMS</span>'
+    :'<span class="hidpill" style="background:#e8f0fb;color:#1769aa;border-color:#b9d3ee">SHOP</span>';
+  return list.map(j=>`<div class="card row">
+    <div style="flex:1">
+      <b>${esc(j.position)}</b> ${badge(j.posterType)}
+      <div class="muted">${esc(j.posterName||'')} · ${j.salary?('ETB '+esc(j.salary)):(j.negotiable?'Negotiable':'—')}${j.hours?(' · '+esc(j.hours)):''}</div>
+      ${j.description?`<div class="muted" style="margin-top:6px">${esc(j.description)}</div>`:''}
+    </div>
+    <button class="danger" onclick="deleteAdminJob('${esc(j.id)}')">Delete</button>
+  </div>`).join('');
+}
+async function postAdminJob(){
+  const g=id=>document.getElementById(id).value.trim();
+  if(!g('aj-position')){ alert('Position is required.'); return; }
+  try{
+    await api('/api/admin/jobs',{method:'POST',body:{
+      position:g('aj-position'), employmentType:g('aj-type'), salary:g('aj-salary'),
+      hours:g('aj-hours'), location:g('aj-location'), deadline:g('aj-deadline'),
+      contactPhone:g('aj-phone'), contactWhatsapp:g('aj-wa'),
+      negotiable:document.getElementById('aj-negotiable').checked,
+      description:document.getElementById('aj-desc').value.trim()
+    }});
+    show('jobs');
+  }catch(e){ alert(e.message); }
+}
+async function deleteAdminJob(id){
+  if(!confirm('Delete this vacancy? It will disappear from the public job board.')) return;
+  try{ await api('/api/admin/jobs/'+id,{method:'DELETE'}); show('jobs'); }catch(e){ alert(e.message); }
+}
+/* installable admin console */
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredInstall=e;
+  const b=document.getElementById('adminInstall'); if(b) b.style.display='inline-flex'; });
+function installApp(){
+  if(!deferredInstall){
+    alert(/iPad|iPhone|iPod/.test(navigator.userAgent)
+      ? 'To install: tap Share, then "Add to Home Screen".'
+      : 'Use your browser menu, then "Install app".');
+    return;
+  }
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(()=>{ deferredInstall=null;
+    const b=document.getElementById('adminInstall'); if(b) b.style.display='none'; });
+}
+
 /* ── unoccupied offices editor ── */
 function renderVacRows(){
   const list = window.__vac||[];
