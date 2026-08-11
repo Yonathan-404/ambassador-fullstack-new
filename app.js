@@ -311,7 +311,9 @@ var SERVICES = [
 ═══════════════════════════════════════════════════════════════════ */
 var I18N = {
   en: {
-    navTenants:'Tenants', navShop:'Shop', navServices:'Services', navHow:'How It Works',
+    navTenants:'Tenants', navShop:'Shop', navServices:'Services', navHow:'How It Works', navJobs:'Vacancies',
+    jobsEyebrow:'Work With Us', jobsTitle:'Job Vacancies',
+    jobsSub:'Openings posted by shops inside the mall, by Ambassador management, and by building operations.',
     navDirectory:'Directory',
     searchPh:'Search products, shops, units, floors…',
     dirEyebrow:'Building Directory', dirTitle:'Every Office, Floor by Floor',
@@ -364,7 +366,9 @@ var I18N = {
     account:'Account', signIn:'Sign in', signOut:'Sign out', signInGoogle:'Continue with Google', signInTitle:'Sign in to Ambassador', signInSub:'Save your details for faster checkout. We never post anything.', signedInAs:'Signed in as', orContinueGuest:'Continue as guest', myAccount:'My Account'
   },
   am: {
-    navTenants:'ተከራዮች', navShop:'ሱቅ', navServices:'አገልግሎቶች', navHow:'እንዴት እንደሚሰራ',
+    navTenants:'ተከራዮች', navShop:'ሱቅ', navServices:'አገልግሎቶች', navHow:'እንዴት እንደሚሰራ', navJobs:'ክፍት የስራ ቦታ',
+    jobsEyebrow:'አብረውን ይስሩ', jobsTitle:'የስራ ማስታወቂያ',
+    jobsSub:'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።',
     navDirectory:'ማውጫ',
     searchPh:'ምርቶችን፣ ሱቆችን፣ ክፍሎችን ይፈልጉ…',
     dirEyebrow:'የህንፃው ማውጫ', dirTitle:'እያንዳንዱ ቢሮ፣ በየፎቁ',
@@ -701,7 +705,7 @@ window.ambScrollTo = function (id) {
 window.ambSetLang = function (lang) {
   state.lang = lang; save('amb-lang', lang);
   applyI18n();
-  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderHeroVisual();
+  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderHeroVisual(); if(A.renderJobsSection) A.renderJobsSection();
   var btn=$('ambLangBtn'); if(btn) btn.innerHTML = lang==='en' ? '<i class="fas fa-language"></i> አማ' : '<i class="fas fa-language"></i> EN';
 };
 window.ambToggleLang = function(){ ambSetLang(state.lang==='en'?'am':'en'); };
@@ -1028,7 +1032,8 @@ function tenantCardHTML(tn){
   var dark = shade(tn.color,-50);
   // 6 awning stripes alternating tenant color / dark shade
   var stripes='';
-  for(var i=0;i<6;i++){ stripes += '<span class="amb-kstripe" style="background:'+(i%2?dark:tn.color)+'"></span>'; }
+  /* 10 alternating stripes = 5 coloured bars across the awning (was 3) */
+  for(var i=0;i<10;i++){ stripes += '<span class="amb-kstripe" style="background:'+(i%2?dark:tn.color)+'"></span>'; }
   return '<div class="amb-kiosk'+(active?' active':'')+'" style="--kc:'+tn.color+';--kcd:'+dark+'" onclick="ambOpenTenant(\''+tn.id+'\')">'+
     /* awning */
     '<div class="amb-kiosk-awning">'+
@@ -1112,13 +1117,16 @@ window.ambOpenTenant = function(tid){
         '<div class="amb-tp-acts2">'+
           '<a class="amb-tp-vcard" href="/api/tenant/'+tn.id+'/vcard" download><i class="fas fa-address-card"></i> '+
             (state.lang==='am'?'እውቂያ አስቀምጥ':'Save Contact')+'</a>'+
-          (tn.whatsapp?'<button class="amb-tp-book" onclick="ambBookAppointment(\''+tn.id+'\')"><i class="fas fa-calendar-check"></i> '+
+          /* booking shows only when the shop (or admin) has enabled it AND a
+             WhatsApp number exists — service shops want it, most retail doesn't */
+          ((tn.appointments && tn.whatsapp)?'<button class="amb-tp-book" onclick="ambBookAppointment(\''+tn.id+'\')"><i class="fas fa-calendar-check"></i> '+
             (state.lang==='am'?'ቀጠሮ ይያዙ':'Book Appointment')+'</button>':'')+
         '</div>'+
       '</div>'+
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
   ambSetDeepLink('tenant', tn.id);
+  ambTrack(tn.id, 'visit');
   ambLoadRatingWidget(tn.id);
 };
 
@@ -1941,6 +1949,7 @@ window.ambSendBooking = function(tid){
 };
 window.ambShareTenant = function(tid){
   var tn=tenant(tid); if(!tn) return;
+  ambTrack(tid, 'share');
   ambShareSheet(nameFor(tn), tn.cat+' · '+floorUnit(tn)+' · '+BUILDING.name, 'tenant', tid);
 };
 function ambShareSheet(title, sub, kind, id){
@@ -2781,32 +2790,10 @@ function vacantUnitsList(){
   }
   return AVAILABLE_OFFICES; // embedded fallback if BUILDING.vacantUnits hasn't loaded yet
 }
-/* ── public job / vacancy board — posted by shops, mall management, or BMS ── */
-window.ambOpenJobs = function(){
-  var am = state.lang==='am';
-  $('ambProdModalBox').innerHTML =
-    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
-    '<div style="padding:26px 24px 6px">'+
-      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+
-        (am?'የስራ ማስታወቂያ':'Job Vacancies')+'</h3>'+
-      '<p style="font-size:.8rem;color:var(--mid)">'+
-        (am?'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።'
-           :'Openings posted by shops inside the mall, by Ambassador management, and by building operations.')+'</p>'+
-    '</div>'+
-    '<div class="amb-job-grid" id="ambJobGrid"><div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+
-      (am?'በመጫን ላይ…':'Loading…')+'</div></div>';
-  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
-
-  A.api('/api/jobs').then(function(d){
-    var grid=$('ambJobGrid'); if(!grid) return;          // modal may already be closed
-    var jobs=(d.jobs||[]);
-    if(!jobs.length){
-      grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
-        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም። እባክዎ በኋላ ይመልከቱ።'
-           :'No openings posted right now — please check back soon.')+'</div>';
-      return;
-    }
-    grid.innerHTML = jobs.map(function(j){
+/* shared card builder — used by both the standalone Vacancies section
+   and the older modal, so the two can never drift apart */
+function ambJobCardsHTML(jobs, am){
+  return jobs.map(function(j){
       var badge = j.posterType==='mall' ? (am?'የሞል አስተዳደር':'Mall Management')
                 : j.posterType==='bms'  ? (am?'የህንፃ ጥገና':'Building Operations')
                 : esc(j.posterName||'');
@@ -2836,7 +2823,71 @@ window.ambOpenJobs = function(){
           (j.description?'<div class="amb-job-desc">'+esc(j.description)+'</div>':'')+
           (acts?'<div class="amb-job-acts">'+acts+'</div>':'')+
         '</div></div>';
-    }).join('');
+  }).join('');
+}
+
+/* ── Vacancies rendered inline as its own page section ── */
+function renderJobsSection(){
+  var grid = $('ambJobSection'); if(!grid) return;
+  var am = state.lang==='am';
+  grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+(am?'በመጫን ላይ…':'Loading…')+'</div>';
+  A.api('/api/jobs').then(function(d){
+    var jobs = d.jobs || [];
+    if(!jobs.length){
+      grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
+        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም — በኋላ ይመልከቱ።'
+           :'No openings posted right now — please check back soon.')+'</div>';
+      return;
+    }
+    grid.innerHTML = ambJobCardsHTML(jobs, am);
+  }).catch(function(){
+    grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-triangle-exclamation"></i>'+
+      (am?'ማስታወቂያዎችን መጫን አልተቻለም።':'Could not load vacancies right now.')+'</div>';
+  });
+}
+A.renderJobsSection = renderJobsSection;
+/* fire-and-forget analytics — a failed beacon must never affect browsing */
+function ambTrack(tid, kind){
+  if(!tid) return;
+  try{
+    var url = '/api/tenant/'+encodeURIComponent(tid)+'/event';
+    var body = JSON.stringify({kind:kind});
+    // sendBeacon survives the page being closed mid-share; fetch is the fallback
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(url, new Blob([body],{type:'application/json'}));
+    } else {
+      fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:body,keepalive:true}).catch(function(){});
+    }
+  }catch(e){}
+}
+A.track = ambTrack;
+
+/* ── public job / vacancy board — posted by shops, mall management, or BMS ── */
+window.ambOpenJobs = function(){
+  var am = state.lang==='am';
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:26px 24px 6px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+
+        (am?'የስራ ማስታወቂያ':'Job Vacancies')+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid)">'+
+        (am?'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።'
+           :'Openings posted by shops inside the mall, by Ambassador management, and by building operations.')+'</p>'+
+    '</div>'+
+    '<div class="amb-job-grid" id="ambJobGrid"><div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+
+      (am?'በመጫን ላይ…':'Loading…')+'</div></div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+
+  A.api('/api/jobs').then(function(d){
+    var grid=$('ambJobGrid'); if(!grid) return;          // modal may already be closed
+    var jobs=(d.jobs||[]);
+    if(!jobs.length){
+      grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
+        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም። እባክዎ በኋላ ይመልከቱ።'
+           :'No openings posted right now — please check back soon.')+'</div>';
+      return;
+    }
+    grid.innerHTML = ambJobCardsHTML(jobs, am);
   }).catch(function(){
     var grid=$('ambJobGrid');
     if(grid) grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-triangle-exclamation"></i>'+
@@ -3174,6 +3225,7 @@ function boot(){
   A.render.filterBar();
   A.render.products();
   A.render.heroVisual();
+  if(A.renderJobsSection) A.renderJobsSection();
   A.render.wishBadge();
   A.renderCart();
   A.updateBadges();

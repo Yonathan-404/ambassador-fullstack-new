@@ -60,6 +60,10 @@
   .imgslot .thumb{width:96px;height:72px;border:1.5px dashed #cbb;border-radius:9px;background:#fff center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:#bba;font-size:1.1rem;cursor:pointer;overflow:hidden}
   .imgslot .thumb.filled{border-style:solid;border-color:#8a1450}
   .imgslot .rm{display:block;width:100%;margin-top:4px;background:#eee;color:#a55;font-size:.62rem;padding:3px 0;border-radius:6px}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .statgrid .stat{background:#fff;border:1px solid #e8e2e5;border-radius:13px;padding:14px 16px}
+  .statgrid .stat .n{font-size:1.6rem;font-weight:800;color:#8a1450;line-height:1.1}
+  .statgrid .stat .l{font-size:.68rem;color:#8a7a84;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:3px}
   .secgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
   /* ── Reports ── */
   .rep-presets{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -111,6 +115,7 @@
     <button class="alt" onclick="show('sellers')">Sellers</button>
     <button class="alt" onclick="show('products')">Products</button>
     <button class="alt" onclick="show('services')">Services</button>
+    <button class="alt" style="background:#0d6f6f" onclick="show('analytics')">Shop Analytics</button>
     <button class="alt" style="background:#5b2d8e" onclick="show('storefront')">Storefront</button>
     <button class="alt" style="background:#b8941f" onclick="show('jobs')">Vacancies</button>
     <button class="gray" onclick="show('notify')">Notify</button>
@@ -249,6 +254,38 @@ async function show(view){
           <textarea id="aj-desc" rows="3" placeholder="Role description, requirements, experience…" style="margin-top:9px"></textarea>
           <div style="text-align:right;margin-top:10px"><button onclick="postAdminJob()">Post vacancy</button></div>
         </div>`;
+    }
+    else if(view==='analytics'){
+      const days = window.__anDays || 7;
+      const d = await api('/api/admin/shop-stats?days='+days);
+      out.className='';
+      const rows = d.shops.length ? d.shops.map(s=>`<tr>
+          <td>${esc(s.name)}</td>
+          <td class="muted">${esc(s.floor)}${s.unit?' · '+esc(s.unit):''}</td>
+          <td class="num">${s.visitsToday}</td>
+          <td class="num"><b>${s.visitsWindow}</b></td>
+          <td class="num">${s.visitsTotal}</td>
+          <td class="num">${s.sharesWindow}</td>
+          <td class="num">${s.sharesTotal}</td>
+        </tr>`).join('')
+        : `<tr><td colspan="7" style="text-align:center;color:#999;padding:22px">No shop visits recorded yet. Numbers appear as people open shop pages.</td></tr>`;
+      out.innerHTML = `
+        <h3>Shop analytics</h3>
+        <p class="muted">How many people opened each shop's page, and how often it was shared. A “visit” is one shop-page open; a “share” is one use of the share button.</p>
+        <div class="bar" style="margin-bottom:10px">
+          ${[7,30,90].map(x=>`<button class="${x===days?'':'alt'}" onclick="window.__anDays=${x};show('analytics')">Last ${x} days</button>`).join('')}
+        </div>
+        <div class="statgrid">
+          <div class="stat"><div class="n">${d.totals.visitsToday}</div><div class="l">Visits today</div></div>
+          <div class="stat"><div class="n">${d.totals.visitsWindow}</div><div class="l">Visits · ${days}d</div></div>
+          <div class="stat"><div class="n">${d.totals.sharesToday}</div><div class="l">Shares today</div></div>
+          <div class="stat"><div class="n">${d.totals.sharesWindow}</div><div class="l">Shares · ${days}d</div></div>
+        </div>
+        <table class="rep-table" style="margin-top:12px">
+          <thead><tr><th>Shop</th><th>Location</th><th class="num">Visits today</th><th class="num">Visits ${days}d</th>
+            <th class="num">Visits all</th><th class="num">Shares ${days}d</th><th class="num">Shares all</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
     }
     else if(view==='storefront'){
       const d=await api('/api/admin/sections'); const sec=d.sections||{}; out.className='';
@@ -509,6 +546,10 @@ function editTenant(tid){
       <input id="et-icon-${tid}" value="${esc(t.icon||'fa-store')}" placeholder="Icon (fa-…)">
       <input id="et-photo-${tid}" value="${esc((t.photo||'').slice(0,80))}" placeholder="Photo URL">
     </div>
+    <label style="display:flex;align-items:center;gap:7px;margin-top:10px;font-size:.82rem;color:#333">
+      <input type="checkbox" id="et-appt-${tid}" ${t.appointments?'checked':''}>
+      <b>Accept appointment bookings</b> <span class="muted">(shows a Book Appointment button on the shop page)</span>
+    </label>
     <div class="muted" style="margin-top:8px"><b>Social links</b> — handle or full URL; check the box to show it on the storefront.</div>
     <div class="formgrid">
       ${['instagram','facebook','tiktok','telegram','youtube','website'].map(k=>{
@@ -541,6 +582,7 @@ async function saveTenantEdit(tid){
       whatsapp:g('et-wa-'+tid), mobile:g('et-mobile-'+tid), color:g('et-color-'+tid),
       icon:g('et-icon-'+tid), photo:photoV.startsWith('http')?photoV:(t.photo||''),
       blurb:document.getElementById('et-blurb-'+tid).value.trim(),
+      appointments:document.getElementById('et-appt-'+tid).checked,
       socials
     }}});
     show('sellers');
@@ -890,6 +932,14 @@ async function checkDataSync(){
     const r = await fetch('/api/admin/data-status', {headers:{'x-admin-key':k}});
     if(!r.ok){ el.textContent=''; return; }
     const d = await r.json();
+    if(d.persistent === false){
+      const el2 = document.getElementById('dataSyncStatus');
+      el2.innerHTML = '\u26D4 <b>DATA IS NOT BEING SAVED PERMANENTLY</b> \u2014 this server is using a temporary file store, '+
+        'so ratings, vacancies and edits are lost whenever it restarts. Attach a Postgres database and set '+
+        '<code>DATABASE_URL</code> in your hosting environment, then redeploy.';
+      el2.style.color = '#b00020';
+      return;
+    }
     if(d.inSync){
       el.innerHTML = `✅ <b>Live data is up to date</b> — v${d.liveVersion}, ${d.liveTenantCount} tenants.`;
       el.style.color = '#1d9e54';

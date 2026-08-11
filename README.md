@@ -31,6 +31,46 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v26 — durability fix, shop analytics, vacancy section, UI fixes
+
+**Data loss fixed (two real causes).** (1) The catalog reseed was
+*destructive* — a `dataVersion` bump replaced the whole document, wiping
+ratings, blurbs, socials, product edits and hidden flags. It now **merges**:
+new structure comes from the seed, every live edit is preserved. (2) Ratings
+were only stored inside that document; they are now **rebuilt on every boot
+from the `tenant_ratings` table**, which is their durable source. Verified by
+shipping a new catalog version with a new shop and confirming a rating, an
+admin blurb edit and a vacancy all survived.
+
+**The likeliest production cause is environmental**, so it now fails loudly
+instead of silently: without `DATABASE_URL` the server falls back to a JSON
+file, which is *ephemeral* on free hosting — wiped on every restart. Boot logs
+a large warning, `/api/health` reports `persistent:false`, and the admin
+dashboard shows a red **"DATA IS NOT BEING SAVED PERMANENTLY"** banner with
+the fix.
+
+**Per-shop analytics.** A new `shop_events` table counts profile visits and
+shares per shop per day. Sellers see their own numbers (today / 7 days / all
+time) atop their portal; admin gets a **Shop Analytics** tab ranking every
+shop with 7/30/90-day windows. Tracking is fire-and-forget via `sendBeacon`,
+so it can never slow or break browsing, and unknown event types are rejected.
+
+**Vacancies are now their own page section** with nav and drawer links,
+instead of living behind a button in the Office-for-Rent block. The card
+builder is shared with the older modal so the two can't drift apart.
+
+**Appointment booking is now opt-in per shop**, switchable by both the seller
+(Shop Profile toggle) and admin (tenant editor checkbox). It defaults off and
+only appears when a WhatsApp number exists.
+
+**vCards now carry social profiles** — Instagram, Facebook, TikTok, Telegram,
+YouTube, X, LinkedIn and website — as `X-SOCIALPROFILE` plus plain `URL`
+lines, and they respect each link's on/off switch.
+
+**Kiosk cards fixed:** the shop "ceiling" was overhanging and clipping the
+floor badge. The awning is shorter, its bars went from 3 to 5, and the
+Verified/floor badges now sit above it — floor and unit read in full.
+
 ### v25 — vacancies, vCards, appointments, seller self-service
 
 **Job vacancy board.** Shops, mall management and building operations can all

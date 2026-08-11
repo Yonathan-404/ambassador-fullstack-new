@@ -113,6 +113,10 @@ if (process.env.DATABASE_URL) {
       hours TEXT, location TEXT, employment_type TEXT, description TEXT,
       contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
       active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS shop_events (
+      id SERIAL PRIMARY KEY, tenant_id TEXT NOT NULL, kind TEXT NOT NULL,
+      day DATE NOT NULL DEFAULT CURRENT_DATE, created_at TIMESTAMPTZ DEFAULT now());
+    CREATE INDEX IF NOT EXISTS shop_events_tid_day ON shop_events (tenant_id, day);
     CREATE TABLE IF NOT EXISTS tenant_ratings (
       id SERIAL PRIMARY KEY, tenant_id TEXT NOT NULL, user_id INT NOT NULL,
       rating SMALLINT NOT NULL, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now(),
@@ -188,6 +192,19 @@ if (process.env.DATABASE_URL) {
     async deleteSellerCode(tid){ await pool.query(`DELETE FROM seller_codes WHERE tenant_id=$1`,[tid]); },
 
     // ── tenant ratings (real, signed-in-user submitted) ──
+    // ── shop analytics: visits & shares, counted per day ──
+    async logShopEvent(tid, kind){
+      await pool.query(`INSERT INTO shop_events (tenant_id, kind) VALUES ($1,$2)`, [tid, kind]);
+    },
+    async shopStats(days){
+      const r = await pool.query(
+        `SELECT tenant_id, kind,
+                COUNT(*)::int AS total,
+                COUNT(*) FILTER (WHERE day = CURRENT_DATE)::int AS today,
+                COUNT(*) FILTER (WHERE day > CURRENT_DATE - $1::int)::int AS window
+         FROM shop_events GROUP BY tenant_id, kind`, [days || 7]);
+      return r.rows;
+    },
     async rateTenant(tenantId, userId, rating){
       await pool.query(
         `INSERT INTO tenant_ratings (tenant_id, user_id, rating) VALUES ($1,$2,$3)
@@ -282,7 +299,7 @@ if (process.env.DATABASE_URL) {
   };
 } else {
   console.warn('[warn] DATABASE_URL not set — using JSON file store at ' + DATA_FILE + ' (dev only).');
-  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], jobs: [], catalog: null, seq: 1,
+  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], events: [], jobs: [], catalog: null, seq: 1,
     leases: [], invoices: [], finance: [], tickets: [], announcements: [], bmsConfig: null };
   try { mem = Object.assign(mem, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) {}
   const flush = () => { try { fs.writeFileSync(DATA_FILE, JSON.stringify(mem)); } catch (e) {} };
@@ -337,6 +354,26 @@ if (process.env.DATABASE_URL) {
     async deleteSellerCode(tid){ delete mem.sellerCodes[tid]; flush(); },
 
     // ── tenant ratings (real, signed-in-user submitted) ──
+    async logShopEvent(tid, kind){
+      mem.events = mem.events || [];
+      mem.events.push({ tenant_id: tid, kind, day: new Date().toISOString().slice(0,10) });
+      if (mem.events.length > 50000) mem.events = mem.events.slice(-40000);   // keep the file bounded
+      flush();
+    },
+    async shopStats(days){
+      mem.events = mem.events || [];
+      const today = new Date().toISOString().slice(0,10);
+      const cutoff = new Date(Date.now() - (days||7)*864e5).toISOString().slice(0,10);
+      const acc = {};
+      mem.events.forEach(e => {
+        const k = e.tenant_id + '|' + e.kind;
+        acc[k] = acc[k] || { tenant_id: e.tenant_id, kind: e.kind, total: 0, today: 0, window: 0 };
+        acc[k].total++;
+        if (e.day === today) acc[k].today++;
+        if (e.day > cutoff) acc[k].window++;
+      });
+      return Object.values(acc);
+    },
     async rateTenant(tenantId, userId, rating){
       mem.ratings = mem.ratings || [];
       const existing = mem.ratings.find(r => r.tenant_id === tenantId && r.user_id === userId);
@@ -676,6 +713,8 @@ function normTenant(input, existing){
   set('reviewLink', ''); set('responseTime', '');
   t.active = input.active !== undefined ? !!input.active : (t.active !== undefined ? t.active : true);
   t.hidden = input.hidden !== undefined ? !!input.hidden : !!t.hidden;
+  /* appointment booking is opt-in per shop; admin and the seller can both flip it */
+  t.appointments = input.appointments !== undefined ? !!input.appointments : !!t.appointments;
   if (input.socials && typeof input.socials === 'object') {
     // each platform is stored as { value, on } so a link can be turned off
     // without losing it; a plain string is still accepted for convenience
@@ -803,7 +842,12 @@ const app = express();
 app.use(express.json({ limit: '8mb' })   /* raised for base64 image uploads (products: 3, services: 2) */);
 app.disable('x-powered-by');
 
-app.get('/api/health', (req, res) => res.json({ ok: true, db: db.kind }));
+app.get('/api/health', (req, res) => res.json({
+  ok: true, db: db.kind,
+  persistent: db.kind === 'postgres',
+  warning: db.kind === 'postgres' ? null
+    : 'Running on a local JSON file. On free hosting this disk is ephemeral — ratings, vacancies and edits are lost on restart. Attach Postgres and set DATABASE_URL.'
+}));
 app.get('/api/config', (req, res) => res.json({
   googleClientId: GOOGLE_ID || null, demoAuth: !GOOGLE_ID, building: { name: B.name },
   checkoutEnabled: CHECKOUT_ENABLED
@@ -1073,6 +1117,7 @@ app.post('/api/seller/profile', requireSeller, async (req, res) => {
   // link off without losing/retyping it later.
   const SOCIAL_KEYS = ['instagram','facebook','tiktok','telegram','youtube','website'];
   const blurb = req.body && typeof req.body.blurb === 'string' ? req.body.blurb.slice(0, 240) : undefined;
+  const appointments = typeof (req.body && req.body.appointments) === 'boolean' ? req.body.appointments : undefined;
   const socialsIn = (req.body && req.body.socials) || null;
   let socials;
   if (socialsIn && typeof socialsIn === 'object') {
@@ -1089,6 +1134,7 @@ app.post('/api/seller/profile', requireSeller, async (req, res) => {
     const t = c.building.tenants.find(x => x.id === req.sellerTid);
     if (blurb !== undefined) t.blurb = blurb;
     if (socials !== undefined) t.socials = socials;
+    if (appointments !== undefined) t.appointments = appointments;
   });
   res.json({ ok: true, tenant: TENANTS[req.sellerTid] });
 });
@@ -1116,6 +1162,8 @@ app.post('/api/admin/reseed', requireAdmin, async (req, res) => {
 app.get('/api/admin/data-status', requireAdmin, async (req, res) => {
   const live = await db.getCatalog();
   res.json({
+    storage: db.kind,
+    persistent: db.kind === 'postgres',
     fileVersion: SEED.dataVersion || 0,
     liveVersion: live ? (live.dataVersion || 0) : null,
     liveTenantCount: live ? (live.building.tenants || []).length : 0,
@@ -1686,7 +1734,79 @@ jobAdminRoutes('/api/admin', requireAdmin, 'mall', 'Ambassador Shopping Mall');
 /* BMS shares the admin key but attributes its posts to building operations */
 jobAdminRoutes('/api/admin/bms', requireAdmin, 'bms', 'Ambassador Building Management');
 
+/* ── shop analytics: visits (profile opened) and shares, per shop per day ──
+   Fire-and-forget from the storefront; never blocks the UI and never fails loudly. */
+app.post('/api/tenant/:id/event', async (req, res) => {
+  const t = TENANTS[req.params.id];
+  const kind = ('' + ((req.body && req.body.kind) || '')).trim();
+  if (!t) return res.status(404).json({ error: 'Unknown shop' });
+  if (['visit', 'share'].indexOf(kind) < 0) return res.status(400).json({ error: 'Unknown event' });
+  try { await db.logShopEvent(t.id, kind); } catch (e) { /* analytics must never break browsing */ }
+  res.json({ ok: true });
+});
+/* admin: every shop, ranked */
+app.get('/api/admin/shop-stats', requireAdmin, async (req, res) => {
+  const days = Math.min(90, Math.max(1, parseInt(req.query.days, 10) || 7));
+  const rows = await db.shopStats(days);
+  const by = {};
+  rows.forEach(r => {
+    by[r.tenant_id] = by[r.tenant_id] || { tenantId: r.tenant_id,
+      name: (TENANTS[r.tenant_id] || {}).name || r.tenant_id,
+      floor: (TENANTS[r.tenant_id] || {}).floor || '',
+      unit: (TENANTS[r.tenant_id] || {}).unit || '',
+      visitsToday: 0, visitsWindow: 0, visitsTotal: 0,
+      sharesToday: 0, sharesWindow: 0, sharesTotal: 0 };
+    const o = by[r.tenant_id];
+    if (r.kind === 'visit') { o.visitsToday = r.today; o.visitsWindow = r.window; o.visitsTotal = r.total; }
+    if (r.kind === 'share') { o.sharesToday = r.today; o.sharesWindow = r.window; o.sharesTotal = r.total; }
+  });
+  const list = Object.values(by).sort((a, b) => b.visitsWindow - a.visitsWindow);
+  res.json({ days, shops: list,
+    totals: list.reduce((t, s) => ({
+      visitsToday: t.visitsToday + s.visitsToday, visitsWindow: t.visitsWindow + s.visitsWindow,
+      sharesToday: t.sharesToday + s.sharesToday, sharesWindow: t.sharesWindow + s.sharesWindow
+    }), { visitsToday: 0, visitsWindow: 0, sharesToday: 0, sharesWindow: 0 }) });
+});
+/* seller: only ever their own shop's numbers */
+app.get('/api/seller/stats', requireSeller, async (req, res) => {
+  const days = Math.min(90, Math.max(1, parseInt(req.query.days, 10) || 7));
+  const rows = (await db.shopStats(days)).filter(r => r.tenant_id === req.sellerTid);
+  const pick = k => rows.find(r => r.kind === k) || { today: 0, window: 0, total: 0 };
+  const v = pick('visit'), sh = pick('share');
+  res.json({ days,
+    visits: { today: v.today, window: v.window, total: v.total },
+    shares: { today: sh.today, window: sh.window, total: sh.total } });
+});
+
 /* ── vCard: one tap to save a shop's contact into the phone's address book ── */
+const SOCIAL_VCARD = {
+  instagram:{ type:'instagram', base:'https://instagram.com/' },
+  facebook: { type:'facebook',  base:'https://facebook.com/' },
+  tiktok:   { type:'tiktok',    base:'https://tiktok.com/@' },
+  telegram: { type:'telegram',  base:'https://t.me/' },
+  youtube:  { type:'youtube',   base:'https://youtube.com/' },
+  x:        { type:'twitter',   base:'https://x.com/' },
+  twitter:  { type:'twitter',   base:'https://x.com/' },
+  linkedin: { type:'linkedin',  base:'https://linkedin.com/company/' },
+  website:  { type:'website',   base:'https://' }
+};
+function socialVcardLines(socials, esc){
+  if (!socials) return [];
+  const out = [];
+  Object.keys(SOCIAL_VCARD).forEach(k => {
+    const entry = socials[k];
+    if (!entry) return;
+    // stored either as a plain string or as { value, on } — respect the toggle
+    const raw = typeof entry === 'object' ? entry.value : entry;
+    const on  = typeof entry === 'object' ? entry.on !== false : true;
+    if (!raw || !on) return;
+    const def = SOCIAL_VCARD[k];
+    const url = /^https?:\/\//i.test(raw) ? raw : def.base + String(raw).replace(/^@/, '');
+    out.push('X-SOCIALPROFILE;TYPE=' + def.type + ':' + esc(url));
+    out.push('URL;TYPE=' + def.type + ':' + esc(url));
+  });
+  return out;
+}
 app.get('/api/tenant/:id/vcard', (req, res) => {
   const t = TENANTS[req.params.id];
   if (!t) return res.status(404).send('Not found');
@@ -1704,6 +1824,9 @@ app.get('/api/tenant/:id/vcard', (req, res) => {
     'ADR;TYPE=WORK:;;' + esc(where + ', ' + (B.name || '')) + ';' + esc((B.location || 'Addis Ababa')) + ';;;Ethiopia',
     t.blurb ? 'NOTE:' + esc(t.blurb) : null,
     'URL:' + (req.protocol + '://' + req.get('host') + '/#tenant=' + t.id),
+    /* social profiles — X-SOCIALPROFILE is what iOS/Android contacts read,
+       and a plain URL line is added too so apps that ignore it still show them */
+    ...socialVcardLines(t.socials, esc),
     'REV:' + new Date().toISOString(),
     'END:VCARD'
   ].filter(Boolean);
@@ -1739,18 +1862,75 @@ app.get('*', (req, res) => {
    Now: bump dataVersion in catalog.json whenever you ship new real data, and
    the next deploy/restart picks it up automatically — no manual step, no
    wiping admin edits made after the last version bump. ── */
+/* Fields a tenant or admin edits at runtime. A version bump must NEVER wipe
+   these — the seed only supplies structure (new shops, floors, categories). */
+const LIVE_TENANT_FIELDS = ['rating','reviews','blurb','socials','photo','mobile','whatsapp',
+  'owner','manager','responseTime','reviewLink','active','hidden','banks','products','appointments'];
+
+function mergeSeedIntoLive(seed, live){
+  if (!live || !live.building) return seed;
+  const merged = JSON.parse(JSON.stringify(seed));
+  const liveById = {};
+  (live.building.tenants || []).forEach(t => { liveById[t.id] = t; });
+  merged.building.tenants = (merged.building.tenants || []).map(st => {
+    const lt = liveById[st.id];
+    if (!lt) return st;                       // brand-new shop from the seed
+    const out = Object.assign({}, st);
+    LIVE_TENANT_FIELDS.forEach(f => { if (lt[f] !== undefined) out[f] = lt[f]; });
+    return out;
+  });
+  // building-level things staff configure live
+  ['sections','vacantUnits','commission'].forEach(k => {
+    if (live.building[k] !== undefined) merged.building[k] = live.building[k];
+  });
+  return merged;
+}
+
+/* Ratings are authoritative in the tenant_ratings table; the copy inside the
+   catalog doc is only a display cache. Rebuild it on every boot so a reseed,
+   a restart, or a wiped catalog can never lose real votes. */
+async function rehydrateRatings(){
+  if (!db.tenantRatingAgg) return;
+  const ids = (catalog.building.tenants || []).map(t => t.id);
+  let changed = false;
+  for (const id of ids) {
+    try {
+      const agg = await db.tenantRatingAgg(id);
+      const t = catalog.building.tenants.find(x => x.id === id);
+      if (t && (t.rating !== agg.rating || t.reviews !== agg.reviews)) {
+        t.rating = agg.rating; t.reviews = agg.reviews; changed = true;
+      }
+    } catch (e) { /* a rating lookup failing must not block boot */ }
+  }
+  if (changed) await db.saveCatalog(catalog);
+}
+
 db.ready()
   .then(() => db.getCatalog())
   .then(doc => {
     const fileVer = SEED.dataVersion || 0;
     const dbVer = doc ? (doc.dataVersion || 0) : -1;
     if (doc && dbVer >= fileVer) { catalog = doc; return; }
-    catalog = SEED;
-    const reason = doc ? `live data was v${dbVer}, catalog.json is v${fileVer}` : 'no live data yet';
-    return db.saveCatalog(catalog).then(() => console.log(`[catalog] (re)seeded from catalog.json — ${reason}`));
+    // NON-DESTRUCTIVE: take new structure from the seed, keep every live edit
+    catalog = mergeSeedIntoLive(SEED, doc);
+    const reason = doc
+      ? `live data was v${dbVer}, catalog.json is v${fileVer} — merged, live edits preserved`
+      : 'no live data yet — first seed';
+    return db.saveCatalog(catalog).then(() => console.log(`[catalog] ${reason}`));
   })
+  .then(() => { indexCatalog(); return rehydrateRatings(); })
   .then(() => {
     indexCatalog();
+    if (db.kind !== 'postgres') {
+      console.warn('');
+      console.warn('  ****************************************************************');
+      console.warn('  *  WARNING: no DATABASE_URL — using a JSON file on local disk. *');
+      console.warn('  *  On Render/Heroku free tiers that disk is EPHEMERAL: ratings, *');
+      console.warn('  *  vacancies, product edits and orders WILL BE LOST on restart. *');
+      console.warn('  *  Attach a Postgres database and set DATABASE_URL.             *');
+      console.warn('  ****************************************************************');
+      console.warn('');
+    }
     app.listen(PORT, () => console.log(`Ambassador store v2 on :${PORT} (db: ${db.kind}, sms: ${process.env.SMS_PROVIDER || 'log-only'})`));
   })
   .catch(e => { console.error('Boot failed:', e); process.exit(1); });

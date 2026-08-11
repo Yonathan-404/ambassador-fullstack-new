@@ -62,6 +62,10 @@
   .prod{display:grid;grid-template-columns:1fr 100px 140px 60px 90px;gap:8px;align-items:center}
   .prod.is-off{opacity:.55;background:#fafafa}
   @media(max-width:640px){.prod{grid-template-columns:1fr 1fr}}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px}
+  .stat{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+  .stat .n{font-size:1.5rem;font-weight:800;color:var(--wine);line-height:1.1}
+  .stat .l{font-size:.68rem;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:2px}
   .savebar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px;display:none;text-align:right}
   /* shop profile tab */
   textarea.desc{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.86rem;resize:vertical;min-height:80px}
@@ -151,7 +155,21 @@ async function render(){
   shell('<div class="empty">Loading…</div>');
   try{
     if(tab==='orders'){
-      const d = await api('/api/seller/orders');
+      const [d, st] = await Promise.all([
+        api('/api/seller/orders'),
+        api('/api/seller/stats?days=7').catch(()=>null)
+      ]);
+      if(st){
+        const strip = `<div class="card"><b>Your shop this week</b>
+          <div class="muted" style="margin:2px 0 10px">How many people opened your shop page, and how often it was shared.</div>
+          <div class="statgrid">
+            <div class="stat"><div class="n">${st.visits.today}</div><div class="l">Visits today</div></div>
+            <div class="stat"><div class="n">${st.visits.window}</div><div class="l">Visits · 7 days</div></div>
+            <div class="stat"><div class="n">${st.shares.window}</div><div class="l">Shares · 7 days</div></div>
+            <div class="stat"><div class="n">${st.visits.total}</div><div class="l">Visits all time</div></div>
+          </div></div>`;
+        setTimeout(()=>{ const b=$('#body'); if(b) b.insertAdjacentHTML('afterbegin', strip); }, 0);
+      }
       const list = d.orders||[];
       $('#body').innerHTML = list.length ? list.map(o=>{
         const items = (o.items||[]).map(i=>esc(i.name)+(i.variant?' ['+esc(i.variant)+']':'')+' ×'+i.qty).join(', ');
@@ -272,6 +290,19 @@ async function render(){
                 <span class="track"><span class="knob"></span></span>
               </label>
             </div>`).join('')}
+        </div>
+        <div class="card">
+          <div class="soc-row" style="border-bottom:0;padding:2px 0">
+            <span class="soc-ic" style="background:var(--wine)"><i class="fas fa-calendar-check"></i></span>
+            <div style="flex:1;min-width:0">
+              <b>Accept appointment bookings</b>
+              <div class="muted">Shows a “Book Appointment” button on your shop page. Requests arrive on your WhatsApp with the date and time already filled in.</div>
+            </div>
+            <label class="toggle" title="Accept bookings">
+              <input type="checkbox" id="pf-appt" ${t.appointments?'checked':''}>
+              <span class="track"><span class="knob"></span></span>
+            </label>
+          </div>
         </div>
         <div style="text-align:right"><button class="btn wine" onclick="saveProfile()"><i class="fas fa-check"></i> Save shop profile</button></div>
         <div class="card" style="margin-top:16px">
@@ -422,7 +453,8 @@ async function saveProfile(){
   const socials = {};
   Object.keys(window.__soc||{}).forEach(k=>{ socials[k] = window.__soc[k]; });
   try{
-    await api('/api/seller/profile',{method:'POST',body:{blurb, socials}});
+    const appointments = !!document.getElementById('pf-appt').checked;
+    await api('/api/seller/profile',{method:'POST',body:{blurb, socials, appointments}});
     render();
   }catch(e){ alert(e.message); }
 }

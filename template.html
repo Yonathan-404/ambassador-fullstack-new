@@ -879,11 +879,11 @@
 }
 #amb-store .amb-kiosk:hover{transform:translateY(-8px)}
 /* awning */
-#amb-store .amb-kiosk-awning{position:absolute;top:-30px;left:-12px;right:-12px;z-index:6;filter:drop-shadow(0 10px 16px rgba(0,0,0,.22))}
-#amb-store .amb-kawn-bar{height:7px;background:var(--kcd);border-radius:4px 4px 0 0}
-#amb-store .amb-kawn-canvas{height:40px;display:flex;overflow:hidden;transform:perspective(150px) rotateX(20deg);transform-origin:top;box-shadow:inset 0 -10px 18px rgba(0,0,0,.35)}
+#amb-store .amb-kiosk-awning{position:absolute;top:-22px;left:-12px;right:-12px;z-index:6;filter:drop-shadow(0 8px 13px rgba(0,0,0,.20));pointer-events:none}
+#amb-store .amb-kawn-bar{height:5px;background:var(--kcd);border-radius:4px 4px 0 0}
+#amb-store .amb-kawn-canvas{height:27px;display:flex;overflow:hidden;transform:perspective(150px) rotateX(20deg);transform-origin:top;box-shadow:inset 0 -8px 14px rgba(0,0,0,.32)}
 #amb-store .amb-kstripe{flex:1;height:100%}
-#amb-store .amb-kawn-valance{position:relative;height:18px;margin-top:-3px;z-index:2}
+#amb-store .amb-kawn-valance{position:relative;height:12px;margin-top:-2px;z-index:2}
 #amb-store .amb-kawn-valance svg{width:100%;height:100%;display:block}
 /* building */
 #amb-store .amb-kiosk-bldg{
@@ -895,8 +895,8 @@
 #amb-store .amb-kiosk-window img{width:100%;height:100%;object-fit:cover;opacity:.9;transition:transform .55s var(--ease)}
 #amb-store .amb-kiosk:hover .amb-kiosk-window img{transform:scale(1.06)}
 #amb-store .amb-kiosk-glare{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 40%,transparent 41%);pointer-events:none}
-#amb-store .amb-kiosk-verified{position:absolute;top:11px;left:11px;background:var(--success);color:#fff;font-size:.58rem;font-weight:700;padding:4px 10px;border-radius:100px;display:flex;align-items:center;gap:5px;box-shadow:0 3px 8px rgba(0,0,0,.2)}
-#amb-store .amb-kiosk-floor{position:absolute;top:11px;right:11px;background:var(--gold);color:var(--shop-dark,#1e1e1e);font-size:.58rem;font-weight:800;padding:4px 10px;border-radius:100px;box-shadow:0 3px 8px rgba(0,0,0,.2)}
+#amb-store .amb-kiosk-verified{position:absolute;top:20px;left:11px;z-index:7;background:var(--success);color:#fff;font-size:.58rem;font-weight:700;padding:4px 10px;border-radius:100px;display:flex;align-items:center;gap:5px;box-shadow:0 3px 8px rgba(0,0,0,.2)}
+#amb-store .amb-kiosk-floor{position:absolute;top:20px;right:11px;z-index:7;white-space:nowrap;background:var(--gold);color:var(--shop-dark,#1e1e1e);font-size:.58rem;font-weight:800;padding:4px 10px;border-radius:100px;box-shadow:0 3px 8px rgba(0,0,0,.2)}
 /* hanging round sign */
 #amb-store .amb-kiosk-sign{
   width:64px;height:64px;color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;
@@ -1852,6 +1852,7 @@ html.lenis, html.lenis body{height:auto}
       <li><a onclick="ambScrollTo('ambTenants')" data-i18n="navTenants">Sellers</a></li>
       <li><a onclick="ambScrollTo('ambShop')" data-i18n="navShop">Shop</a></li>
       <li><a onclick="ambScrollTo('ambServices')" data-i18n="navServices">Services</a></li>
+      <li><a onclick="ambScrollTo('ambJobs')" data-i18n="navJobs">Vacancies</a></li>
     </ul>
     <div class="amb-nav-actions">
       <button class="amb-icon-btn amb-msearch-btn" onclick="ambOpenMSearch()" title="Search">
@@ -1892,6 +1893,7 @@ html.lenis, html.lenis body{height:auto}
         <a onclick="ambMNav('ambTenants')"><i class="fas fa-store"></i> <span data-i18n="navTenants">Sellers</span></a>
         <a onclick="ambMNav('ambShop')"><i class="fas fa-bag-shopping"></i> <span data-i18n="navShop">Shop</span></a>
         <a onclick="ambMNav('ambServices')"><i class="fas fa-concierge-bell"></i> <span data-i18n="navServices">Services</span></a>
+        <a onclick="ambMNav('ambJobs')"><i class="fas fa-briefcase"></i> <span data-i18n="navJobs">Vacancies</span></a>
       </nav>
       <div class="amb-mdrawer-divider"></div>
       <nav class="amb-mdrawer-links">
@@ -2073,10 +2075,21 @@ html.lenis, html.lenis body{height:auto}
           <div class="amb-rent-btns">
             <a class="amb-rent-btn" href="tel:+251926785987"><i class="fas fa-phone"></i> Call Us to Visit</a>
             <button type="button" class="amb-rent-btn ghost" onclick="ambOpenAvailableOffices()"><i class="fas fa-door-open"></i> See Offices</button>
-            <button type="button" class="amb-rent-btn ghost" onclick="ambOpenJobs()"><i class="fas fa-briefcase"></i> <span data-i18n="jobsBtn">Job Vacancies</span></button>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- job vacancies — its own section, fed by shops, mall management and BMS -->
+  <section class="amb-section" id="ambJobs">
+    <div class="amb-container">
+      <div class="amb-head">
+        <div class="amb-eyebrow2"><span data-i18n="jobsEyebrow">Work With Us</span></div>
+        <h3 class="amb-title" data-i18n="jobsTitle">Job Vacancies</h3>
+        <p class="amb-sub" data-i18n="jobsSub">Openings posted by shops inside the mall, by Ambassador management, and by building operations.</p>
+      </div>
+      <div class="amb-job-grid" id="ambJobSection"></div>
     </div>
   </section>
 
@@ -2555,7 +2568,9 @@ var SERVICES = [
 ═══════════════════════════════════════════════════════════════════ */
 var I18N = {
   en: {
-    navTenants:'Tenants', navShop:'Shop', navServices:'Services', navHow:'How It Works',
+    navTenants:'Tenants', navShop:'Shop', navServices:'Services', navHow:'How It Works', navJobs:'Vacancies',
+    jobsEyebrow:'Work With Us', jobsTitle:'Job Vacancies',
+    jobsSub:'Openings posted by shops inside the mall, by Ambassador management, and by building operations.',
     navDirectory:'Directory',
     searchPh:'Search products, shops, units, floors…',
     dirEyebrow:'Building Directory', dirTitle:'Every Office, Floor by Floor',
@@ -2608,7 +2623,9 @@ var I18N = {
     account:'Account', signIn:'Sign in', signOut:'Sign out', signInGoogle:'Continue with Google', signInTitle:'Sign in to Ambassador', signInSub:'Save your details for faster checkout. We never post anything.', signedInAs:'Signed in as', orContinueGuest:'Continue as guest', myAccount:'My Account'
   },
   am: {
-    navTenants:'ተከራዮች', navShop:'ሱቅ', navServices:'አገልግሎቶች', navHow:'እንዴት እንደሚሰራ',
+    navTenants:'ተከራዮች', navShop:'ሱቅ', navServices:'አገልግሎቶች', navHow:'እንዴት እንደሚሰራ', navJobs:'ክፍት የስራ ቦታ',
+    jobsEyebrow:'አብረውን ይስሩ', jobsTitle:'የስራ ማስታወቂያ',
+    jobsSub:'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።',
     navDirectory:'ማውጫ',
     searchPh:'ምርቶችን፣ ሱቆችን፣ ክፍሎችን ይፈልጉ…',
     dirEyebrow:'የህንፃው ማውጫ', dirTitle:'እያንዳንዱ ቢሮ፣ በየፎቁ',
@@ -2945,7 +2962,7 @@ window.ambScrollTo = function (id) {
 window.ambSetLang = function (lang) {
   state.lang = lang; save('amb-lang', lang);
   applyI18n();
-  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderHeroVisual();
+  renderRibbon(); renderTenants(); renderServices(); renderOnSale(); renderFilterChips(); renderFilterBar(); renderProducts(); renderHeroVisual(); if(A.renderJobsSection) A.renderJobsSection();
   var btn=$('ambLangBtn'); if(btn) btn.innerHTML = lang==='en' ? '<i class="fas fa-language"></i> አማ' : '<i class="fas fa-language"></i> EN';
 };
 window.ambToggleLang = function(){ ambSetLang(state.lang==='en'?'am':'en'); };
@@ -3272,7 +3289,8 @@ function tenantCardHTML(tn){
   var dark = shade(tn.color,-50);
   // 6 awning stripes alternating tenant color / dark shade
   var stripes='';
-  for(var i=0;i<6;i++){ stripes += '<span class="amb-kstripe" style="background:'+(i%2?dark:tn.color)+'"></span>'; }
+  /* 10 alternating stripes = 5 coloured bars across the awning (was 3) */
+  for(var i=0;i<10;i++){ stripes += '<span class="amb-kstripe" style="background:'+(i%2?dark:tn.color)+'"></span>'; }
   return '<div class="amb-kiosk'+(active?' active':'')+'" style="--kc:'+tn.color+';--kcd:'+dark+'" onclick="ambOpenTenant(\''+tn.id+'\')">'+
     /* awning */
     '<div class="amb-kiosk-awning">'+
@@ -3356,13 +3374,16 @@ window.ambOpenTenant = function(tid){
         '<div class="amb-tp-acts2">'+
           '<a class="amb-tp-vcard" href="/api/tenant/'+tn.id+'/vcard" download><i class="fas fa-address-card"></i> '+
             (state.lang==='am'?'እውቂያ አስቀምጥ':'Save Contact')+'</a>'+
-          (tn.whatsapp?'<button class="amb-tp-book" onclick="ambBookAppointment(\''+tn.id+'\')"><i class="fas fa-calendar-check"></i> '+
+          /* booking shows only when the shop (or admin) has enabled it AND a
+             WhatsApp number exists — service shops want it, most retail doesn't */
+          ((tn.appointments && tn.whatsapp)?'<button class="amb-tp-book" onclick="ambBookAppointment(\''+tn.id+'\')"><i class="fas fa-calendar-check"></i> '+
             (state.lang==='am'?'ቀጠሮ ይያዙ':'Book Appointment')+'</button>':'')+
         '</div>'+
       '</div>'+
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
   ambSetDeepLink('tenant', tn.id);
+  ambTrack(tn.id, 'visit');
   ambLoadRatingWidget(tn.id);
 };
 
@@ -4185,6 +4206,7 @@ window.ambSendBooking = function(tid){
 };
 window.ambShareTenant = function(tid){
   var tn=tenant(tid); if(!tn) return;
+  ambTrack(tid, 'share');
   ambShareSheet(nameFor(tn), tn.cat+' · '+floorUnit(tn)+' · '+BUILDING.name, 'tenant', tid);
 };
 function ambShareSheet(title, sub, kind, id){
@@ -5025,32 +5047,10 @@ function vacantUnitsList(){
   }
   return AVAILABLE_OFFICES; // embedded fallback if BUILDING.vacantUnits hasn't loaded yet
 }
-/* ── public job / vacancy board — posted by shops, mall management, or BMS ── */
-window.ambOpenJobs = function(){
-  var am = state.lang==='am';
-  $('ambProdModalBox').innerHTML =
-    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
-    '<div style="padding:26px 24px 6px">'+
-      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+
-        (am?'የስራ ማስታወቂያ':'Job Vacancies')+'</h3>'+
-      '<p style="font-size:.8rem;color:var(--mid)">'+
-        (am?'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።'
-           :'Openings posted by shops inside the mall, by Ambassador management, and by building operations.')+'</p>'+
-    '</div>'+
-    '<div class="amb-job-grid" id="ambJobGrid"><div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+
-      (am?'በመጫን ላይ…':'Loading…')+'</div></div>';
-  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
-
-  A.api('/api/jobs').then(function(d){
-    var grid=$('ambJobGrid'); if(!grid) return;          // modal may already be closed
-    var jobs=(d.jobs||[]);
-    if(!jobs.length){
-      grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
-        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም። እባክዎ በኋላ ይመልከቱ።'
-           :'No openings posted right now — please check back soon.')+'</div>';
-      return;
-    }
-    grid.innerHTML = jobs.map(function(j){
+/* shared card builder — used by both the standalone Vacancies section
+   and the older modal, so the two can never drift apart */
+function ambJobCardsHTML(jobs, am){
+  return jobs.map(function(j){
       var badge = j.posterType==='mall' ? (am?'የሞል አስተዳደር':'Mall Management')
                 : j.posterType==='bms'  ? (am?'የህንፃ ጥገና':'Building Operations')
                 : esc(j.posterName||'');
@@ -5080,7 +5080,71 @@ window.ambOpenJobs = function(){
           (j.description?'<div class="amb-job-desc">'+esc(j.description)+'</div>':'')+
           (acts?'<div class="amb-job-acts">'+acts+'</div>':'')+
         '</div></div>';
-    }).join('');
+  }).join('');
+}
+
+/* ── Vacancies rendered inline as its own page section ── */
+function renderJobsSection(){
+  var grid = $('ambJobSection'); if(!grid) return;
+  var am = state.lang==='am';
+  grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+(am?'በመጫን ላይ…':'Loading…')+'</div>';
+  A.api('/api/jobs').then(function(d){
+    var jobs = d.jobs || [];
+    if(!jobs.length){
+      grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
+        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም — በኋላ ይመልከቱ።'
+           :'No openings posted right now — please check back soon.')+'</div>';
+      return;
+    }
+    grid.innerHTML = ambJobCardsHTML(jobs, am);
+  }).catch(function(){
+    grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-triangle-exclamation"></i>'+
+      (am?'ማስታወቂያዎችን መጫን አልተቻለም።':'Could not load vacancies right now.')+'</div>';
+  });
+}
+A.renderJobsSection = renderJobsSection;
+/* fire-and-forget analytics — a failed beacon must never affect browsing */
+function ambTrack(tid, kind){
+  if(!tid) return;
+  try{
+    var url = '/api/tenant/'+encodeURIComponent(tid)+'/event';
+    var body = JSON.stringify({kind:kind});
+    // sendBeacon survives the page being closed mid-share; fetch is the fallback
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(url, new Blob([body],{type:'application/json'}));
+    } else {
+      fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:body,keepalive:true}).catch(function(){});
+    }
+  }catch(e){}
+}
+A.track = ambTrack;
+
+/* ── public job / vacancy board — posted by shops, mall management, or BMS ── */
+window.ambOpenJobs = function(){
+  var am = state.lang==='am';
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div style="padding:26px 24px 6px">'+
+      '<h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-weight:900;color:var(--wine-d);margin-bottom:6px">'+
+        (am?'የስራ ማስታወቂያ':'Job Vacancies')+'</h3>'+
+      '<p style="font-size:.8rem;color:var(--mid)">'+
+        (am?'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።'
+           :'Openings posted by shops inside the mall, by Ambassador management, and by building operations.')+'</p>'+
+    '</div>'+
+    '<div class="amb-job-grid" id="ambJobGrid"><div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+
+      (am?'በመጫን ላይ…':'Loading…')+'</div></div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+
+  A.api('/api/jobs').then(function(d){
+    var grid=$('ambJobGrid'); if(!grid) return;          // modal may already be closed
+    var jobs=(d.jobs||[]);
+    if(!jobs.length){
+      grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
+        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም። እባክዎ በኋላ ይመልከቱ።'
+           :'No openings posted right now — please check back soon.')+'</div>';
+      return;
+    }
+    grid.innerHTML = ambJobCardsHTML(jobs, am);
   }).catch(function(){
     var grid=$('ambJobGrid');
     if(grid) grid.innerHTML='<div class="amb-job-empty"><i class="fas fa-triangle-exclamation"></i>'+
@@ -5418,6 +5482,7 @@ function boot(){
   A.render.filterBar();
   A.render.products();
   A.render.heroVisual();
+  if(A.renderJobsSection) A.renderJobsSection();
   A.render.wishBadge();
   A.renderCart();
   A.updateBadges();
