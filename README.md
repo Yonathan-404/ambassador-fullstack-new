@@ -31,6 +31,15 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v27.1 — Postgres SSL detection fixed for all providers
+
+The SSL rule matched only `render.com`, so a connection string from Neon,
+Supabase, Railway or Heroku got `ssl: undefined` and the connection was
+rejected. Detection is now based on the host shape: Render's private
+`dpg-…` hostname and localhost connect without SSL, everything else uses SSL
+with a self-signed cert. Verified against six real connection-string formats.
+Boot now also logs which mode it chose.
+
 ### v27 — shop logos, colour picker, labelled vacancies, Amharic sweep
 
 **Seller cards redesigned.** The "Verified" tag is gone. The circle now shows

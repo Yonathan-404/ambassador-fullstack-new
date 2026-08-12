@@ -85,10 +85,22 @@ async function mutateCatalog(fn){
 let db;
 if (process.env.DATABASE_URL) {
   const { Pool } = require('pg');
+  /* SSL rules differ by host:
+       • Render INTERNAL url (dpg-xxxx-a/dbname) → same private network, no SSL
+       • Render EXTERNAL url and every hosted provider (Neon, Supabase, Railway,
+         Heroku, ElephantSQL…) → SSL required, self-signed cert
+       • localhost / 127.0.0.1 → no SSL
+     Matching only "render.com" silently failed on other providers. */
+  const DB_URL = process.env.DATABASE_URL;
+  const isLocal    = /@(localhost|127\.0\.0\.1)/.test(DB_URL);
+  const isInternal = /@dpg-[a-z0-9-]+(-a)?(:\d+)?\//.test(DB_URL);   // Render private hostname
+  const needsSSL   = !isLocal && !isInternal;
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes('render.com') ? { rejectUnauthorized: false } : undefined
+    connectionString: DB_URL,
+    ssl: needsSSL ? { rejectUnauthorized: false } : undefined
   });
+  pool.on('error', e => console.error('[db] idle client error:', e.message));
+  console.log(`[db] connecting to Postgres (ssl: ${needsSSL ? 'on' : 'off'})`);
   const init = pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY, google_sub TEXT UNIQUE, name TEXT, email TEXT,
