@@ -64,6 +64,14 @@
   .statgrid .stat{background:#fff;border:1px solid #e8e2e5;border-radius:13px;padding:14px 16px}
   .statgrid .stat .n{font-size:1.6rem;font-weight:800;color:#8a1450;line-height:1.1}
   .statgrid .stat .l{font-size:.68rem;color:#8a7a84;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:3px}
+.swwrap{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+  .swgroup{display:flex;flex-direction:column;gap:4px}
+  .swlabel{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:#8a7a84;font-weight:700}
+  .swrow{display:flex;gap:5px}
+  .sw{width:26px;height:26px;border-radius:7px;border:2px solid #fff;box-shadow:0 0 0 1px #ddd;cursor:pointer;padding:0}
+  .sw:hover{transform:scale(1.12)}
+  .sw.on{box-shadow:0 0 0 2px #8a1450;transform:scale(1.12)}
+  .swprev{width:30px;height:30px;border-radius:8px;border:2px solid #fff;box-shadow:0 0 0 1px #ddd;display:inline-block;background-size:cover;background-position:center;flex-shrink:0}
   .secgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
   /* ── Reports ── */
   .rep-presets{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -542,9 +550,20 @@ function editTenant(tid){
       <input id="et-owner-${tid}" value="${esc(t.owner||'')}" placeholder="Owner">
       <input id="et-wa-${tid}" value="${esc(t.whatsapp||'')}" placeholder="WhatsApp (2519…)">
       <input id="et-mobile-${tid}" value="${esc(t.mobile||'')}" placeholder="Mobile">
-      <input id="et-color-${tid}" value="${esc(t.color||'#8a1450')}" placeholder="Color (#hex)">
+      <span style="display:flex;align-items:center;gap:7px">
+        <span id="et-color-${tid}-prev" class="swprev" style="background:${esc(t.color||'#8a1450')}"></span>
+        <input id="et-color-${tid}" value="${esc(t.color||'#8a1450')}" placeholder="Color (#hex)" style="flex:1"
+          oninput="pickColor('et-color-${tid}', this.value)">
+      </span>
       <input id="et-icon-${tid}" value="${esc(t.icon||'fa-store')}" placeholder="Icon (fa-…)">
       <input id="et-photo-${tid}" value="${esc((t.photo||'').slice(0,80))}" placeholder="Photo URL">
+    </div>
+    <div class="muted" style="margin-top:8px"><b>Card colour</b> — used for this shop's card and product tags.</div>
+    <div id="et-color-${tid}-sw" class="swwrap">${swatchHTML('et-color-'+tid, t.color)}</div>
+    <div class="muted" style="margin-top:8px"><b>Shop logo</b> — shown on the seller card; initials are used until one is set.</div>
+    <div class="formgrid">
+      <input id="et-logo-${tid}" value="${esc((t.logo||'').startsWith('data:')?'':(t.logo||''))}" placeholder="Logo image URL">
+      <input type="file" id="et-logofile-${tid}" accept="image/*" onchange="uploadLogo('${tid}', this)">
     </div>
     <label style="display:flex;align-items:center;gap:7px;margin-top:10px;font-size:.82rem;color:#333">
       <input type="checkbox" id="et-appt-${tid}" ${t.appointments?'checked':''}>
@@ -566,6 +585,49 @@ function editTenant(tid){
     <div style="margin-top:10px;text-align:right"><button onclick="saveTenantEdit('${tid}')">Save changes</button></div>
   </div>`;
 }
+
+/* ── shop card colour palette — 30 choices across the brand families ── */
+const SHOP_COLORS = [
+  ['Wine',['#8A1450','#A83269','#5E1338','#C25B86','#7A1A44']],
+  ['Gold & Bronze',['#B8941F','#D4AF37','#8A6D12','#96601F','#7A4A1E','#C6941B']],
+  ['Plum & Rose',['#9C2F63','#C13584','#D4468F','#E0579C','#A82B70']],
+  ['Earth',['#B5651D','#A85C1A','#C7702A','#5B4636','#4A3A2C','#A8641C']],
+  ['Blue',['#1E3A8A','#2451A8','#1E56C0','#3D5A80','#2E4560']],
+  ['Deep & Neutral',['#1F2937','#374151','#0F5132','#134E4A','#4C1D95']]
+];
+function swatchHTML(idBase, current){
+  const cur=(current||'#8A1450').toUpperCase();
+  return SHOP_COLORS.map(([label,cols])=>`
+    <div class="swgroup"><span class="swlabel">${label}</span>
+      <div class="swrow">${cols.map(c=>`
+        <button type="button" class="sw${c.toUpperCase()===cur?' on':''}" style="background:${c}"
+          title="${c}" onclick="pickColor('${idBase}','${c}')"></button>`).join('')}</div>
+    </div>`).join('');
+}
+function pickColor(idBase, hex){
+  const inp=document.getElementById(idBase);
+  if(inp) inp.value=hex;
+  const box=document.getElementById(idBase+'-sw');
+  if(box) box.innerHTML=swatchHTML(idBase, hex);
+  const prev=document.getElementById(idBase+'-prev');
+  if(prev) prev.style.background=hex;
+}
+window.__logoData = window.__logoData || {};
+function uploadLogo(tid, input){
+  const f=input.files && input.files[0]; if(!f) return;
+  const img=new Image(), rd=new FileReader();
+  rd.onload=()=>{ img.onload=()=>{
+    // square-crop and downscale to 256px so logos never bloat the catalog
+    const S=256, c=document.createElement('canvas'); c.width=c.height=S;
+    const ctx=c.getContext('2d'); const m=Math.min(img.width,img.height);
+    ctx.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);
+    window.__logoData[tid]=c.toDataURL('image/jpeg',0.85);
+    const p=document.getElementById('et-color-'+tid+'-prev');
+    if(p) p.style.backgroundImage='url('+window.__logoData[tid]+')';
+    alert('Logo ready — press "Save changes" to apply it.');
+  }; img.src=rd.result; };
+  rd.readAsDataURL(f);
+}
 async function saveTenantEdit(tid){
   const g=id=>document.getElementById(id).value.trim();
   try{
@@ -581,6 +643,7 @@ async function saveTenantEdit(tid){
       floor:g('et-floor-'+tid), cat:g('et-cat-'+tid), owner:g('et-owner-'+tid),
       whatsapp:g('et-wa-'+tid), mobile:g('et-mobile-'+tid), color:g('et-color-'+tid),
       icon:g('et-icon-'+tid), photo:photoV.startsWith('http')?photoV:(t.photo||''),
+      logo:(window.__logoData&&window.__logoData[tid]) || g('et-logo-'+tid) || t.logo || '',
       blurb:document.getElementById('et-blurb-'+tid).value.trim(),
       appointments:document.getElementById('et-appt-'+tid).checked,
       socials

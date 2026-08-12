@@ -709,7 +709,7 @@ function normTenant(input, existing){
   set('floor', 'Ground Floor'); set('color', '#8a1450'); set('icon', 'fa-store');
   set('unit', t.id.toUpperCase());
   set('whatsapp', ''); set('mobile', ''); set('owner', ''); set('manager', '');
-  set('photo', ''); set('blurb', ''); set('rating', 0); set('reviews', 0);
+  set('photo', ''); set('logo', ''); set('blurb', ''); set('rating', 0); set('reviews', 0);
   set('reviewLink', ''); set('responseTime', '');
   t.active = input.active !== undefined ? !!input.active : (t.active !== undefined ? t.active : true);
   t.hidden = input.hidden !== undefined ? !!input.hidden : !!t.hidden;
@@ -1118,6 +1118,10 @@ app.post('/api/seller/profile', requireSeller, async (req, res) => {
   const SOCIAL_KEYS = ['instagram','facebook','tiktok','telegram','youtube','website'];
   const blurb = req.body && typeof req.body.blurb === 'string' ? req.body.blurb.slice(0, 240) : undefined;
   const appointments = typeof (req.body && req.body.appointments) === 'boolean' ? req.body.appointments : undefined;
+  const logo = req.body && typeof req.body.logo === 'string' ? req.body.logo.slice(0, 400000) : undefined;
+  // only accept a real #rrggbb value — never trust a colour string straight into CSS
+  const colorIn = req.body && typeof req.body.color === 'string' ? req.body.color.trim() : undefined;
+  const color = (colorIn !== undefined && /^#[0-9a-fA-F]{6}$/.test(colorIn)) ? colorIn : undefined;
   const socialsIn = (req.body && req.body.socials) || null;
   let socials;
   if (socialsIn && typeof socialsIn === 'object') {
@@ -1135,6 +1139,8 @@ app.post('/api/seller/profile', requireSeller, async (req, res) => {
     if (blurb !== undefined) t.blurb = blurb;
     if (socials !== undefined) t.socials = socials;
     if (appointments !== undefined) t.appointments = appointments;
+    if (logo !== undefined) t.logo = logo;
+    if (color !== undefined) t.color = color;
   });
   res.json({ ok: true, tenant: TENANTS[req.sellerTid] });
 });
@@ -1864,7 +1870,7 @@ app.get('*', (req, res) => {
    wiping admin edits made after the last version bump. ── */
 /* Fields a tenant or admin edits at runtime. A version bump must NEVER wipe
    these — the seed only supplies structure (new shops, floors, categories). */
-const LIVE_TENANT_FIELDS = ['rating','reviews','blurb','socials','photo','mobile','whatsapp',
+const LIVE_TENANT_FIELDS = ['rating','reviews','blurb','socials','photo','logo','color','mobile','whatsapp',
   'owner','manager','responseTime','reviewLink','active','hidden','banks','products','appointments'];
 
 function mergeSeedIntoLive(seed, live){

@@ -312,6 +312,11 @@ var SERVICES = [
 var I18N = {
   en: {
     navTenants:'Tenants', navShop:'Shop', navServices:'Services', navHow:'How It Works', navJobs:'Vacancies',
+    shareEyebrow:"We'd Love to Hear From You", shareTitle:'Share Your Experience',
+    fbTitle:'Send Us Feedback', fbName:'Your Name (optional)', fbEmail:'Email Address (optional)',
+    fbPhone:'Phone Number (optional)', fbMsg:'Your Message', fbMsgPh:'Share your feedback...',
+    fbSend:'Send Message', fbNamePh:'Yonas K.', fbEmailPh:'you@example.com', fbPhonePh:'09xx xxx xxx',
+    tagShop:'Come for the shopping,', tagFun:'stay for the fun!', partnersTitle:'Trusted Partners',
     jobsEyebrow:'Work With Us', jobsTitle:'Job Vacancies',
     jobsSub:'Openings posted by shops inside the mall, by Ambassador management, and by building operations.',
     navDirectory:'Directory',
@@ -367,6 +372,11 @@ var I18N = {
   },
   am: {
     navTenants:'ተከራዮች', navShop:'ሱቅ', navServices:'አገልግሎቶች', navHow:'እንዴት እንደሚሰራ', navJobs:'ክፍት የስራ ቦታ',
+    shareEyebrow:'ከእርስዎ መስማት እንወዳለን', shareTitle:'ተሞክሮዎን ያካፍሉን',
+    fbTitle:'አስተያየት ይላኩልን', fbName:'ስምዎ (አማራጭ)', fbEmail:'ኢሜይል (አማራጭ)',
+    fbPhone:'ስልክ ቁጥር (አማራጭ)', fbMsg:'መልእክትዎ', fbMsgPh:'አስተያየትዎን ያካፍሉ...',
+    fbSend:'መልእክት ላክ', fbNamePh:'ዮናስ ከ.', fbEmailPh:'you@example.com', fbPhonePh:'09xx xxx xxx',
+    tagShop:'ለግብይት ይምጡ፣', tagFun:'ለመዝናናት ይቆዩ!', partnersTitle:'የታመኑ አጋሮች',
     jobsEyebrow:'አብረውን ይስሩ', jobsTitle:'የስራ ማስታወቂያ',
     jobsSub:'ከሱቆች፣ ከሞሉ አስተዳደር እና ከህንፃ ጥገና ክፍል የተለጠፉ ክፍት የስራ ቦታዎች።',
     navDirectory:'ማውጫ',
@@ -730,6 +740,9 @@ function applyI18n(){
   document.querySelectorAll('#amb-store [data-i18n]').forEach(function(el){
     el.textContent = t(el.getAttribute('data-i18n'));
   });
+  document.querySelectorAll('#amb-store [data-i18n-ph]').forEach(function(el){
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
   document.querySelectorAll('#amb-store [data-i18n-html]').forEach(function(el){
     el.innerHTML = t(el.getAttribute('data-i18n-html'));
   });
@@ -1048,10 +1061,18 @@ function tenantCardHTML(tn){
       '<div class="amb-kiosk-window">'+
         '<img src="'+esc(tn.photo)+'" alt="'+esc(tn.name)+'" loading="lazy" onerror="this.style.display=\'none\'">'+
         '<div class="amb-kiosk-glare"></div>'+
-        '<span class="amb-kiosk-verified" onclick="event.stopPropagation();ambShowVerifiedInfo()" style="cursor:pointer"><i class="fas fa-circle-check"></i> '+esc(t('statVerified'))+'</span>'+
+      '</div>'+
+      /* logo row: the shop's own picture (initials until they upload one),
+         with floor + unit sitting horizontally beside it */
+      '<div class="amb-kiosk-idrow">'+
+        (tn.logo
+          ? '<div class="amb-kiosk-sign has-logo" style="background:linear-gradient(150deg,'+tn.color+','+dark+')">'+
+              '<img src="'+esc(tn.logo)+'" alt="'+esc(tn.name)+'" loading="lazy" '+
+              'onerror="this.parentNode.classList.remove(\'has-logo\');this.parentNode.textContent=\''+esc(initials(tn.name)).replace(/'/g,"\\'")+'\'">'+
+            '</div>'
+          : '<div class="amb-kiosk-sign" style="background:linear-gradient(150deg,'+tn.color+','+dark+')">'+esc(initials(tn.name))+'</div>')+
         '<span class="amb-kiosk-floor">'+esc(floorUnit(tn))+'</span>'+
       '</div>'+
-      '<div class="amb-kiosk-sign" style="background:linear-gradient(150deg,'+tn.color+','+dark+')">'+esc(initials(tn.name))+'</div>'+
       '<div class="amb-kiosk-interior">'+
         '<div class="amb-kiosk-cat"><i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+'</div>'+
         '<h3 class="amb-kiosk-title display">'+esc(nameFor(tn))+'</h3>'+
@@ -2111,7 +2132,7 @@ function renderCart(){
   var body=$('ambCartBody'), foot=$('ambCartFoot'); if(!body) return;
   var groups = cartGroups();
   if(!groups.length){
-    body.innerHTML='<div class="amb-cart-empty"><i class="fas fa-shopping-bag"></i><div style="font-weight:700">Your cart is empty</div><div style="font-size:.74rem">Browse tenants and add products</div></div>';
+    body.innerHTML='<div class="amb-cart-empty"><i class="fas fa-shopping-bag"></i><div style="font-weight:700">'+(state.lang==='am'?'ጋሪዎ ባዶ ነው':'Your cart is empty')+'</div><div style="font-size:.74rem">'+(state.lang==='am'?'ሱቆችን አስሱና ምርቶች ይጨምሩ':'Browse tenants and add products')+'</div></div>';
     if(foot) foot.style.display='none';
     return;
   }
@@ -2349,8 +2370,8 @@ function renderCoStep3(t){
       '</div>'+
       '<div class="amb-bank-detail">'+
         '<div class="amb-bank-row"><div><div class="amb-bank-row-l">'+esc(acctType)+'</div><div class="amb-bank-row-v">'+esc(b.acct)+'</div></div><button class="amb-copy" onclick="event.stopPropagation();ambCopy(\''+b.acct+'\')"><i class="fas fa-copy"></i> Copy</button></div>'+
-        '<div class="amb-bank-row"><div><div class="amb-bank-row-l">Account name</div><div class="amb-bank-row-v" style="font-family:Outfit">'+esc(b.holder)+'</div></div></div>'+
-        '<div class="amb-bank-row" style="background:var(--gold-tint);border-color:rgba(212,175,55,.3)"><div><div class="amb-bank-row-l">Amount to transfer</div><div class="amb-bank-row-v" style="color:var(--wine)">'+fmt(grand)+'</div></div><button class="amb-copy" onclick="event.stopPropagation();ambCopy(\''+grand+'\')"><i class="fas fa-copy"></i></button></div>'+
+        '<div class="amb-bank-row"><div><div class="amb-bank-row-l">'+(state.lang==='am'?'የሂሳብ ስም':'Account name')+'</div><div class="amb-bank-row-v" style="font-family:Outfit">'+esc(b.holder)+'</div></div></div>'+
+        '<div class="amb-bank-row" style="background:var(--gold-tint);border-color:rgba(212,175,55,.3)"><div><div class="amb-bank-row-l">'+(state.lang==='am'?'የሚተላለፍ መጠን':'Amount to transfer')+'</div><div class="amb-bank-row-v" style="color:var(--wine)">'+fmt(grand)+'</div></div><button class="amb-copy" onclick="event.stopPropagation();ambCopy(\''+grand+'\')"><i class="fas fa-copy"></i></button></div>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -2804,12 +2825,20 @@ function ambJobCardsHTML(jobs, am){
       var pay = salTxt ? (bareNum ? 'ETB ' + esc(salTxt) : esc(salTxt))
                        : (j.negotiable ? (am?'ሊደራደር የሚችል':'Negotiable') : '');
       var waMsg = encodeURIComponent((am?'ሰላም፣ ስለ ':'Hello, I would like to apply for the ')+j.position+(am?' የስራ ቦታ ማመልከት እፈልጋለሁ።':' position.'));
+      /* every figure gets a label — a bare "8000" or "9:00–18:00" told the
+         reader nothing about what it referred to */
       var rows='';
-      if(pay)       rows+='<div class="amb-job-row"><i class="fas fa-money-bill-wave"></i><span class="amb-job-pay">'+pay+(j.salary&&j.negotiable?(am?' (ሊደራደር የሚችል)':' (negotiable)'):'')+'</span></div>';
-      if(j.hours)   rows+='<div class="amb-job-row"><i class="fas fa-clock"></i><span>'+esc(j.hours)+'</span></div>';
-      if(j.employmentType) rows+='<div class="amb-job-row"><i class="fas fa-briefcase"></i><span>'+esc(j.employmentType)+'</span></div>';
-      if(j.location)rows+='<div class="amb-job-row"><i class="fas fa-location-dot"></i><span>'+esc(j.location)+'</span></div>';
-      if(j.deadline)rows+='<div class="amb-job-row"><i class="fas fa-calendar-day"></i><span>'+(am?'እስከ ':'Apply by ')+esc(j.deadline)+'</span></div>';
+      function jobRow(icon, label, value){
+        return '<div class="amb-job-row"><i class="fas '+icon+'"></i>'+
+               '<span class="amb-job-k">'+esc(label)+'</span>'+
+               '<span class="amb-job-v">'+value+'</span></div>';
+      }
+      if(pay)       rows+=jobRow('fa-money-bill-wave', am?'ደሞዝ':'Salary',
+                        '<b class="amb-job-pay">'+pay+'</b>'+(j.salary&&j.negotiable?(am?' (ሊደራደር የሚችል)':' (negotiable)'):''));
+      if(j.hours)   rows+=jobRow('fa-clock', am?'የስራ ሰዓት':'Working hours', esc(j.hours));
+      if(j.employmentType) rows+=jobRow('fa-briefcase', am?'የቅጥር አይነት':'Employment', esc(j.employmentType));
+      if(j.location)rows+=jobRow('fa-location-dot', am?'ቦታ':'Location', esc(j.location));
+      if(j.deadline)rows+=jobRow('fa-calendar-day', am?'ማመልከቻ እስከ':'Apply by', esc(j.deadline));
       var acts='';
       if(j.contactPhone)    acts+='<a href="tel:'+esc(j.contactPhone.replace(/\s/g,''))+'" class="amb-job-call"><i class="fas fa-phone"></i> '+(am?'ይደውሉ':'Call')+'</a>';
       if(j.contactWhatsapp) acts+='<a href="https://wa.me/'+esc(j.contactWhatsapp)+'?text='+waMsg+'" target="_blank" rel="noopener" class="amb-job-wa"><i class="fab fa-whatsapp"></i> '+(am?'ያመልክቱ':'Apply')+'</a>';
@@ -2820,7 +2849,8 @@ function ambJobCardsHTML(jobs, am){
         '</div>'+
         '<div class="amb-job-body">'+
           (rows?'<div class="amb-job-rows">'+rows+'</div>':'')+
-          (j.description?'<div class="amb-job-desc">'+esc(j.description)+'</div>':'')+
+          (j.description?'<div class="amb-job-descwrap"><span class="amb-job-k">'+(am?'መግለጫ':'Description')+
+            '</span><div class="amb-job-desc">'+esc(j.description)+'</div></div>':'')+
           (acts?'<div class="amb-job-acts">'+acts+'</div>':'')+
         '</div></div>';
   }).join('');
@@ -2833,12 +2863,16 @@ function renderJobsSection(){
   grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-spinner fa-spin"></i>'+(am?'በመጫን ላይ…':'Loading…')+'</div>';
   A.api('/api/jobs').then(function(d){
     var jobs = d.jobs || [];
+    var sect = document.getElementById('ambJobs');
     if(!jobs.length){
-      grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-briefcase"></i>'+
-        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም — በኋላ ይመልከቱ።'
-           :'No openings posted right now — please check back soon.')+'</div>';
+      /* nothing to advertise: collapse the whole section rather than leave a
+         wide empty band on a large screen. Small screens keep a short notice. */
+      if(sect) sect.classList.add('amb-jobs-empty');
+      grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-briefcase"></i> '+
+        (am?'በአሁኑ ጊዜ ክፍት የስራ ቦታ የለም።':'No job posts right now.')+'</div>';
       return;
     }
+    if(sect) sect.classList.remove('amb-jobs-empty');
     grid.innerHTML = ambJobCardsHTML(jobs, am);
   }).catch(function(){
     grid.innerHTML = '<div class="amb-job-empty"><i class="fas fa-triangle-exclamation"></i>'+

@@ -62,7 +62,18 @@
   .prod{display:grid;grid-template-columns:1fr 100px 140px 60px 90px;gap:8px;align-items:center}
   .prod.is-off{opacity:.55;background:#fafafa}
   @media(max-width:640px){.prod{grid-template-columns:1fr 1fr}}
-.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px}
+.swwrap{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+  .swgroup{display:flex;flex-direction:column;gap:4px}
+  .swlabel{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--mid);font-weight:700}
+  .swrow{display:flex;gap:5px}
+  .sw{width:28px;height:28px;border-radius:8px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0;transition:.15s}
+  .sw:hover{transform:scale(1.12)}
+  .sw.on{box-shadow:0 0 0 2px var(--wine);transform:scale(1.12)}
+  .swprev{width:32px;height:32px;border-radius:9px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);display:inline-block;flex-shrink:0}
+  .logoprev{width:74px;height:74px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px var(--line);
+    background:var(--wine);background-size:cover;background-position:center;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;flex-shrink:0}
+  .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px}
   .stat{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
   .stat .n{font-size:1.5rem;font-weight:800;color:var(--wine);line-height:1.1}
   .stat .l{font-size:.68rem;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-top:2px}
@@ -263,6 +274,8 @@ async function render(){
         ['website','Website','fas fa-globe','https://yourshop.com'],
       ];
       window.__soc = {};
+      window.__shopColor = t.color || '#8a1450';
+      window.__shopLogo  = undefined;   // only sent if the seller picks a new file
       PLATFORMS.forEach(([key])=>{
         const entry = soc[key];
         const value = entry ? (typeof entry==='object' ? entry.value : entry) : '';
@@ -290,6 +303,22 @@ async function render(){
                 <span class="track"><span class="knob"></span></span>
               </label>
             </div>`).join('')}
+        </div>
+        <div class="card">
+          <b>Shop logo & card colour</b>
+          <div class="muted" style="margin:4px 0 10px">Your logo appears on your shop card. Until you add one, your initials are shown. The colour is used for your card and product tags.</div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div id="pf-logoprev" class="logoprev" style="${t.logo?`background-image:url(${esc(t.logo)})`:''}">${t.logo?'':esc((t.name||'').split(' ').slice(0,2).map(w=>w.charAt(0)).join(''))}</div>
+            <div>
+              <input type="file" accept="image/*" onchange="uploadShopLogo(this)">
+              <div class="muted" style="margin-top:4px">Square images work best.</div>
+            </div>
+            <span style="display:flex;align-items:center;gap:8px;margin-left:auto">
+              <span class="muted">Card colour</span>
+              <span id="pf-colorprev" class="swprev" style="background:${esc(t.color||'#8a1450')}"></span>
+            </span>
+          </div>
+          <div id="pf-sw" class="swwrap">${swatchHTML(t.color)}</div>
         </div>
         <div class="card">
           <div class="soc-row" style="border-bottom:0;padding:2px 0">
@@ -448,13 +477,53 @@ async function changeCode(){
     ['pw-cur','pw-new','pw-rep'].forEach(id=>document.getElementById(id).value='');
   }catch(e){ err.textContent=e.message; }
 }
+
+/* ── shop card colour palette (same set the admin console offers) ── */
+const SHOP_COLORS = [
+  ['Wine',['#8A1450','#A83269','#5E1338','#C25B86','#7A1A44']],
+  ['Gold & Bronze',['#B8941F','#D4AF37','#8A6D12','#96601F','#7A4A1E','#C6941B']],
+  ['Plum & Rose',['#9C2F63','#C13584','#D4468F','#E0579C','#A82B70']],
+  ['Earth',['#B5651D','#A85C1A','#C7702A','#5B4636','#4A3A2C','#A8641C']],
+  ['Blue',['#1E3A8A','#2451A8','#1E56C0','#3D5A80','#2E4560']],
+  ['Deep & Neutral',['#1F2937','#374151','#0F5132','#134E4A','#4C1D95']]
+];
+function swatchHTML(cur){
+  const c0=(cur||'#8A1450').toUpperCase();
+  return SHOP_COLORS.map(([label,cols])=>`
+    <div class="swgroup"><span class="swlabel">${label}</span>
+      <div class="swrow">${cols.map(c=>`
+        <button type="button" class="sw${c.toUpperCase()===c0?' on':''}" style="background:${c}"
+          title="${c}" onclick="pickColor('${c}')"></button>`).join('')}</div>
+    </div>`).join('');
+}
+function pickColor(hex){
+  window.__shopColor=hex;
+  const sw=document.getElementById('pf-sw'); if(sw) sw.innerHTML=swatchHTML(hex);
+  const pv=document.getElementById('pf-colorprev'); if(pv) pv.style.background=hex;
+}
+function uploadShopLogo(input){
+  const f=input.files&&input.files[0]; if(!f) return;
+  const img=new Image(), rd=new FileReader();
+  rd.onload=()=>{ img.onload=()=>{
+    const S=256,c=document.createElement('canvas'); c.width=c.height=S;
+    const ctx=c.getContext('2d'), m=Math.min(img.width,img.height);
+    ctx.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);
+    window.__shopLogo=c.toDataURL('image/jpeg',0.85);
+    const p=document.getElementById('pf-logoprev');
+    if(p){ p.style.backgroundImage='url('+window.__shopLogo+')'; p.textContent=''; }
+  }; img.src=rd.result; };
+  rd.readAsDataURL(f);
+}
 async function saveProfile(){
   const blurb = document.getElementById('pf-blurb').value.trim();
   const socials = {};
   Object.keys(window.__soc||{}).forEach(k=>{ socials[k] = window.__soc[k]; });
   try{
     const appointments = !!document.getElementById('pf-appt').checked;
-    await api('/api/seller/profile',{method:'POST',body:{blurb, socials, appointments}});
+    const body = {blurb, socials, appointments};
+    if(window.__shopColor) body.color = window.__shopColor;
+    if(window.__shopLogo)  body.logo  = window.__shopLogo;   // omit unless changed
+    await api('/api/seller/profile',{method:'POST',body});
     render();
   }catch(e){ alert(e.message); }
 }

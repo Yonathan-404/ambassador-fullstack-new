@@ -31,6 +31,37 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v27 — shop logos, colour picker, labelled vacancies, Amharic sweep
+
+**Seller cards redesigned.** The "Verified" tag is gone. The circle now shows
+the shop's own logo, falling back to the two initials until one is uploaded
+(and falling back again if the image fails to load). Floor and unit now sit
+horizontally beside the logo instead of floating over the window.
+
+**Shop logo + card colour are now self-service.** Both admin and each seller
+can upload a logo and pick a card colour from a **30-swatch palette** across
+six families (Wine, Gold & Bronze, Plum & Rose, Earth, Blue, Deep & Neutral),
+with a live preview. Logos are square-cropped and downscaled to 256px in the
+browser so they never bloat the catalog. Colours are validated server-side
+against a strict `#rrggbb` pattern — a CSS-injection attempt is rejected and
+the previous colour kept (verified by test).
+
+**Vacancy cards now label every field.** A bare "6000" or "9:00–18:00" told
+the reader nothing; each row now reads SALARY / WORKING HOURS / EMPLOYMENT /
+LOCATION / APPLY BY / DESCRIPTION, in English or Amharic.
+
+**Vacancy section is responsive and self-hiding.** Cards reflow to a single
+column under 640px, and when there are no posts the whole section collapses
+on desktop rather than leaving a wide empty band — small screens keep a short
+"No job posts right now" notice.
+
+**Amharic coverage extended.** Added `data-i18n-ph` support so input
+placeholders translate too, then swept the render code for hardcoded English.
+Found and fixed the **entire "Share Your Experience" feedback section** — its
+heading, all four field labels, placeholders, send button and both taglines
+had no i18n bindings at all and stayed English on switch — plus the Trusted
+Partners heading and the cart/bank-transfer labels.
+
 ### v26 — durability fix, shop analytics, vacancy section, UI fixes
 
 **Data loss fixed (two real causes).** (1) The catalog reseed was
