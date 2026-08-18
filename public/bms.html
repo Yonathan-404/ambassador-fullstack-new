@@ -57,6 +57,17 @@
             border-bottom:1px solid var(--line);font-size:.7rem;color:var(--mid)}
   .brandbar img{height:18px;border-radius:4px}
   .brandbar b{color:var(--wine)}
+.sortable{cursor:pointer;user-select:none}
+  .sortable:hover{color:#8a1450}
+  .tag.warn{background:#fff3cd;color:#8a6d12}
+  .who{font-size:.78rem;color:#555;margin-left:8px}
+  .who a{color:#8a1450;margin-left:6px}
+  .dualtag{background:#8a1450;color:#fff;padding:2px 8px;border-radius:99px;font-size:.66rem;font-weight:700}
+  .pill{background:#c62828;color:#fff;border-radius:99px;padding:1px 7px;font-size:.66rem;font-weight:800;display:none;margin-left:4px}
+  .pendcard{border:1px solid #e6dde2;border-left:4px solid #b8941f;border-radius:11px;padding:12px 14px;margin-bottom:10px;background:#fffdf7}
+  .pendcard .act{font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:#8a6d12;font-weight:800}
+  .pendcard .sum{font-weight:700;margin:3px 0 6px}
+  .pendcard .meta{font-size:.72rem;color:#777}
   .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px}
   .grid2 input{width:100%}
 </style>
@@ -65,8 +76,12 @@
 <div class="top">
   <span class="logos"><img src="/media/ambassador-logo.png" alt="Ambassador Shopping Mall"><img src="/media/bisinka-logo.png" alt="Bisinka"></span>
   <h1>Ambassador BMS <span>BUILDING MGMT</span></h1>
-  <input class="key" id="key" type="password" placeholder="ADMIN_KEY">
+  <input class="key" id="bmsPhone" placeholder="Phone (09…)" style="width:120px">
+  <input class="key" id="bmsCode" type="password" placeholder="Access code" style="width:110px">
+  <button class="btn" onclick="bmsLogin()">Sign in</button>
+  <input class="key" id="key" type="password" placeholder="or ADMIN_KEY" style="width:110px">
   <button class="btn" onclick="boot()">Connect</button>
+  <span id="whoami" class="who"></span>
   <a class="back" href="/admin.html">← Store admin</a>
 </div>
 <div class="brandbar"><img src="/media/bisinka-logo.png" alt=""> Building management console &mdash; powered by <b>Bisinka</b></div>
@@ -79,6 +94,8 @@
   <button onclick="show('maintenance')"><i class="fas fa-screwdriver-wrench"></i> Maintenance</button>
   <button onclick="show('announcements')"><i class="fas fa-bullhorn"></i> Announcements</button>
   <button onclick="show('jobs')"><i class="fas fa-briefcase"></i> Vacancies</button>
+  <button onclick="show('approvals')" id="tabApprovals"><i class="fas fa-clipboard-check"></i> Approvals <span class="pill" id="pendCount"></span></button>
+  <button onclick="show('audit')"><i class="fas fa-list-check"></i> Audit</button>
   <button onclick="show('settings')"><i class="fas fa-gear"></i> Settings</button>
 </div>
 <div class="wrap"><div id="out" class="empty">Enter your ADMIN_KEY and press Connect.</div></div>
@@ -89,11 +106,26 @@ const esc = s => (''+(s==null?'':s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt
 const fmt = n => 'ETB ' + Number(n||0).toLocaleString();
 const K = () => document.getElementById('key').value.trim();
 let view = 'dashboard';
+let __leaseSort='name', __leaseSortDir='asc', __leaseQuery='';
+function sortLeases(k){
+  if(__leaseSort===k) __leaseSortDir = __leaseSortDir==='asc'?'desc':'asc';
+  else { __leaseSort=k; __leaseSortDir='asc'; }
+  renderLeases();
+}
+function editLease(unit){
+  const el=document.getElementById('lsUnit');
+  if(el){ el.value=unit; fillLeaseForm(); el.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
 let __tenants = [], __leases = [], __invoices = [], __finance = [], __tickets = [], __announcements = [];
 
 async function api(path, opts){
   const o = opts||{};
-  const r = await fetch(path, { method:o.method||'GET', headers:Object.assign({'x-admin-key':K()}, o.body?{'Content-Type':'application/json'}:{}), body:o.body?JSON.stringify(o.body):undefined });
+  const h = {};
+  if(K()) h['x-admin-key'] = K();          // master key path
+  if(o.body) h['Content-Type'] = 'application/json';
+  const r = await fetch(path, { method:o.method||'GET', headers:h,
+    credentials:'same-origin',              // BMS user session cookie
+    body:o.body?JSON.stringify(o.body):undefined });
   const d = await r.json().catch(()=>({}));
   if(!r.ok) throw new Error(d.error||('HTTP '+r.status));
   return d;
@@ -106,13 +138,49 @@ function show(view_){
   document.querySelectorAll('#tabs button').forEach((b,i)=>b.classList.toggle('on', b.getAttribute('onclick')===`show('${view}')`));
   render();
 }
+let ME = null, MODE = 'single';
+async function bmsLogin(){
+  const phone=document.getElementById('bmsPhone').value.trim();
+  const code=document.getElementById('bmsCode').value.trim();
+  if(!phone||!code){ out.className='empty'; out.textContent='Enter your phone and access code.'; return; }
+  try{
+    const d = await api('/api/bms/login',{method:'POST',body:{phone,code}});
+    ME = d.user; MODE = d.mode;
+    document.getElementById('bmsCode').value='';
+    paintWho(); await render();
+  }catch(e){ fail(e); }
+}
+async function bmsLogout(){ try{ await api('/api/bms/logout',{method:'POST'}); }catch(e){} ME=null; paintWho(); location.reload(); }
+function paintWho(){
+  const el=document.getElementById('whoami');
+  if(!el) return;
+  if(ME){
+    const label = ME.role==='inputer'?'Inputer':ME.role==='authorisor'?'Authorisor':'Manager';
+    el.innerHTML = '<b>'+esc(ME.name)+'</b> · '+label+
+      (MODE==='dual'?' · <span class="dualtag">Dual control</span>':'')+
+      ' <a href="#" onclick="bmsLogout();return false;">sign out</a>';
+  } else el.textContent='';
+}
+async function refreshMe(){
+  try{ const d=await api('/api/bms/me'); ME=d.user||null; MODE=d.mode||'single'; paintWho(); }catch(e){}
+}
+async function refreshPending(){
+  const b=document.getElementById('pendCount'); if(!b) return;
+  try{
+    const d=await api('/api/bms/pending');
+    MODE = d.mode || MODE;
+    b.textContent = d.pending.length ? d.pending.length : '';
+    b.style.display = d.pending.length ? 'inline-block':'none';
+  }catch(e){ b.style.display='none'; }
+}
 async function boot(){
-  if(!K()){ out.className='empty'; out.textContent='Please enter the ADMIN_KEY.'; return; }
+  if(!K() && !ME){ out.className='empty'; out.textContent='Sign in with your phone and access code, or enter the ADMIN_KEY.'; return; }
   await render();
 }
 
 async function render(){
   out.className='empty'; out.textContent='Loading…';
+  refreshPending();
   try{
     if(view==='dashboard') await renderDashboard();
     else if(view==='tenants') await renderTenants();
@@ -122,8 +190,70 @@ async function render(){
     else if(view==='maintenance') await renderMaintenance();
     else if(view==='announcements') await renderAnnouncements();
     else if(view==='jobs') await renderJobs();
+    else if(view==='approvals') await renderApprovals();
+    else if(view==='audit') await renderAudit();
     else if(view==='settings') await renderSettings();
   }catch(e){ fail(e); }
+}
+
+/* ═══ APPROVALS (maker–checker queue) ═══ */
+async function renderApprovals(){
+  const d = await api('/api/bms/pending');
+  MODE = d.mode; out.className='';
+  const canApprove = ME ? (ME.role==='authorisor'||ME.role==='manager') : true;
+  const pend = d.pending.length ? d.pending.map(p=>`
+    <div class="pendcard">
+      <div class="act">${esc(p.action)}</div>
+      <div class="sum">${esc(p.summary||'')}</div>
+      <div class="meta">Submitted by <b>${esc(p.made_by_name||p.made_by||'')}</b> · ${new Date(p.made_at).toLocaleString()}</div>
+      ${canApprove?`<div style="margin-top:9px;display:flex;gap:7px">
+        <button class="btn" onclick="decide(${p.id},true)">Approve</button>
+        <button class="btn danger" onclick="decide(${p.id},false)">Reject</button>
+      </div>`:`<div class="muted" style="margin-top:8px">Waiting for an authorisor.</div>`}
+    </div>`).join('')
+    : `<div class="empty">Nothing waiting for approval.</div>`;
+  const recent = (d.recent||[]).map(p=>`<tr>
+      <td>${esc(p.summary||p.action)}</td>
+      <td>${esc(p.made_by_name||'')}</td>
+      <td><span class="tag ${p.status==='approved'?'ok':'no'}">${esc(p.status)}</span></td>
+      <td>${esc(p.decided_by_name||'')}</td>
+      <td class="muted">${p.decided_at?new Date(p.decided_at).toLocaleString():''}</td>
+    </tr>`).join('');
+  out.innerHTML = `
+    <h3>Approvals ${MODE==='dual'?'<span class="dualtag">Dual control ON</span>':''}</h3>
+    <p class="muted">${MODE==='dual'
+      ? 'Every change an inputer makes waits here until an authorisor approves it. Nobody can approve their own submission.'
+      : 'Dual control is off — changes apply immediately. Admin can switch this on in the store admin console.'}</p>
+    ${pend}
+    ${recent?`<h3 style="margin-top:18px">Recently decided</h3>
+      <table><thead><tr><th>Change</th><th>Submitted by</th><th>Status</th><th>Decided by</th><th>When</th></tr></thead>
+      <tbody>${recent}</tbody></table>`:''}`;
+}
+async function decide(id, approve){
+  let reason='';
+  if(!approve){ reason = prompt('Reason for rejection (optional):')||''; }
+  try{
+    await api('/api/bms/pending/'+id+'/decide',{method:'POST',body:{approve,reason}});
+    await refreshPending(); await renderApprovals();
+  }catch(e){ alert(e.message); }
+}
+
+/* ═══ AUDIT TRAIL ═══ */
+async function renderAudit(){
+  const d = await api('/api/bms/audit');
+  out.className='';
+  out.innerHTML = `
+    <h3>Audit trail</h3>
+    <p class="muted">Every building-console change, who made it and when. Records are append-only.</p>
+    <table><thead><tr><th>When</th><th>Action</th><th>Detail</th><th>By</th><th>Role</th></tr></thead><tbody>
+    ${d.entries.length? d.entries.map(e=>`<tr>
+      <td class="muted">${new Date(e.at).toLocaleString()}</td>
+      <td><code>${esc(e.action)}</code></td>
+      <td>${esc(e.summary||'')}</td>
+      <td>${esc(e.actor_name||'')}</td>
+      <td class="muted">${esc(e.role||'')}</td></tr>`).join('')
+      : '<tr><td colspan="5" class="muted" style="text-align:center;padding:20px">No activity recorded yet.</td></tr>'}
+    </tbody></table>`;
 }
 
 /* ═══ DASHBOARD ═══ */
@@ -136,6 +266,8 @@ async function renderDashboard(){
       <div class="kpi"><div class="n">${d.occupiedUnits}</div><div class="l">Occupied</div></div>
       <div class="kpi"><div class="n">${d.vacantUnits}</div><div class="l">Off / vacant</div></div>
       <div class="kpi"><div class="n">${d.activeLeases}</div><div class="l">Active leases</div></div>
+      <div class="kpi ${(d.expiringSoon&&d.expiringSoon.length)?'warn':''}"><div class="n">${(d.expiringSoon||[]).length}</div><div class="l">Leases expiring ≤90d</div></div>
+      <div class="kpi ${(d.expired&&d.expired.length)?'warn':''}"><div class="n">${(d.expired||[]).length}</div><div class="l">Leases expired</div></div>
       <div class="kpi ${d.arrears?'warn':''}"><div class="n">${fmt(d.arrears)}</div><div class="l">Arrears (${d.overdueCount} overdue)</div></div>
       <div class="kpi"><div class="n">${fmt(d.incomeThisMonth)}</div><div class="l">Income this month</div></div>
       <div class="kpi"><div class="n">${fmt(d.expenseThisMonth)}</div><div class="l">Expense this month</div></div>
@@ -197,13 +329,46 @@ async function renderLeases(){
   __leases = leasesRes.leases;
   const opts = __tenants.map(t=>`<option value="${esc(t.unit||t.id.toUpperCase())}">${esc(t.name)} — ${esc(t.unit||t.id.toUpperCase())}</option>`).join('');
   out.className='';
+  // sortable, searchable lease list
+  const today = new Date(); today.setHours(0,0,0,0);
+  const rows = __leases.map(l=>{
+    const t = __tenants.find(x=>(x.unit||x.id.toUpperCase())===l.unit);
+    const end = l.end_date||l.end||'';
+    const days = end ? Math.round((new Date(end)-today)/86400000) : null;
+    return { unit:l.unit, name:t?t.name:l.unit, floor:t?t.floor:'', rent:+l.rent||0,
+             cycle:l.cycle_months, next:l.next_due||'', end, days };
+  });
+  const dir = __leaseSortDir==='desc'?-1:1;
+  rows.sort((a,b)=>{
+    const k=__leaseSort;
+    if(k==='rent'||k==='days') return ((a[k]??0)-(b[k]??0))*dir;
+    return String(a[k]||'').localeCompare(String(b[k]||''))*dir;
+  });
+  const q=(__leaseQuery||'').toLowerCase();
+  const shown = q ? rows.filter(r=>(r.name+' '+r.unit+' '+r.floor).toLowerCase().includes(q)) : rows;
+  const th=(k,label)=>`<th class="sortable" onclick="sortLeases('${k}')">${label}${__leaseSort===k?(__leaseSortDir==='desc'?' ▾':' ▴'):''}</th>`;
   out.innerHTML = `
-    <h3>Active leases (${__leases.length})</h3>
-    ${__leases.length ? __leases.map(l=>{
-      const t = __tenants.find(x=>(x.unit||x.id.toUpperCase())===l.unit);
-      return `<div class="card row"><div><b>${esc(t?t.name:l.unit)}</b> <span class="muted">(${esc(l.unit)})</span><div class="muted">Rent ${fmt(l.rent)} · cycle ${l.cycle_months}mo · next due ${esc(l.next_due)} · ends ${esc(l.end_date||'—')}</div></div>
-        <button class="btn danger" onclick="deleteLease('${esc(l.unit)}')">Remove lease</button></div>`;
-    }).join('') : '<div class="empty">No leases yet — add one below.</div>'}
+    <h3>Leases (${shown.length}${q?` of ${rows.length}`:''})</h3>
+    <div class="bar" style="margin-bottom:10px">
+      <input id="lsSearch" placeholder="Search shop, unit or floor…" value="${esc(__leaseQuery||'')}"
+        oninput="__leaseQuery=this.value;renderLeases()" style="min-width:240px">
+    </div>
+    ${shown.length ? `<table><thead><tr>
+        ${th('name','Shop')}${th('unit','Unit')}${th('floor','Floor')}${th('rent','Rent')}
+        <th>Cycle</th><th>Next due</th>${th('days','Ends')}<th></th></tr></thead><tbody>
+      ${shown.map(r=>`<tr>
+        <td><b>${esc(r.name)}</b></td>
+        <td>${esc(r.unit)}</td>
+        <td class="muted">${esc(r.floor)}</td>
+        <td>${fmt(r.rent)}</td>
+        <td class="muted">${r.cycle}mo</td>
+        <td class="muted">${esc(r.next)}</td>
+        <td>${r.end?`${esc(r.end)} ${r.days<0?'<span class="tag no">expired</span>':(r.days<=90?`<span class="tag warn">${r.days}d</span>`:'')}`:'—'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn alt" onclick="editLease('${esc(r.unit)}')">Edit</button>
+          <button class="btn danger" onclick="deleteLease('${esc(r.unit)}')">Remove</button>
+        </td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">No leases match — add one below.</div>'}
     <h3>Add / update a lease</h3>
     <div class="card">
       <div class="formgrid">
@@ -445,6 +610,10 @@ async function renderSettings(){
 async function saveConfig(){
   try{ await api('/api/admin/bms/config',{method:'PUT',body:{config:{penalty:{amount:+v('cfgPenAmt')||0, per:v('cfgPenPer')}}}}); renderSettings(); }catch(e){ alert(e.message); }
 }
+
+/* restore an existing BMS session on load, so a signed-in user
+   doesn't have to log in again on every page visit */
+(async function(){ await refreshMe(); if(ME) await render(); })();
 </script>
 </body>
 </html>

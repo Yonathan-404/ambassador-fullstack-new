@@ -62,7 +62,12 @@
   .prod{display:grid;grid-template-columns:1fr 100px 140px 60px 90px;gap:8px;align-items:center}
   .prod.is-off{opacity:.55;background:#fafafa}
   @media(max-width:640px){.prod{grid-template-columns:1fr 1fr}}
-.swwrap{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.acctwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;margin-top:8px}
+  .acct{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.84rem}
+  .tag{background:#eee;border-radius:99px;padding:2px 9px;font-size:.7rem;font-weight:700}
+  .tag.ok{background:#e6f4ea;color:#1d7a33}
+  .tag.no{background:#fdeaea;color:#b3261e}
+  .swwrap{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
   .swgroup{display:flex;flex-direction:column;gap:4px}
   .swlabel{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--mid);font-weight:700}
   .swrow{display:flex;gap:5px}
@@ -105,6 +110,7 @@
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => (''+(s==null?'':s)).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = n => 'ETB ' + Number(n||0).toLocaleString();   // used by the My Rent tab
 const STATUS_LABEL = {placed:'Placed', confirmed:'Payment confirmed', preparing:'Preparing', out_for_delivery:'Out for delivery', delivered:'Delivered', cancelled:'Cancelled'};
 let me = null, tab = 'orders';
 
@@ -155,6 +161,7 @@ function shell(inner){
       <button class="${tab==='orders'?'on':''}" onclick="tab='orders';render()"><i class="fas fa-receipt"></i> Orders</button>
       <button class="${tab==='stock'?'on':''}" onclick="tab='stock';render()"><i class="fas fa-boxes-stacked"></i> Products</button>
       <button class="${tab==='profile'?'on':''}" onclick="tab='profile';render()"><i class="fas fa-store-alt"></i> Shop Profile</button>
+      <button class="${tab==='rent'?'on':''}" onclick="tab='rent';render()"><i class="fas fa-file-invoice-dollar"></i> My Rent</button>
       <button class="${tab==='jobs'?'on':''}" onclick="tab='jobs';render()"><i class="fas fa-briefcase"></i> Vacancies</button>
     </div>
     <div id="body">${inner}</div>
@@ -261,6 +268,52 @@ async function render(){
           <textarea id="jb-desc" rows="3" placeholder="Describe the role, requirements, experience needed…" style="margin-top:9px"></textarea>
           <div style="text-align:right;margin-top:10px"><button class="btn wine" onclick="postJob()"><i class="fas fa-plus"></i> Post vacancy</button></div>
         </div>`;
+    } else if(tab==='rent'){
+      const [r, tk] = await Promise.all([api('/api/seller/rent'), api('/api/seller/tickets').catch(()=>({tickets:[]}))]);
+      const L=r.lease;
+      const inv = r.invoices.length ? r.invoices.map(i=>`<tr>
+          <td>${esc(i.period_start||i.periodStart||'')} → ${esc(i.period_end||i.periodEnd||'')}</td>
+          <td>${fmt(i.amount)}</td>
+          <td>${i.penaltyDue?`<span style="color:#b3261e">+${fmt(i.penaltyDue)}</span>`:'—'}</td>
+          <td>${esc(i.due_date||i.dueDate||'')}</td>
+          <td>${i.status==='paid'?'<span class="tag ok">paid</span>':(i.daysLate>0?`<span class="tag no">${i.daysLate}d late</span>`:'<span class="tag">due</span>')}</td>
+        </tr>`).join('') : '<tr><td colspan="5" class="muted" style="text-align:center;padding:16px">No invoices yet.</td></tr>';
+      const accounts = (r.accounts||[]).map(a=>`<div class="acct"><b>${esc(a.bank)}</b><div>${esc(a.number)}</div><div class="muted">${esc(a.holder||'')}</div></div>`).join('');
+      const tickets = tk.tickets.length ? tk.tickets.map(t=>`<div class="card row">
+          <div><b>${esc(t.title)}</b><div class="muted">${esc(t.cat||'')} · ${new Date(t.created).toLocaleDateString()}</div></div>
+          <span class="tag ${t.status==='done'?'ok':''}">${esc(t.status)}</span></div>`).join('')
+        : '<div class="muted">No maintenance requests yet.</div>';
+      $('#body').innerHTML = `
+        ${r.outstanding>0?`<div class="card" style="border-left:4px solid #b3261e">
+          <b>Outstanding balance: ${fmt(r.outstanding)}</b>
+          <div class="muted">Includes any late penalty. Pay to one of the accounts below and keep your receipt.</div></div>`:
+          `<div class="card" style="border-left:4px solid #1d7a33"><b>You're up to date</b><div class="muted">No outstanding rent.</div></div>`}
+        <div class="card">
+          <b>Your lease — unit ${esc(r.unit)}</b>
+          ${L?`<div class="statgrid" style="margin-top:9px">
+            <div class="stat"><div class="n">${fmt(L.rent)}</div><div class="l">Rent</div></div>
+            <div class="stat"><div class="n">${L.cycle_months||L.cycleMonths||1}mo</div><div class="l">Billing cycle</div></div>
+            <div class="stat"><div class="n">${esc(L.next_due||L.nextDue||'—')}</div><div class="l">Next due</div></div>
+            <div class="stat"><div class="n">${esc(L.end_date||L.end||'—')}</div><div class="l">Lease ends</div></div>
+          </div>`:'<div class="muted" style="margin-top:6px">No lease on file yet — building management will add one.</div>'}
+        </div>
+        <div class="card"><b>Invoices</b>
+          <table style="margin-top:8px"><thead><tr><th>Period</th><th>Amount</th><th>Penalty</th><th>Due</th><th>Status</th></tr></thead>
+          <tbody>${inv}</tbody></table>
+        </div>
+        ${accounts?`<div class="card"><b>Where to pay</b><div class="acctwrap">${accounts}</div></div>`:''}
+        <div class="card">
+          <b>Report a maintenance problem</b>
+          <div class="muted" style="margin:4px 0 8px">Goes straight to building management with your unit number attached.</div>
+          <div class="grid">
+            <input id="tkTitle" placeholder="What is the problem? (e.g. water leak in the ceiling)">
+            <select id="tkCat"><option value="plumbing">Plumbing</option><option value="electric">Electrical</option>
+              <option value="cleaning">Cleaning</option><option value="security">Security</option><option value="other">Other</option></select>
+            <select id="tkPri"><option value="med">Normal</option><option value="high">Urgent</option><option value="low">Low</option></select>
+          </div>
+          <div style="text-align:right;margin-top:8px"><button class="btn wine" onclick="raiseTicket()">Send request</button></div>
+        </div>
+        <div class="card"><b>Your requests</b><div style="margin-top:8px">${tickets}</div></div>`;
     } else if(tab==='profile'){
       const cat = await api('/api/catalog');
       const t = (cat.building.tenants||[]).find(x=>x.id===me.id) || {};
@@ -513,6 +566,15 @@ function uploadShopLogo(input){
     if(p){ p.style.backgroundImage='url('+window.__shopLogo+')'; p.textContent=''; }
   }; img.src=rd.result; };
   rd.readAsDataURL(f);
+}
+async function raiseTicket(){
+  const title=document.getElementById('tkTitle').value.trim();
+  if(!title) return alert('Please describe the problem.');
+  try{
+    await api('/api/seller/ticket',{method:'POST',body:{title,
+      cat:document.getElementById('tkCat').value, pri:document.getElementById('tkPri').value}});
+    render();
+  }catch(e){ alert(e.message); }
 }
 async function saveProfile(){
   const blurb = document.getElementById('pf-blurb').value.trim();

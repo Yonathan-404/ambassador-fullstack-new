@@ -125,6 +125,14 @@ if (process.env.DATABASE_URL) {
       hours TEXT, location TEXT, employment_type TEXT, description TEXT,
       contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
       active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS bms_pending (
+      id SERIAL PRIMARY KEY, action TEXT NOT NULL, payload JSONB NOT NULL,
+      summary TEXT, made_by TEXT, made_by_name TEXT, made_at TIMESTAMPTZ DEFAULT now(),
+      status TEXT DEFAULT 'pending', decided_by TEXT, decided_by_name TEXT,
+      decided_at TIMESTAMPTZ, reason TEXT);
+    CREATE TABLE IF NOT EXISTS bms_audit (
+      id SERIAL PRIMARY KEY, action TEXT, summary TEXT, actor TEXT, actor_name TEXT,
+      role TEXT, at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS shop_events (
       id SERIAL PRIMARY KEY, tenant_id TEXT NOT NULL, kind TEXT NOT NULL,
       day DATE NOT NULL DEFAULT CURRENT_DATE, created_at TIMESTAMPTZ DEFAULT now());
@@ -205,6 +213,31 @@ if (process.env.DATABASE_URL) {
 
     // ── tenant ratings (real, signed-in-user submitted) ──
     // ── shop analytics: visits & shares, counted per day ──
+    // ── BMS maker/checker queue + audit ──
+    async addPending(p){
+      const r = await pool.query(
+        `INSERT INTO bms_pending (action,payload,summary,made_by,made_by_name)
+         VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+        [p.action, JSON.stringify(p.payload), p.summary, p.madeBy, p.madeByName]);
+      return r.rows[0];
+    },
+    async allPending(status){
+      const r = status
+        ? await pool.query(`SELECT * FROM bms_pending WHERE status=$1 ORDER BY made_at DESC LIMIT 300`, [status])
+        : await pool.query(`SELECT * FROM bms_pending ORDER BY made_at DESC LIMIT 300`);
+      return r.rows;
+    },
+    async getPending(id){ const r = await pool.query(`SELECT * FROM bms_pending WHERE id=$1`,[id]); return r.rows[0]||null; },
+    async decidePending(id, status, by, byName, reason){
+      await pool.query(`UPDATE bms_pending SET status=$2, decided_by=$3, decided_by_name=$4, decided_at=now(), reason=$5 WHERE id=$1`,
+        [id, status, by, byName, reason||null]);
+    },
+    async addAudit(a){
+      await pool.query(`INSERT INTO bms_audit (action,summary,actor,actor_name,role) VALUES ($1,$2,$3,$4,$5)`,
+        [a.action, a.summary, a.actor, a.actorName, a.role]);
+    },
+    async allAudit(limit){ const r = await pool.query(`SELECT * FROM bms_audit ORDER BY at DESC LIMIT $1`,[limit||200]); return r.rows; },
+
     async logShopEvent(tid, kind){
       await pool.query(`INSERT INTO shop_events (tenant_id, kind) VALUES ($1,$2)`, [tid, kind]);
     },
@@ -311,7 +344,7 @@ if (process.env.DATABASE_URL) {
   };
 } else {
   console.warn('[warn] DATABASE_URL not set — using JSON file store at ' + DATA_FILE + ' (dev only).');
-  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], events: [], jobs: [], catalog: null, seq: 1,
+  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], events: [], pending: [], audit: [], jobs: [], catalog: null, seq: 1,
     leases: [], invoices: [], finance: [], tickets: [], announcements: [], bmsConfig: null };
   try { mem = Object.assign(mem, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) {}
   const flush = () => { try { fs.writeFileSync(DATA_FILE, JSON.stringify(mem)); } catch (e) {} };
@@ -366,6 +399,33 @@ if (process.env.DATABASE_URL) {
     async deleteSellerCode(tid){ delete mem.sellerCodes[tid]; flush(); },
 
     // ── tenant ratings (real, signed-in-user submitted) ──
+    // ── BMS maker/checker queue + audit ──
+    async addPending(p){
+      mem.pending = mem.pending || [];
+      const row = { id: mem.seq++, action:p.action, payload:p.payload, summary:p.summary,
+        made_by:p.madeBy, made_by_name:p.madeByName, made_at:new Date().toISOString(), status:'pending' };
+      mem.pending.unshift(row); flush(); return row;
+    },
+    async allPending(status){
+      mem.pending = mem.pending || [];
+      return status ? mem.pending.filter(p => p.status === status) : mem.pending.slice(0,300);
+    },
+    async getPending(id){ mem.pending = mem.pending || []; return mem.pending.find(p => p.id === +id) || null; },
+    async decidePending(id, status, by, byName, reason){
+      mem.pending = mem.pending || [];
+      const p = mem.pending.find(x => x.id === +id);
+      if (p) { p.status=status; p.decided_by=by; p.decided_by_name=byName; p.decided_at=new Date().toISOString(); p.reason=reason||null; }
+      flush();
+    },
+    async addAudit(a){
+      mem.audit = mem.audit || [];
+      mem.audit.unshift({ id: mem.seq++, action:a.action, summary:a.summary, actor:a.actor,
+        actor_name:a.actorName, role:a.role, at:new Date().toISOString() });
+      if (mem.audit.length > 3000) mem.audit = mem.audit.slice(0,2000);
+      flush();
+    },
+    async allAudit(limit){ mem.audit = mem.audit || []; return mem.audit.slice(0, limit||200); },
+
     async logShopEvent(tid, kind){
       mem.events = mem.events || [];
       mem.events.push({ tenant_id: tid, kind, day: new Date().toISOString().slice(0,10) });
@@ -805,6 +865,11 @@ function bDateOnly(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
 function bAddMonths(d, n){ const x = new Date(d); x.setMonth(x.getMonth() + n); return x; }
 function defaultBmsConfig(){
   return {
+    /* 'single'  — one operator does everything, changes apply immediately
+       'dual'    — maker/checker: an inputer submits, an authorisor approves
+                   before anything is written. Standard control for money. */
+    mode: 'single',
+    users: [],            // [{ id, name, phone, role:'inputer'|'authorisor'|'manager', codeHash, active }]
     penalty: { amount: 200, per: 'day' },
     accounts: [
       { bank: 'Bank of Abyssinia', number: '1000123456789', holder: 'Ambassador Mall PLC' },
@@ -1045,6 +1110,77 @@ app.post('/api/seller/change-code', async (req, res) => {
   res.json({ ok: true });
 });
 
+/* ══════════ BMS USERS, ROLES & MAKER–CHECKER ══════════
+   Building operations no longer share the master ADMIN_KEY. Admin creates
+   BMS users and grants each a role:
+     manager    — single-person mode: does everything, applies immediately
+     inputer    — submits changes; they wait in a queue
+     authorisor — approves or rejects what an inputer submitted
+   In 'dual' mode an inputer can never approve their own submission. */
+const getBmsUser = req => readCookie(req, 'amb_bms');
+
+async function bmsUsers(){ const c = await getBmsConfigSafe(); return c.users || []; }
+async function bmsMode(){ const c = await getBmsConfigSafe(); return c.mode === 'dual' ? 'dual' : 'single'; }
+
+app.post('/api/bms/login', async (req, res) => {
+  const phone = normPhone(('' + ((req.body && req.body.phone) || '')).trim());
+  const code  = ('' + ((req.body && req.body.code) || '')).trim();
+  if (!phone || !code) return res.status(400).json({ error: 'Phone and access code are required' });
+  const u = (await bmsUsers()).find(x => x.phone === phone && x.active !== false);
+  if (!u || u.codeHash !== sha256(code)) return res.status(401).json({ error: 'Wrong phone or access code' });
+  writeCookie(res, 'amb_bms', { role: 'bms', id: u.id, name: u.name, bmsRole: u.role }, 7);
+  res.json({ user: { id: u.id, name: u.name, role: u.role }, mode: await bmsMode() });
+});
+app.post('/api/bms/logout', (req, res) => { clearCookie(res, 'amb_bms'); res.json({ ok: true }); });
+app.get('/api/bms/me', async (req, res) => {
+  const s = getBmsUser(req);
+  if (!s) return res.json({ user: null });
+  const u = (await bmsUsers()).find(x => x.id === s.id && x.active !== false);
+  if (!u) return res.json({ user: null });   // revoked while signed in
+  res.json({ user: { id: u.id, name: u.name, role: u.role }, mode: await bmsMode() });
+});
+
+/* Accepts EITHER the master admin key OR a signed-in BMS user, so the
+   existing admin console keeps working unchanged. */
+async function requireBms(req, res, next){
+  if (ADMIN_KEY && req.get('x-admin-key') === ADMIN_KEY) {
+    req.bms = { id: 'admin', name: 'Administrator', role: 'manager', isAdmin: true };
+    return next();
+  }
+  const s = getBmsUser(req);
+  if (!s || s.role !== 'bms') return res.status(401).json({ error: 'Please sign in to the building console' });
+  const u = (await bmsUsers()).find(x => x.id === s.id && x.active !== false);
+  if (!u) return res.status(401).json({ error: 'This account is no longer active' });
+  req.bms = { id: u.id, name: u.name, role: u.role, isAdmin: false };
+  next();
+}
+/* Only an authorisor (or admin/manager) may approve. */
+function requireAuthorisor(req, res, next){
+  const r = req.bms && req.bms.role;
+  if (r === 'authorisor' || r === 'manager' || (req.bms && req.bms.isAdmin)) return next();
+  return res.status(403).json({ error: 'Only an authorisor can approve or reject changes' });
+}
+
+/* The heart of maker–checker: in dual mode a write is parked for approval
+   instead of applied. Returns true when the caller should stop. */
+async function queueIfDual(req, res, action, payload, summary){
+  if (await bmsMode() !== 'dual') return false;
+  if (req.bms && req.bms.isAdmin) return false;              // master key bypasses
+  if (req.bms && req.bms.role === 'manager') return false;   // manager acts alone
+  const row = await db.addPending({ action, payload, summary,
+    madeBy: req.bms.id, madeByName: req.bms.name });
+  await db.addAudit({ action: 'submit:' + action, summary, actor: req.bms.id,
+    actorName: req.bms.name, role: req.bms.role });
+  res.json({ ok: true, pending: true, id: row.id,
+    message: 'Submitted for approval — an authorisor must approve it before it takes effect.' });
+  return true;
+}
+async function bmsAudit(req, action, summary){
+  await db.addAudit({ action, summary,
+    actor: req.bms ? req.bms.id : 'admin', actorName: req.bms ? req.bms.name : 'Administrator',
+    role: req.bms ? req.bms.role : 'manager' });
+}
+
 function requireSeller(req, res, next){
   const s = getSeller(req);
   if (!s || s.role !== 'seller' || !TENANTS[s.tid]) return res.status(401).json({ error: 'Please sign in' });
@@ -1123,6 +1259,45 @@ app.delete('/api/seller/product/:pid', requireSeller, async (req, res) => {
   });
   res.json({ ok: true });
 });
+/* ── a tenant's own building account: rent, invoices, maintenance ──
+   Cuts the phone calls to management, and makes the portal useful to the
+   many tenants who will never sell online. Strictly scoped to their unit. */
+app.get('/api/seller/rent', requireSeller, async (req, res) => {
+  const t = TENANTS[req.sellerTid];
+  const unit = (t.unit || t.id.toUpperCase());
+  const lease = await db.leaseByUnit(unit);
+  const config = await getBmsConfigSafe();
+  const invoices = (await db.invoicesByUnit(unit)).map(i => Object.assign({}, i, {
+    daysLate: bDaysLate(i), penaltyDue: bPenaltyOf(i, config)
+  }));
+  const outstanding = invoices
+    .filter(i => i.status !== 'paid')
+    .reduce((sum, i) => sum + (i.amount || 0) + i.penaltyDue, 0);
+  res.json({
+    unit, lease: lease || null, invoices, outstanding,
+    accounts: config.accounts || [],           // where to pay
+    penalty: config.penalty || null
+  });
+});
+app.get('/api/seller/tickets', requireSeller, async (req, res) => {
+  const t = TENANTS[req.sellerTid];
+  const unit = (t.unit || t.id.toUpperCase());
+  const mine = (await db.allTickets()).filter(x => (x.loc || '').toUpperCase() === unit);
+  res.json({ tickets: mine });
+});
+app.post('/api/seller/ticket', requireSeller, async (req, res) => {
+  const t = TENANTS[req.sellerTid];
+  const unit = (t.unit || t.id.toUpperCase());
+  const title = ('' + ((req.body && req.body.title) || '')).trim().slice(0, 160);
+  if (!title) return res.status(400).json({ error: 'Describe the problem' });
+  const cat = ('' + ((req.body && req.body.cat) || 'other')).slice(0, 30);
+  const pri = ['low','med','high'].indexOf(req.body && req.body.pri) >= 0 ? req.body.pri : 'med';
+  const tk = { id: 'tk-' + Date.now().toString(36), title, loc: unit, cat, pri,
+    asg: '', status: 'open', created: new Date().toISOString(), doneAt: null };
+  await db.insertTicket(tk);
+  res.json({ ok: true, ticket: tk });
+});
+
 app.post('/api/seller/profile', requireSeller, async (req, res) => {
   // sellers can update their OWN shop's brief description and social links.
   // Each social platform is stored as { value, on } so a seller can turn a
@@ -1196,15 +1371,15 @@ app.get('/api/admin/ussd-log', requireAdmin, (req, res) => res.json({ messages: 
    else in /admin.html). Operates on the same tenants as the storefront.
 ═══════════════════════════════════════════════════════════════════ */
 
-app.get('/api/admin/bms/tenants', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/tenants', requireBms, async (req, res) => {
   const leases = await db.allLeases();
   const byUnit = {}; leases.forEach(l => { byUnit[l.unit] = l; });
   const tenants = (B.tenants || []).map(t => Object.assign({}, t, { lease: byUnit[t.unit || t.id.toUpperCase()] || null }));
   res.json({ tenants });
 });
 
-app.get('/api/admin/bms/leases', requireAdmin, async (req, res) => res.json({ leases: await db.allLeases() }));
-app.put('/api/admin/bms/lease', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/leases', requireBms, async (req, res) => res.json({ leases: await db.allLeases() }));
+app.put('/api/admin/bms/lease', requireBms, async (req, res) => {
   try {
     const input = (req.body && req.body.lease) || {};
     const unit = ('' + (input.unit || '')).toUpperCase();
@@ -1212,32 +1387,38 @@ app.put('/api/admin/bms/lease', requireAdmin, async (req, res) => {
     if (!t) return res.status(404).json({ error: 'No tenant on unit ' + unit });
     const existing = await db.leaseByUnit(unit);
     const start = input.start || bIso(new Date());
-    const lease = {
-      unit, tenantId: t.id, start,
+    const payload = {
+      unit, start,
       end: input.end || bIso(bAddMonths(new Date(start), 12)),
       cycleMonths: Math.max(1, parseInt(input.cycleMonths, 10) || (existing ? existing.cycle_months : 1)),
       firstPeriodMonths: Math.max(1, parseInt(input.firstPeriodMonths, 10) || (existing ? existing.first_period_months : 1)),
-      firstDone: existing ? existing.first_done : false,
-      nextDue: existing ? existing.next_due : start,
       deposit: input.deposit !== undefined ? parseInt(input.deposit, 10) || 0 : (existing ? existing.deposit : 0),
       rent: input.rent !== undefined ? parseInt(input.rent, 10) || 0 : (existing ? existing.rent : 0)
     };
-    await db.upsertLease(lease);
+    const summary = 'Lease ' + unit + ' · ' + t.name + ' · rent ' + payload.rent +
+                    ' · ' + payload.start + ' → ' + payload.end;
+    if (await queueIfDual(req, res, 'lease.save', payload, summary)) return;
+    const lease = await applyBmsAction('lease.save', payload);
+    await bmsAudit(req, 'lease.save', summary);
     res.json({ lease });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
-app.delete('/api/admin/bms/lease/:unit', requireAdmin, async (req, res) => {
-  await db.deleteLease(req.params.unit.toUpperCase());
+app.delete('/api/admin/bms/lease/:unit', requireBms, async (req, res) => {
+  const unit = req.params.unit.toUpperCase();
+  const summary = 'Delete lease on ' + unit;
+  if (await queueIfDual(req, res, 'lease.delete', { unit }, summary)) return;
+  await applyBmsAction('lease.delete', { unit });
+  await bmsAudit(req, 'lease.delete', summary);
   res.json({ ok: true });
 });
 
-app.get('/api/admin/bms/invoices', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/invoices', requireBms, async (req, res) => {
   const rows = req.query.unit ? await db.invoicesByUnit(req.query.unit.toUpperCase()) : await db.allInvoices();
   const config = await getBmsConfigSafe();
   const withPenalty = rows.map(i => Object.assign({}, i, { daysLate: bDaysLate(i), penaltyDue: bPenaltyOf(i, config) }));
   res.json({ invoices: withPenalty });
 });
-app.post('/api/admin/bms/invoice/:id/pay', requireAdmin, async (req, res) => {
+app.post('/api/admin/bms/invoice/:id/pay', requireBms, async (req, res) => {
   const config = await getBmsConfigSafe();
   const rows = await db.allInvoices();
   const inv = rows.find(i => i.id === req.params.id);
@@ -1250,7 +1431,7 @@ app.post('/api/admin/bms/invoice/:id/pay', requireAdmin, async (req, res) => {
   });
   res.json({ invoice: row, penaltyCharged: penalty });
 });
-app.post('/api/admin/bms/sweep', requireAdmin, async (req, res) => {
+app.post('/api/admin/bms/sweep', requireBms, async (req, res) => {
   const leases = await db.allLeases();
   const today = new Date();
   let created = 0;
@@ -1269,8 +1450,8 @@ app.post('/api/admin/bms/sweep', requireAdmin, async (req, res) => {
   res.json({ invoicesCreated: created, markedOverdue: overdue });
 });
 
-app.get('/api/admin/bms/finance', requireAdmin, async (req, res) => res.json({ entries: await db.allFinance() }));
-app.put('/api/admin/bms/finance', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/finance', requireBms, async (req, res) => res.json({ entries: await db.allFinance() }));
+app.put('/api/admin/bms/finance', requireBms, async (req, res) => {
   try {
     const input = (req.body && req.body.entry) || {};
     if (!['income','expense'].includes(input.type)) return res.status(400).json({ error: 'type must be income or expense' });
@@ -1285,10 +1466,10 @@ app.put('/api/admin/bms/finance', requireAdmin, async (req, res) => {
     res.json({ entry });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
-app.delete('/api/admin/bms/finance/:id', requireAdmin, async (req, res) => { await db.deleteFinance(req.params.id); res.json({ ok: true }); });
+app.delete('/api/admin/bms/finance/:id', requireBms, async (req, res) => { await db.deleteFinance(req.params.id); res.json({ ok: true }); });
 
-app.get('/api/admin/bms/tickets', requireAdmin, async (req, res) => res.json({ tickets: await db.allTickets() }));
-app.put('/api/admin/bms/ticket', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/tickets', requireBms, async (req, res) => res.json({ tickets: await db.allTickets() }));
+app.put('/api/admin/bms/ticket', requireBms, async (req, res) => {
   try {
     const input = (req.body && req.body.ticket) || {};
     if (!input.title) return res.status(400).json({ error: 'Title is required' });
@@ -1302,7 +1483,7 @@ app.put('/api/admin/bms/ticket', requireAdmin, async (req, res) => {
     res.json({ ticket: tk });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
-app.post('/api/admin/bms/ticket/:id/status', requireAdmin, async (req, res) => {
+app.post('/api/admin/bms/ticket/:id/status', requireBms, async (req, res) => {
   const status = (req.body && req.body.status) || '';
   if (!['open','prog','done'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
   const row = await db.updateTicketStatus(req.params.id, status, status === 'done' ? bIso(new Date()) : null);
@@ -1310,8 +1491,8 @@ app.post('/api/admin/bms/ticket/:id/status', requireAdmin, async (req, res) => {
   res.json({ ticket: row });
 });
 
-app.get('/api/admin/bms/announcements', requireAdmin, async (req, res) => res.json({ announcements: await db.allAnnouncements() }));
-app.put('/api/admin/bms/announcement', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/announcements', requireBms, async (req, res) => res.json({ announcements: await db.allAnnouncements() }));
+app.put('/api/admin/bms/announcement', requireBms, async (req, res) => {
   const input = (req.body && req.body.announcement) || {};
   if (!input.title || !input.body) return res.status(400).json({ error: 'Title and message are required' });
   const a = { id: 'AN-' + Date.now().toString(36).toUpperCase() + crypto.randomBytes(2).toString('hex').toUpperCase(),
@@ -1319,21 +1500,200 @@ app.put('/api/admin/bms/announcement', requireAdmin, async (req, res) => {
   await db.insertAnnouncement(a);
   res.json({ announcement: a });
 });
-app.delete('/api/admin/bms/announcement/:id', requireAdmin, async (req, res) => { await db.deleteAnnouncement(req.params.id); res.json({ ok: true }); });
+app.delete('/api/admin/bms/announcement/:id', requireBms, async (req, res) => { await db.deleteAnnouncement(req.params.id); res.json({ ok: true }); });
 
-app.get('/api/admin/bms/config', requireAdmin, async (req, res) => res.json({ config: await getBmsConfigSafe() }));
-app.put('/api/admin/bms/config', requireAdmin, async (req, res) => {
+app.get('/api/admin/bms/config', requireBms, async (req, res) => res.json({ config: await getBmsConfigSafe() }));
+app.put('/api/admin/bms/config', requireBms, async (req, res) => {
   const input = (req.body && req.body.config) || {};
-  const cfg = defaultBmsConfig();
-  if (input.penalty && typeof input.penalty.amount === 'number') cfg.penalty = { amount: input.penalty.amount, per: input.penalty.per === 'week' ? 'week' : 'day' };
-  if (Array.isArray(input.accounts) && input.accounts.length) cfg.accounts = input.accounts.map(a => ({ bank: ('' + (a.bank||'')).slice(0,60), number: ('' + (a.number||'')).slice(0,40), holder: ('' + (a.holder||'')).slice(0,80) }));
+  /* BUG FIX: this used to rebuild from defaultBmsConfig(), which silently wiped
+     the BMS users list and the mode on every settings save. Start from the
+     CURRENT config and change only what was sent. */
+  const cur = await getBmsConfigSafe();
+  const parts = [];
+  let penalty = cur.penalty, accounts = cur.accounts;
+  if (input.penalty && typeof input.penalty.amount === 'number') {
+    penalty = { amount: input.penalty.amount, per: input.penalty.per === 'week' ? 'week' : 'day' };
+    parts.push('penalty ' + penalty.amount + '/' + penalty.per);
+  }
+  if (Array.isArray(input.accounts)) {
+    accounts = input.accounts
+      .map(a => ({ bank: ('' + (a.bank||'')).trim().slice(0,60),
+                   number: ('' + (a.number||'')).trim().slice(0,40),
+                   holder: ('' + (a.holder||'')).trim().slice(0,80) }))
+      .filter(a => a.bank && a.number);
+    parts.push(accounts.length + ' bank account(s)');
+  }
+  const summary = 'Building settings: ' + (parts.join(', ') || 'no change');
+  if (input.penalty && await queueIfDual(req, res, 'config.penalty', { penalty }, summary)) return;
+  if (Array.isArray(input.accounts) && await queueIfDual(req, res, 'config.accounts', { accounts }, summary)) return;
+  const cfg = Object.assign({}, cur, { penalty, accounts });
   await db.saveBmsConfig(cfg);
+  await bmsAudit(req, 'config.save', summary);
   res.json({ config: cfg });
 });
 
-app.get('/api/admin/bms/dashboard', requireAdmin, async (req, res) => {
+/* Applies a BMS action. Called directly in single mode, or by an authorisor
+   approving a queued item in dual mode — so both paths share identical logic. */
+async function applyBmsAction(action, p){
+  if (action === 'lease.save') {
+    const t = (B.tenants || []).find(x => (x.unit || x.id.toUpperCase()) === p.unit);
+    if (!t) throw new Error('No tenant on unit ' + p.unit);
+    const existing = await db.leaseByUnit(p.unit);
+    const lease = {
+      unit: p.unit, tenantId: t.id, start: p.start,
+      end: p.end, cycleMonths: p.cycleMonths, firstPeriodMonths: p.firstPeriodMonths,
+      firstDone: existing ? existing.first_done : false,
+      nextDue: existing ? existing.next_due : p.start,
+      deposit: p.deposit, rent: p.rent
+    };
+    await db.upsertLease(lease);
+    return lease;
+  }
+  if (action === 'lease.delete') { await db.deleteLease(p.unit); return true; }
+  if (action === 'config.accounts') {
+    const c = await getBmsConfigSafe(); c.accounts = p.accounts; await db.saveBmsConfig(c); return c.accounts;
+  }
+  if (action === 'config.penalty') {
+    const c = await getBmsConfigSafe(); c.penalty = p.penalty; await db.saveBmsConfig(c); return c.penalty;
+  }
+  if (action === 'finance.save')   { await db.insertFinance(p.entry); return true; }
+  if (action === 'finance.delete') { await db.deleteFinance(p.id); return true; }
+  if (action === 'invoice.pay')    {
+    await db.updateInvoice(p.id, { status:'paid', paid_at: p.paidAt || bIso(new Date()),
+      method: p.method || null, ref: p.ref || null });
+    return true;
+  }
+  throw new Error('Unknown action ' + action);
+}
+
+/* ── admin grants BMS access ── */
+app.get('/api/admin/bms/users', requireAdmin, async (req, res) => {
+  const c = await getBmsConfigSafe();
+  res.json({ mode: c.mode || 'single',
+    users: (c.users || []).map(u => ({ id:u.id, name:u.name, phone:u.phone, role:u.role, active:u.active !== false })) });
+});
+app.put('/api/admin/bms/mode', requireAdmin, async (req, res) => {
+  const mode = req.body && req.body.mode === 'dual' ? 'dual' : 'single';
+  const c = await getBmsConfigSafe(); c.mode = mode;
+  await db.saveBmsConfig(c);
+  res.json({ ok: true, mode });
+});
+app.post('/api/admin/bms/user', requireAdmin, async (req, res) => {
+  const b = req.body || {};
+  const name = ('' + (b.name || '')).trim().slice(0, 80);
+  const phone = normPhone(('' + (b.phone || '')).trim());
+  const role = ['inputer','authorisor','manager'].indexOf(b.role) >= 0 ? b.role : 'inputer';
+  if (!name || !phone) return res.status(400).json({ error: 'Name and phone are required' });
+  const c = await getBmsConfigSafe();
+  c.users = c.users || [];
+  if (c.users.some(u => u.phone === phone && u.id !== b.id))
+    return res.status(400).json({ error: 'That phone already has a building-console account' });
+  // a fresh code is shown ONCE; only its hash is stored
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  const existing = b.id ? c.users.find(u => u.id === b.id) : null;
+  if (existing) {
+    existing.name = name; existing.phone = phone; existing.role = role;
+    if (b.resetCode) existing.codeHash = sha256(code);
+  } else {
+    c.users.push({ id: 'bms-' + Date.now().toString(36), name, phone, role,
+      codeHash: sha256(code), active: true });
+  }
+  await db.saveBmsConfig(c);
+  res.json({ ok: true, code: (!existing || b.resetCode) ? code : null, phone });
+});
+app.post('/api/admin/bms/user/:id/active', requireAdmin, async (req, res) => {
+  const c = await getBmsConfigSafe();
+  const u = (c.users || []).find(x => x.id === req.params.id);
+  if (!u) return res.status(404).json({ error: 'No such user' });
+  u.active = !!(req.body && req.body.active);
+  await db.saveBmsConfig(c);
+  res.json({ ok: true, active: u.active });
+});
+app.delete('/api/admin/bms/user/:id', requireAdmin, async (req, res) => {
+  const c = await getBmsConfigSafe();
+  c.users = (c.users || []).filter(x => x.id !== req.params.id);
+  await db.saveBmsConfig(c);
+  res.json({ ok: true });
+});
+
+/* ── approval queue ── */
+app.get('/api/bms/pending', requireBms, async (req, res) => {
+  res.json({ mode: await bmsMode(), pending: await db.allPending('pending'),
+    recent: (await db.allPending()).filter(p => p.status !== 'pending').slice(0, 40) });
+});
+app.post('/api/bms/pending/:id/decide', requireBms, requireAuthorisor, async (req, res) => {
+  const row = await db.getPending(req.params.id);
+  if (!row || row.status !== 'pending') return res.status(404).json({ error: 'Nothing pending with that id' });
+  const approve = !!(req.body && req.body.approve);
+  // an inputer must never be able to wave through their own entry
+  if (approve && !req.bms.isAdmin && row.made_by === req.bms.id)
+    return res.status(403).json({ error: 'You cannot approve a change you submitted yourself' });
+  if (!approve) {
+    await db.decidePending(row.id, 'rejected', req.bms.id, req.bms.name, (req.body && req.body.reason) || '');
+    await bmsAudit(req, 'reject:' + row.action, row.summary);
+    return res.json({ ok: true, status: 'rejected' });
+  }
+  const payload = typeof row.payload === 'string' ? JSON.parse(row.payload) : row.payload;
+  try {
+    await applyBmsAction(row.action, payload);
+  } catch (e) {
+    return res.status(400).json({ error: 'Could not apply: ' + e.message });
+  }
+  await db.decidePending(row.id, 'approved', req.bms.id, req.bms.name, '');
+  await bmsAudit(req, 'approve:' + row.action, row.summary);
+  res.json({ ok: true, status: 'approved' });
+});
+app.get('/api/bms/audit', requireBms, async (req, res) => {
+  res.json({ entries: await db.allAudit(200) });
+});
+
+/* ── ONE source of truth for vacancy ──
+   Previously the BMS dashboard counted (tenants − active tenants) while the
+   storefront showed a separate hand-typed list, so the two could disagree.
+   Now both read this: a unit is vacant if it has no active tenant, or it was
+   explicitly listed by management. Leases ending soon are surfaced too, so a
+   unit becomes a leasing lead before it actually empties. */
+async function vacancyPicture(){
+  const tenants = B.tenants || [];
+  const leases = await db.allLeases();
+  const today = bDateOnly(bIso(new Date()));
+  const manual = (B.vacantUnits || []).map(v => ({
+    unit: v.unit, floor: v.floor, source: 'listed', tenant: null
+  }));
+  const inactive = tenants.filter(t => t.active === false).map(t => ({
+    unit: t.unit || t.id.toUpperCase(), floor: t.floor, source: 'terminated', tenant: t.name
+  }));
+  const byUnit = {};
+  [...manual, ...inactive].forEach(v => { if (!byUnit[v.unit]) byUnit[v.unit] = v; });
+  const vacant = Object.values(byUnit);
+
+  const expiring = leases.map(l => {
+    const t = tenants.find(x => (x.unit || x.id.toUpperCase()) === l.unit);
+    const end = bDateOnly(l.end);
+    const days = Math.round((end - today) / 86400000);
+    return { unit: l.unit, tenant: t ? t.name : l.unit, floor: t ? t.floor : '',
+             end: l.end, daysLeft: days, rent: l.rent };
+  }).filter(x => x.daysLeft <= 90).sort((a,b) => a.daysLeft - b.daysLeft);
+
+  return {
+    vacant,
+    vacantCount: vacant.length,
+    occupiedCount: tenants.filter(t => t.active !== false).length - 0,
+    totalUnits: tenants.length,
+    expiringSoon: expiring.filter(x => x.daysLeft >= 0),
+    expired: expiring.filter(x => x.daysLeft < 0)
+  };
+}
+/* Public: the storefront's office-for-rent list now reads the same picture. */
+app.get('/api/vacant-units', async (req, res) => {
+  const v = await vacancyPicture();
+  res.json({ vacantUnits: v.vacant.map(x => ({ unit: x.unit, floor: x.floor })) });
+});
+
+app.get('/api/admin/bms/dashboard', requireBms, async (req, res) => {
   const tenants = B.tenants || [];
   const occupied = tenants.filter(t => t.active !== false).length;
+  const vac = await vacancyPicture();
   const leases = await db.allLeases();
   const invoices = await db.allInvoices();
   const config = await getBmsConfigSafe();
@@ -1348,7 +1708,10 @@ app.get('/api/admin/bms/dashboard', requireAdmin, async (req, res) => {
   const revenueToday = orders.filter(o => ('' + o.created_at).slice(0,10) === bIso(new Date())).reduce((s,o) => s + (o.total||0), 0);
   const tickets = await db.allTickets();
   res.json({
-    totalUnits: tenants.length, occupiedUnits: occupied, vacantUnits: tenants.length - occupied,
+    totalUnits: tenants.length, occupiedUnits: occupied,
+    vacantUnits: vac.vacantCount,            // same number the storefront shows
+    vacantList: vac.vacant,
+    expiringSoon: vac.expiringSoon, expired: vac.expired,
     activeLeases: leases.length,
     arrears, overdueCount: overdueInvoices.length,
     incomeThisMonth, expenseThisMonth, netThisMonth: incomeThisMonth - expenseThisMonth,

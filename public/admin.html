@@ -124,6 +124,7 @@
     <button class="alt" onclick="show('products')">Products</button>
     <button class="alt" onclick="show('services')">Services</button>
     <button class="alt" style="background:#0d6f6f" onclick="show('analytics')">Shop Analytics</button>
+    <button class="alt" style="background:#7a4a1e" onclick="show('bmsusers')">BMS Access</button>
     <button class="alt" style="background:#5b2d8e" onclick="show('storefront')">Storefront</button>
     <button class="alt" style="background:#b8941f" onclick="show('jobs')">Vacancies</button>
     <button class="gray" onclick="show('notify')">Notify</button>
@@ -262,6 +263,46 @@ async function show(view){
           <textarea id="aj-desc" rows="3" placeholder="Role description, requirements, experience…" style="margin-top:9px"></textarea>
           <div style="text-align:right;margin-top:10px"><button onclick="postAdminJob()">Post vacancy</button></div>
         </div>`;
+    }
+    else if(view==='bmsusers'){
+      const d = await api('/api/admin/bms/users'); out.className='';
+      window.__bmsUsers = d.users;
+      out.innerHTML = `
+        <h3>Building console access</h3>
+        <p class="muted">Grant building-management staff their own sign-in. They can run the BMS without ever getting the master ADMIN_KEY — so they cannot edit shops, commission or the storefront.</p>
+        <div class="card">
+          <b>Control mode</b>
+          <div class="muted" style="margin:4px 0 9px">Choose how changes are approved.</div>
+          <label style="display:block;margin-bottom:6px"><input type="radio" name="bmsmode" value="single" ${d.mode!=='dual'?'checked':''} onchange="setBmsMode('single')">
+            <b>Single person</b> — one manager does everything; changes apply immediately.</label>
+          <label style="display:block"><input type="radio" name="bmsmode" value="dual" ${d.mode==='dual'?'checked':''} onchange="setBmsMode('dual')">
+            <b>Two person (inputer + authorisor)</b> — an inputer submits, an authorisor approves. Nobody can approve their own entry.</label>
+        </div>
+        <div class="card">
+          <b>Add a user</b>
+          <div class="formgrid" style="margin-top:8px">
+            <input id="bu-name" placeholder="Full name">
+            <input id="bu-phone" placeholder="Phone (09…)">
+            <select id="bu-role">
+              <option value="manager">Manager — does everything (single mode)</option>
+              <option value="inputer">Inputer — submits changes</option>
+              <option value="authorisor">Authorisor — approves changes</option>
+            </select>
+          </div>
+          <div style="text-align:right;margin-top:9px"><button onclick="addBmsUser()">Create user</button></div>
+          <div id="bu-out"></div>
+        </div>
+        ${d.users.length?`<table><thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>Status</th><th></th></tr></thead><tbody>
+          ${d.users.map(u=>`<tr>
+            <td><b>${esc(u.name)}</b></td><td>${esc(u.phone)}</td>
+            <td>${esc(u.role)}</td>
+            <td>${u.active?'<span class="tag ok">active</span>':'<span class="tag no">disabled</span>'}</td>
+            <td style="white-space:nowrap">
+              <button class="alt" onclick="resetBmsCode('${u.id}','${esc(u.name)}','${esc(u.phone)}','${u.role}')">New code</button>
+              <button class="alt" onclick="toggleBmsUser('${u.id}',${!u.active})">${u.active?'Disable':'Enable'}</button>
+              <button class="danger" onclick="delBmsUser('${u.id}')">Delete</button>
+            </td></tr>`).join('')}
+        </tbody></table>`:'<div class="muted">No building users yet.</div>'}`;
     }
     else if(view==='analytics'){
       const days = window.__anDays || 7;
@@ -718,6 +759,40 @@ async function saveServiceEdit(sid){
 }
 async function hideService(sid, hide){
   try{ await api('/api/admin/service/'+sid+'/hide',{method:'POST',body:{hidden:hide}}); show('services'); }catch(e){ alert(e.message); }
+}
+async function setBmsMode(mode){
+  try{ await api('/api/admin/bms/mode',{method:'PUT',body:{mode}}); show('bmsusers'); }catch(e){ alert(e.message); }
+}
+function showCode(code, phone){
+  document.getElementById('bu-out').innerHTML =
+    `<div class="codebox" style="margin-top:10px">Access code for <b>${esc(phone)}</b>: <span style="font-size:1.2rem">${esc(code)}</span></div>
+     <div class="muted">Shown once — send it to them now. Only a hash is stored, so it cannot be looked up later.</div>`;
+}
+async function addBmsUser(){
+  const name=document.getElementById('bu-name').value.trim();
+  const phone=document.getElementById('bu-phone').value.trim();
+  const role=document.getElementById('bu-role').value;
+  if(!name||!phone) return alert('Name and phone are required.');
+  try{
+    const d=await api('/api/admin/bms/user',{method:'POST',body:{name,phone,role}});
+    showCode(d.code,d.phone);
+    document.getElementById('bu-name').value=''; document.getElementById('bu-phone').value='';
+    const users=await api('/api/admin/bms/users'); window.__bmsUsers=users.users;
+  }catch(e){ alert(e.message); }
+}
+async function resetBmsCode(id,name,phone,role){
+  if(!confirm('Issue a new access code for '+name+'? Their current code stops working.')) return;
+  try{
+    const d=await api('/api/admin/bms/user',{method:'POST',body:{id,name,phone,role,resetCode:true}});
+    showCode(d.code,d.phone);
+  }catch(e){ alert(e.message); }
+}
+async function toggleBmsUser(id,active){
+  try{ await api('/api/admin/bms/user/'+id+'/active',{method:'POST',body:{active}}); show('bmsusers'); }catch(e){ alert(e.message); }
+}
+async function delBmsUser(id){
+  if(!confirm('Delete this building user? They lose access immediately.')) return;
+  try{ await api('/api/admin/bms/user/'+id,{method:'DELETE'}); show('bmsusers'); }catch(e){ alert(e.message); }
 }
 async function saveSections(){
   const g=id=>document.getElementById(id).value.trim();

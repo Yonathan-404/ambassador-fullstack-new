@@ -31,6 +31,49 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v28 — BMS roles, maker–checker, unified vacancy, tenant rent portal
+
+**Separate BMS access (item 1).** Building staff no longer need the master
+ADMIN_KEY. Admin creates BMS users with one-time access codes (only a hash is
+stored) and grants each a role. A BMS user can run the building console but
+**cannot reach the storefront admin** — verified by test. User management and
+mode switching stay admin-only.
+
+**Single OR two-person control.** `single` = one manager, changes apply
+immediately. `dual` = maker–checker: an **inputer** submits, an
+**authorisor** approves. While pending, nothing changes. An inputer cannot
+approve at all, and **nobody can approve their own submission** — both
+enforced server-side and tested. Every decision is recorded in an
+append-only audit trail with a new Approvals tab (live pending badge) and
+Audit tab.
+
+**Leases are now sortable, searchable and editable (item: manage lease).**
+Click any column to sort, search by shop/unit/floor, Edit loads a lease into
+the form. Rows show days-to-expiry with an "expired" flag.
+
+**Bank name & account number editable** from BMS settings, routed through the
+approval flow in dual mode.
+
+**Unified vacancy (item 2).** The dashboard used to compute vacancy as
+`tenants − active` while the storefront read a separate hand-typed list — the
+two could disagree. Both now read one `vacancyPicture()`, and a new public
+`/api/vacant-units` serves the storefront from it. Verified equal by test.
+
+**Lease-expiry automation (item 3).** Leases ending within 90 days, and
+already-expired leases, now surface on the dashboard so a unit becomes a
+leasing lead before it empties.
+
+**Tenant rent portal (item 4).** A new **My Rent** tab in the seller portal
+shows each tenant their lease, invoices with late penalties, outstanding
+balance, where to pay — and lets them **raise a maintenance ticket**
+themselves, scoped strictly to their own unit.
+
+**Three real bugs fixed along the way:** saving BMS settings rebuilt config
+from defaults and **silently wiped the BMS users list**; all BMS read routes
+still required the admin key, so a BMS user could sign in but saw only
+"Unauthorized"; and the new tenant view called `fmt()`, which existed only in
+bms.html, breaking the whole tab.
+
 ### v27.1 — Postgres SSL detection fixed for all providers
 
 The SSL rule matched only `render.com`, so a connection string from Neon,
