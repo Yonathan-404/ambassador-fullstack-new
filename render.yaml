@@ -1,13 +1,10 @@
 # Render Blueprint — deploy with "New +" → "Blueprint" pointing at this repo.
-# This creates BOTH the web service and the Postgres database, and wires
-# DATABASE_URL automatically. Deploying as a plain "Web Service" ignores this
-# file, which is why data would not persist.
 services:
   - type: web
     name: ambassador-store
     runtime: node
     plan: free
-    buildCommand: npm install --omit=dev
+    buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
@@ -21,8 +18,6 @@ services:
         generateValue: true
       - key: ADMIN_KEY
         generateValue: true
-      - key: CHECKOUT_ENABLED
-        value: "false"     # e-commerce is on hold; set to "true" when checkout goes live
       - key: GOOGLE_CLIENT_ID
         sync: false        # set in dashboard after creating a Google OAuth client
       - key: SMS_PROVIDER

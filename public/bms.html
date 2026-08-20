@@ -57,38 +57,7 @@
             border-bottom:1px solid var(--line);font-size:.7rem;color:var(--mid)}
   .brandbar img{height:18px;border-radius:4px}
   .brandbar b{color:var(--wine)}
-.shell{display:flex;align-items:flex-start;min-height:calc(100vh - 118px)}
-  .side{width:232px;flex-shrink:0;background:#fff;border-right:1px solid #ece3e7;padding:14px 10px 30px;
-    position:sticky;top:0;max-height:100vh;overflow-y:auto}
-  .navgrp{font-size:.63rem;text-transform:uppercase;letter-spacing:1px;color:#a3939c;font-weight:800;
-    padding:14px 12px 6px}
-  .nav{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;cursor:pointer;
-    color:#4a3a44;font-size:.86rem;font-weight:600;text-decoration:none;transition:.15s;margin-bottom:2px}
-  .nav i{width:17px;text-align:center;color:#b09aa6;font-size:.9rem}
-  .nav:hover{background:#faf3f7;color:#8a1450}
-  .nav:hover i{color:#8a1450}
-  .nav.on{background:linear-gradient(100deg,#8a1450,#6d1a42);color:#fff;box-shadow:0 6px 16px -8px rgba(138,20,80,.7)}
-  .nav.on i{color:#ffd97a}
-  .nav .badge{margin-left:auto;background:#f0e3ea;color:#8a1450;border-radius:99px;padding:1px 8px;
-    font-size:.66rem;font-weight:800;display:none}
-  .nav .badge.red{background:#c62828;color:#fff}
-  .nav.on .badge{background:rgba(255,255,255,.25);color:#fff}
-  .main{flex:1;min-width:0}
-  .crumb{padding:12px 22px 0;font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;
-    color:#a3939c;font-weight:800}
-  .navtoggle{display:none;position:fixed;left:12px;bottom:16px;z-index:60;width:50px;height:50px;
-    border-radius:50%;background:#8a1450;color:#fff;border:none;font-size:1.15rem;
-    box-shadow:0 8px 22px -6px rgba(66,13,39,.65);cursor:pointer}
-  .scrim{display:none;position:fixed;inset:0;background:rgba(40,8,24,.45);z-index:40}
-  @media(max-width:900px){
-    .side{position:fixed;left:0;top:0;bottom:0;z-index:50;transform:translateX(-100%);transition:transform .28s ease;
-      box-shadow:0 0 40px rgba(0,0,0,.25)}
-    body.navopen .side{transform:none}
-    body.navopen .scrim{display:block}
-    .navtoggle{display:flex;align-items:center;justify-content:center}
-    .crumb{padding-left:16px}
-  }
-  .sortable{cursor:pointer;user-select:none}
+.sortable{cursor:pointer;user-select:none}
   .sortable:hover{color:#8a1450}
   .tag.warn{background:#fff3cd;color:#8a6d12}
   .who{font-size:.78rem;color:#555;margin-left:8px}
@@ -116,36 +85,20 @@
   <a class="back" href="/admin.html">← Store admin</a>
 </div>
 <div class="brandbar"><img src="/media/bisinka-logo.png" alt=""> Building management console &mdash; powered by <b>Bisinka</b></div>
-<button class="navtoggle" onclick="document.body.classList.toggle('navopen')" aria-label="Menu"><i class="fas fa-bars"></i></button>
-<div class="shell">
-  <aside class="side" id="tabs">
-    <div class="navgrp">Overview</div>
-    <a class="nav on" onclick="show('dashboard')"><i class="fas fa-gauge"></i><span>Dashboard</span></a>
-    <a class="nav" onclick="show('tenants')"><i class="fas fa-store"></i><span>Tenants</span></a>
-    <div class="navgrp">Leasing</div>
-    <a class="nav" onclick="show('leases')"><i class="fas fa-file-signature"></i><span>Leases</span><b class="badge" id="nbExpiring"></b></a>
-    <a class="nav" onclick="show('deposits')"><i class="fas fa-shield-halved"></i><span>Deposits</span></a>
-    <a class="nav" onclick="show('documents')"><i class="fas fa-folder-open"></i><span>Documents</span></a>
-    <a class="nav" onclick="show('jobs')"><i class="fas fa-briefcase"></i><span>Vacancies</span></a>
-    <div class="navgrp">Money</div>
-    <a class="nav" onclick="show('billing')"><i class="fas fa-file-invoice-dollar"></i><span>Billing</span><b class="badge red" id="nbOverdue"></b></a>
-    <a class="nav" onclick="show('charges')"><i class="fas fa-droplet"></i><span>Utilities &amp; charges</span></a>
-    <a class="nav" onclick="show('payments')"><i class="fas fa-receipt"></i><span>Payments</span></a>
-    <a class="nav" onclick="show('finance')"><i class="fas fa-sack-dollar"></i><span>Finance</span></a>
-    <div class="navgrp">Operations</div>
-    <a class="nav" onclick="show('maintenance')"><i class="fas fa-screwdriver-wrench"></i><span>Maintenance</span><b class="badge" id="nbTickets"></b></a>
-    <a class="nav" onclick="show('announcements')"><i class="fas fa-bullhorn"></i><span>Announcements</span></a>
-    <div class="navgrp">Control</div>
-    <a class="nav" onclick="show('approvals')" id="tabApprovals"><i class="fas fa-clipboard-check"></i><span>Approvals</span><b class="badge red" id="pendCount"></b></a>
-    <a class="nav" onclick="show('audit')"><i class="fas fa-list-check"></i><span>Audit trail</span></a>
-    <a class="nav" onclick="show('settings')"><i class="fas fa-gear"></i><span>Settings</span></a>
-  </aside>
-  <main class="main">
-    <div class="crumb"><span id="crumbNow">Dashboard</span></div>
-    <div class="wrap"><div id="out" class="empty">Sign in with your phone and access code, or enter the ADMIN_KEY.</div></div>
-  </main>
+<div class="tabs" id="tabs">
+  <button class="on" onclick="show('dashboard')"><i class="fas fa-gauge"></i> Dashboard</button>
+  <button onclick="show('tenants')"><i class="fas fa-store"></i> Tenants</button>
+  <button onclick="show('leases')"><i class="fas fa-file-signature"></i> Leases</button>
+  <button onclick="show('billing')"><i class="fas fa-file-invoice-dollar"></i> Billing</button>
+  <button onclick="show('finance')"><i class="fas fa-sack-dollar"></i> Finance</button>
+  <button onclick="show('maintenance')"><i class="fas fa-screwdriver-wrench"></i> Maintenance</button>
+  <button onclick="show('announcements')"><i class="fas fa-bullhorn"></i> Announcements</button>
+  <button onclick="show('jobs')"><i class="fas fa-briefcase"></i> Vacancies</button>
+  <button onclick="show('approvals')" id="tabApprovals"><i class="fas fa-clipboard-check"></i> Approvals <span class="pill" id="pendCount"></span></button>
+  <button onclick="show('audit')"><i class="fas fa-list-check"></i> Audit</button>
+  <button onclick="show('settings')"><i class="fas fa-gear"></i> Settings</button>
 </div>
-<div class="scrim" onclick="document.body.classList.remove('navopen')"></div>
+<div class="wrap"><div id="out" class="empty">Enter your ADMIN_KEY and press Connect.</div></div>
 
 <script>
 const out = document.getElementById('out');
@@ -180,15 +133,9 @@ async function api(path, opts){
 function fail(e){ out.className='empty'; out.textContent='Error: '+e.message; }
 function v(id){ return document.getElementById(id).value.trim(); }
 
-const VIEW_TITLES = {dashboard:'Dashboard',tenants:'Tenants',leases:'Leases',deposits:'Deposits',
-  documents:'Documents',jobs:'Vacancies',billing:'Billing',charges:'Utilities & charges',
-  payments:'Payments & receipts',finance:'Finance',maintenance:'Maintenance',
-  announcements:'Announcements',approvals:'Approvals',audit:'Audit trail',settings:'Settings'};
 function show(view_){
   view = view_;
-  document.querySelectorAll('.nav').forEach(a=>a.classList.toggle('on', a.getAttribute('onclick')===`show('${view}')`));
-  const c=document.getElementById('crumbNow'); if(c) c.textContent = VIEW_TITLES[view]||view;
-  document.body.classList.remove('navopen');       // close the drawer on mobile
+  document.querySelectorAll('#tabs button').forEach((b,i)=>b.classList.toggle('on', b.getAttribute('onclick')===`show('${view}')`));
   render();
 }
 let ME = null, MODE = 'single';
@@ -217,16 +164,6 @@ function paintWho(){
 async function refreshMe(){
   try{ const d=await api('/api/bms/me'); ME=d.user||null; MODE=d.mode||'single'; paintWho(); }catch(e){}
 }
-async function refreshBadges(){
-  try{
-    const d = await api('/api/admin/bms/dashboard');
-    const set=(id,v,show)=>{const el=document.getElementById(id); if(!el) return;
-      el.textContent=v||''; el.style.display=show?'inline-block':'none';};
-    set('nbExpiring',(d.expiringSoon||[]).length,(d.expiringSoon||[]).length>0);
-    set('nbOverdue',d.overdueCount||'',!!d.overdueCount);
-    set('nbTickets',d.openTickets||'',!!d.openTickets);
-  }catch(e){}
-}
 async function refreshPending(){
   const b=document.getElementById('pendCount'); if(!b) return;
   try{
@@ -243,7 +180,7 @@ async function boot(){
 
 async function render(){
   out.className='empty'; out.textContent='Loading…';
-  refreshPending(); refreshBadges();
+  refreshPending();
   try{
     if(view==='dashboard') await renderDashboard();
     else if(view==='tenants') await renderTenants();
@@ -253,194 +190,10 @@ async function render(){
     else if(view==='maintenance') await renderMaintenance();
     else if(view==='announcements') await renderAnnouncements();
     else if(view==='jobs') await renderJobs();
-    else if(view==='deposits') await renderDeposits();
-    else if(view==='documents') await renderDocs();
-    else if(view==='charges') await renderCharges();
-    else if(view==='payments') await renderPayments();
     else if(view==='approvals') await renderApprovals();
     else if(view==='audit') await renderAudit();
     else if(view==='settings') await renderSettings();
   }catch(e){ fail(e); }
-}
-
-/* ═══ DEPOSITS ═══ */
-async function renderDeposits(){
-  const d = await api('/api/admin/bms/deposits'); out.className='';
-  out.innerHTML = `
-    <h3>Deposits held</h3>
-    <p class="muted">Deposits collected at lease signing. Settle at move-out: deduct for damage or arrears, refund the rest — both post to the ledger automatically.</p>
-    <div class="kpis"><div class="kpi"><div class="n">${fmt(d.totalHeld)}</div><div class="l">Total held</div></div>
-      <div class="kpi"><div class="n">${d.deposits.length}</div><div class="l">Units with a deposit</div></div></div>
-    ${d.deposits.length?`<table style="margin-top:12px"><thead><tr><th>Shop</th><th>Unit</th><th>Deposit</th><th>Lease ends</th><th></th></tr></thead><tbody>
-      ${d.deposits.map(r=>`<tr>
-        <td><b>${esc(r.tenant)}</b></td><td>${esc(r.unit)}</td><td>${fmt(r.deposit)}</td>
-        <td class="muted">${esc(r.end||'—')}</td>
-        <td><button class="btn alt" onclick="settleDeposit('${esc(r.unit)}',${r.deposit})">Settle</button></td>
-      </tr>`).join('')}</tbody></table>`:'<div class="empty">No deposits recorded.</div>'}`;
-}
-async function settleDeposit(unit, held){
-  const ded = parseInt(prompt(`Deposit held on ${unit}: ${held}\n\nHow much to DEDUCT (damage/arrears)?`,'0')||'0',10);
-  if(isNaN(ded)) return;
-  const ref = parseInt(prompt(`How much to REFUND to the tenant?`, String(Math.max(0,held-ded)))||'0',10);
-  if(isNaN(ref)) return;
-  const note = prompt('Note (optional):')||'';
-  try{ const r=await api(`/api/admin/bms/deposit/${unit}/settle`,{method:'POST',body:{deducted:ded,refunded:ref,note}});
-    alert(r.pending?r.message:'Deposit settled.'); renderDeposits(); }catch(e){ alert(e.message); }
-}
-
-/* ═══ DOCUMENTS ═══ */
-async function renderDocs(){
-  out.className='';
-  const units = __tenants.length?__tenants:(await api('/api/admin/bms/tenants')).tenants;
-  __tenants = units;
-  const sel = window.__docUnit || (units[0] && (units[0].unit||units[0].id.toUpperCase())) || '';
-  window.__docUnit = sel;
-  let docs=[];
-  try{ docs = (await api('/api/admin/bms/docs?unit='+encodeURIComponent(sel))).docs; }catch(e){}
-  out.innerHTML = `
-    <h3>Documents</h3>
-    <p class="muted">Keep signed lease agreements, ID copies and trade licences with the tenancy instead of in a drawer.</p>
-    <div class="card">
-      <div class="grid">
-        <select id="docUnit" onchange="window.__docUnit=this.value;renderDocs()">
-          ${units.map(t=>{const u=t.unit||t.id.toUpperCase();
-            return `<option value="${esc(u)}" ${u===sel?'selected':''}>${esc(t.name)} — ${esc(u)}</option>`}).join('')}
-        </select>
-        <input id="docTitle" placeholder="Title (e.g. Signed lease 2026)">
-        <select id="docKind"><option value="lease">Lease agreement</option><option value="id">ID copy</option>
-          <option value="licence">Trade licence</option><option value="other">Other</option></select>
-        <input type="file" id="docFile" accept="image/*,application/pdf">
-      </div>
-      <div style="text-align:right;margin-top:9px"><button class="btn" onclick="uploadDoc()">Upload</button></div>
-    </div>
-    ${docs.length?`<table><thead><tr><th>Title</th><th>Type</th><th>Uploaded by</th><th>When</th><th></th></tr></thead><tbody>
-      ${docs.map(d=>`<tr><td><b>${esc(d.title)}</b></td><td>${esc(d.kind)}</td>
-        <td class="muted">${esc(d.uploaded_by||'')}</td><td class="muted">${new Date(d.at).toLocaleDateString()}</td>
-        <td style="white-space:nowrap"><button class="btn alt" onclick="viewDoc('${d.id}')">Open</button>
-        <button class="btn danger" onclick="delDoc('${d.id}')">Delete</button></td></tr>`).join('')}
-      </tbody></table>`:'<div class="empty">No documents for this unit yet.</div>'}`;
-}
-function uploadDoc(){
-  const f=document.getElementById('docFile').files[0];
-  if(!f) return alert('Choose a file first.');
-  if(f.size>2000000) return alert('File is too large (max 2MB).');
-  const rd=new FileReader();
-  rd.onload=async()=>{
-    try{
-      await api('/api/admin/bms/doc',{method:'POST',body:{unit:document.getElementById('docUnit').value,
-        title:document.getElementById('docTitle').value.trim()||f.name,
-        kind:document.getElementById('docKind').value, data:rd.result}});
-      renderDocs();
-    }catch(e){ alert(e.message); }
-  };
-  rd.readAsDataURL(f);
-}
-async function viewDoc(id){
-  try{ const d=await api('/api/admin/bms/doc/'+id);
-    const w=window.open(); w.document.write(`<iframe src="${d.doc.data}" style="border:0;width:100%;height:100%"></iframe>`);
-  }catch(e){ alert(e.message); }
-}
-async function delDoc(id){
-  if(!confirm('Delete this document?')) return;
-  try{ await api('/api/admin/bms/doc/'+id,{method:'DELETE'}); renderDocs(); }catch(e){ alert(e.message); }
-}
-
-/* ═══ UTILITIES & SERVICE CHARGES ═══ */
-async function renderCharges(){
-  out.className='';
-  const units = __tenants.length?__tenants:(await api('/api/admin/bms/tenants')).tenants;
-  __tenants = units;
-  out.innerHTML = `
-    <h3>Utilities &amp; service charges</h3>
-    <p class="muted">Bill anything that isn't rent — water, electricity, cleaning, security or a shared service charge. Each becomes an invoice the tenant sees in their portal.</p>
-    <div class="card">
-      <b>Charge one unit</b>
-      <div class="grid" style="margin-top:8px">
-        <select id="chUnit">${units.map(t=>{const u=t.unit||t.id.toUpperCase();
-          return `<option value="${esc(u)}">${esc(t.name)} — ${esc(u)}</option>`}).join('')}</select>
-        <select id="chKind"><option value="water">Water</option><option value="electricity">Electricity</option>
-          <option value="service">Service charge</option><option value="cleaning">Cleaning</option>
-          <option value="security">Security</option><option value="other">Other</option></select>
-        <input id="chAmount" type="number" placeholder="Amount (ETB)">
-        <input id="chDue" type="date">
-      </div>
-      <div style="text-align:right;margin-top:9px"><button class="btn" onclick="addCharge()">Add charge</button></div>
-    </div>
-    <div class="card">
-      <b>Charge every occupied unit</b>
-      <div class="muted" style="margin:4px 0 8px">Applies the same amount to all ${units.filter(t=>t.active!==false).length} active shops — e.g. a monthly service fee.</div>
-      <div class="grid">
-        <select id="bkKind"><option value="service">Service charge</option><option value="cleaning">Cleaning</option>
-          <option value="security">Security</option><option value="water">Water</option><option value="other">Other</option></select>
-        <input id="bkAmount" type="number" placeholder="Amount per unit (ETB)">
-        <input id="bkDue" type="date">
-      </div>
-      <div style="text-align:right;margin-top:9px"><button class="btn alt" onclick="addBulkCharge()">Charge all units</button></div>
-    </div>`;
-}
-async function addCharge(){
-  const amount=parseInt(document.getElementById('chAmount').value,10);
-  if(!amount||amount<=0) return alert('Enter an amount.');
-  try{ const r=await api('/api/admin/bms/charge',{method:'POST',body:{unit:document.getElementById('chUnit').value,
-      kind:document.getElementById('chKind').value, amount, dueDate:document.getElementById('chDue').value||undefined}});
-    alert(r.pending?r.message:'Charge added.'); document.getElementById('chAmount').value='';
-  }catch(e){ alert(e.message); }
-}
-async function addBulkCharge(){
-  const amount=parseInt(document.getElementById('bkAmount').value,10);
-  if(!amount||amount<=0) return alert('Enter an amount.');
-  if(!confirm(`Charge ${amount} to every active shop?`)) return;
-  try{ const r=await api('/api/admin/bms/charge/bulk',{method:'POST',body:{kind:document.getElementById('bkKind').value,
-      amount, dueDate:document.getElementById('bkDue').value||undefined}});
-    alert(r.pending?r.message:`Created ${r.created} charges.`); document.getElementById('bkAmount').value='';
-  }catch(e){ alert(e.message); }
-}
-
-/* ═══ PAYMENTS & RECEIPTS ═══ */
-async function renderPayments(){
-  const d = await api('/api/admin/bms/payments'); out.className='';
-  const total = d.payments.reduce((s,p)=>s+(p.amount||0),0);
-  out.innerHTML = `
-    <h3>Payments &amp; receipts</h3>
-    <p class="muted">Every payment recorded, with a sequential receipt number you can print for the tenant.</p>
-    <div class="kpis"><div class="kpi"><div class="n">${fmt(total)}</div><div class="l">Total received</div></div>
-      <div class="kpi"><div class="n">${d.payments.length}</div><div class="l">Payments</div></div></div>
-    ${d.payments.length?`<table style="margin-top:12px"><thead><tr><th>Receipt</th><th>Unit</th><th>Amount</th><th>Method</th><th>Ref</th><th>Date</th><th>Taken by</th><th></th></tr></thead><tbody>
-      ${d.payments.map(p=>`<tr><td><b>${esc(p.receipt_no)}</b></td><td>${esc(p.unit)}</td>
-        <td>${fmt(p.amount)}</td><td>${esc(p.method||'')}</td><td class="muted">${esc(p.ref||'')}</td>
-        <td class="muted">${esc(p.paid_at||'')}</td><td class="muted">${esc(p.taken_by||'')}</td>
-        <td><button class="btn alt" onclick="printReceipt('${esc(p.receipt_no)}')">Print</button></td></tr>`).join('')}
-      </tbody></table>`:'<div class="empty">No payments recorded yet.</div>'}`;
-}
-async function printReceipt(no){
-  try{
-    const d = await api('/api/admin/bms/receipt/'+no);
-    const p=d.payment, t=d.tenant, b=d.building;
-    const w=window.open('','_blank','width=420,height=640');
-    w.document.write(`<html><head><title>Receipt ${esc(no)}</title>
-      <style>body{font-family:Georgia,serif;padding:26px;color:#241a26}
-      h1{font-size:1.15rem;margin:0 0 2px}.m{color:#777;font-size:.78rem}
-      hr{border:0;border-top:1px dashed #ccc;margin:14px 0}
-      .r{display:flex;justify-content:space-between;padding:5px 0;font-size:.86rem}
-      .tot{font-weight:800;font-size:1.05rem;border-top:2px solid #8a1450;margin-top:8px;padding-top:8px;color:#8a1450}
-      .no{text-align:center;font-size:.72rem;letter-spacing:2px;color:#8a1450;font-weight:800;margin-bottom:10px}
-      @media print{@page{margin:10mm}}</style></head><body>
-      <div class="no">RECEIPT ${esc(no)}</div>
-      <h1>${esc(b.name||'')}</h1><div class="m">${esc(b.location||'')} · ${esc(b.phone||'')}</div>
-      <hr>
-      <div class="r"><span>Received from</span><b>${esc(t?t.name:p.unit)}</b></div>
-      <div class="r"><span>Unit</span><b>${esc(p.unit)}</b></div>
-      <div class="r"><span>Date</span><b>${esc(p.paid_at||'')}</b></div>
-      <div class="r"><span>Method</span><b>${esc(p.method||'')}</b></div>
-      ${p.ref?`<div class="r"><span>Reference</span><b>${esc(p.ref)}</b></div>`:''}
-      <div class="r"><span>Invoice</span><b>${esc(p.invoice_id||'')}</b></div>
-      <div class="r tot"><span>Amount paid</span><span>${fmt(p.amount)}</span></div>
-      <hr>
-      <div class="m">Received by ${esc(p.taken_by||'—')}. Thank you.</div>
-      <div class="m" style="margin-top:16px;text-align:center">Powered by Bisinka</div>
-      <script>window.print()<\/script></body></html>`);
-    w.document.close();
-  }catch(e){ alert(e.message); }
 }
 
 /* ═══ APPROVALS (maker–checker queue) ═══ */
@@ -664,27 +417,15 @@ async function renderBilling(){
     <div class="row" style="margin-bottom:10px"><button class="btn alt" onclick="runSweep()"><i class="fas fa-rotate"></i> Run billing sweep now</button><span class="muted">Generates any invoices leases are behind on, and ages overdue ones.</span></div>
     ${__invoices.length ? __invoices.map(i=>`<div class="card row">
       <div><b>${esc(i.unit)}</b> <span class="pill ${esc(i.status)}">${esc(i.status)}</span><div class="muted">${esc(i.period_start)} → ${esc(i.period_end)} · due ${esc(i.due_date)}${i.daysLate?` · ${i.daysLate}d late`:''}${i.penaltyDue?` · penalty ${fmt(i.penaltyDue)}`:''}</div></div>
-      <span><b>${fmt(i.amount)}</b>${(i.paid_amount>0&&i.status!=='paid')?` <span class="muted">(${fmt(i.paid_amount)} paid)</span>`:''} ${i.status!=='paid'?`<button class="btn" onclick="payInvoice('${esc(i.id)}',${(i.amount||0)+(i.penaltyDue||0)-(i.paid_amount||0)})">Record payment</button>`:`<span class="muted">paid ${esc(i.paid_at||'')}${i.receipt_no?` · <a href="#" onclick="printReceipt('${esc(i.receipt_no)}');return false;">${esc(i.receipt_no)}</a>`:''}</span>`}</span>
+      <span><b>${fmt(i.amount)}</b> ${i.status!=='paid'?`<button class="btn" onclick="payInvoice('${esc(i.id)}')">Mark paid</button>`:`<span class="muted">paid ${esc(i.paid_at||'')}</span>`}</span>
     </div>`).join('') : '<div class="empty">No invoices yet. Add a lease, then run the sweep.</div>'}
   `;
 }
 async function runSweep(){
   try{ const d = await api('/api/admin/bms/sweep',{method:'POST',body:{}}); alert(`Created ${d.invoicesCreated} invoice(s), marked ${d.markedOverdue} overdue.`); renderBilling(); }catch(e){ alert(e.message); }
 }
-async function payInvoice(id, owed){
-  const amt = prompt(`Amount received (ETB).\nOutstanding on this invoice: ${owed}\n\nEnter less to record a PARTIAL payment.`, String(owed));
-  if(amt===null) return;
-  const amount = parseInt(amt,10);
-  if(!amount || amount<=0) return alert('Enter a valid amount.');
-  const method = prompt('Payment method: cash / bank_transfer / telebirr','bank_transfer');
-  if(method===null) return;
-  const ref = prompt('Bank reference or receipt slip no. (optional):','')||'';
-  try{
-    const r = await api('/api/admin/bms/invoice/'+id+'/pay',{method:'POST',body:{amount,method,ref}});
-    if(r.pending){ alert(r.message); }
-    else if(r.receiptNo && confirm(`Recorded. Receipt ${r.receiptNo} issued.\n\nPrint it now?`)) printReceipt(r.receiptNo);
-    renderBilling(); refreshBadges();
-  }catch(e){ alert(e.message); }
+async function payInvoice(id){
+  try{ await api('/api/admin/bms/invoice/'+id+'/pay',{method:'POST',body:{method:'bank_transfer'}}); renderBilling(); }catch(e){ alert(e.message); }
 }
 
 /* ═══ FINANCE ═══ */

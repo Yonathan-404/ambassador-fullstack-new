@@ -1,7 +1,7 @@
 {
   "name": "ambassador-store",
   "version": "1.0.0",
-  "description": "Ambassador Shopping Mall \u2014 full-stack directory & marketplace (Bisinka)",
+  "description": "Ambassador Shopping Center — full-stack marketplace storefront (Bisinka)",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
@@ -12,9 +12,7 @@
   },
   "dependencies": {
     "express": "^4.19.2",
+    "jsdom": "^29.1.1",
     "pg": "^8.12.0"
-  },
-  "devDependencies": {
-    "jsdom": "^29.1.1"
   }
 }

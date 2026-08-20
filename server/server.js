@@ -125,21 +125,6 @@ if (process.env.DATABASE_URL) {
       hours TEXT, location TEXT, employment_type TEXT, description TEXT,
       contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
       active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
-    ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS paid_amount INT DEFAULT 0;
-    ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS receipt_no TEXT;
-    ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'rent';
-    ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS photo TEXT;
-    ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS cost INT DEFAULT 0;
-    ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS note TEXT;
-    ALTER TABLE bms_leases ADD COLUMN IF NOT EXISTS deposit_held INT DEFAULT 0;
-    ALTER TABLE bms_leases ADD COLUMN IF NOT EXISTS deposit_note TEXT;
-    CREATE TABLE IF NOT EXISTS bms_payments (
-      id SERIAL PRIMARY KEY, invoice_id TEXT, unit TEXT, amount INT, penalty INT DEFAULT 0,
-      method TEXT, ref TEXT, receipt_no TEXT, paid_at TEXT, taken_by TEXT, note TEXT,
-      created_at TIMESTAMPTZ DEFAULT now());
-    CREATE TABLE IF NOT EXISTS bms_docs (
-      id TEXT PRIMARY KEY, unit TEXT, title TEXT, kind TEXT, data TEXT,
-      uploaded_by TEXT, at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS bms_pending (
       id SERIAL PRIMARY KEY, action TEXT NOT NULL, payload JSONB NOT NULL,
       summary TEXT, made_by TEXT, made_by_name TEXT, made_at TIMESTAMPTZ DEFAULT now(),
@@ -166,7 +151,6 @@ if (process.env.DATABASE_URL) {
     CREATE TABLE IF NOT EXISTS bms_invoices (
       id TEXT PRIMARY KEY, unit TEXT, period_start TEXT, period_end TEXT, period_months INT,
       due_date TEXT, amount INT, status TEXT DEFAULT 'due', paid_at TEXT, method TEXT, ref TEXT,
-      paid_amount INT DEFAULT 0, receipt_no TEXT, kind TEXT DEFAULT 'rent',
       penalty_paid INT DEFAULT 0, created_at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS bms_finance (
       id TEXT PRIMARY KEY, type TEXT, date TEXT, category TEXT, amount INT, note TEXT, unit TEXT,
@@ -229,30 +213,6 @@ if (process.env.DATABASE_URL) {
 
     // ── tenant ratings (real, signed-in-user submitted) ──
     // ── shop analytics: visits & shares, counted per day ──
-    // ── payments, receipts & documents ──
-    async insertPayment(p){
-      const r = await pool.query(
-        `INSERT INTO bms_payments (invoice_id,unit,amount,penalty,method,ref,receipt_no,paid_at,taken_by,note)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
-        [p.invoiceId,p.unit,p.amount,p.penalty||0,p.method,p.ref||'',p.receiptNo,p.paidAt,p.takenBy||'',p.note||'']);
-      return r.rows[0];
-    },
-    async paymentsByUnit(unit){ return (await pool.query(`SELECT * FROM bms_payments WHERE unit=$1 ORDER BY paid_at DESC`,[unit])).rows; },
-    async paymentByReceipt(rn){ const r = await pool.query(`SELECT * FROM bms_payments WHERE receipt_no=$1`,[rn]); return r.rows[0]||null; },
-    async allPayments(){ return (await pool.query(`SELECT * FROM bms_payments ORDER BY paid_at DESC LIMIT 1000`)).rows; },
-    async nextReceiptNo(){
-      const r = await pool.query(`SELECT COUNT(*)::int AS n FROM bms_payments`);
-      return 'RCP-' + String((r.rows[0].n || 0) + 1).padStart(5,'0');
-    },
-    async insertDoc(d){
-      await pool.query(`INSERT INTO bms_docs (id,unit,title,kind,data,uploaded_by) VALUES ($1,$2,$3,$4,$5,$6)`,
-        [d.id,d.unit,d.title,d.kind,d.data,d.uploadedBy||'']);
-    },
-    async docsByUnit(unit){ return (await pool.query(`SELECT id,unit,title,kind,uploaded_by,at FROM bms_docs WHERE unit=$1 ORDER BY at DESC`,[unit])).rows; },
-    async getDoc(id){ const r = await pool.query(`SELECT * FROM bms_docs WHERE id=$1`,[id]); return r.rows[0]||null; },
-    async deleteDoc(id){ await pool.query(`DELETE FROM bms_docs WHERE id=$1`,[id]); },
-
-
     // ── BMS maker/checker queue + audit ──
     async addPending(p){
       const r = await pool.query(
@@ -340,15 +300,15 @@ if (process.env.DATABASE_URL) {
     async invoicesByUnit(unit){ return (await pool.query(`SELECT * FROM bms_invoices WHERE unit=$1 ORDER BY due_date DESC`,[unit])).rows; },
     async insertInvoice(i){
       await pool.query(
-        `INSERT INTO bms_invoices (id,unit,period_start,period_end,period_months,due_date,amount,status,paid_at,method,ref,penalty_paid,paid_amount,kind)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
-        [i.id,i.unit,i.periodStart,i.periodEnd,i.periodMonths,i.dueDate,i.amount,i.status||'due',i.paidAt||null,i.method||null,i.ref||null,i.penaltyPaid||0,i.paidAmount||0,i.kind||'rent']);
+        `INSERT INTO bms_invoices (id,unit,period_start,period_end,period_months,due_date,amount,status,paid_at,method,ref,penalty_paid)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+        [i.id,i.unit,i.periodStart,i.periodEnd,i.periodMonths,i.dueDate,i.amount,i.status||'due',i.paidAt||null,i.method||null,i.ref||null,i.penaltyPaid||0]);
     },
     async updateInvoice(id, patch){
       const r = await pool.query(`SELECT * FROM bms_invoices WHERE id=$1`,[id]); if (!r.rows[0]) return null;
       const row = Object.assign({}, r.rows[0], patch);
-      await pool.query(`UPDATE bms_invoices SET status=$2,paid_at=$3,method=$4,ref=$5,penalty_paid=$6,paid_amount=$7,receipt_no=$8 WHERE id=$1`,
-        [id, row.status, row.paid_at, row.method, row.ref, row.penalty_paid, row.paid_amount||0, row.receipt_no||null]);
+      await pool.query(`UPDATE bms_invoices SET status=$2,paid_at=$3,method=$4,ref=$5,penalty_paid=$6 WHERE id=$1`,
+        [id, row.status, row.paid_at, row.method, row.ref, row.penalty_paid]);
       return row;
     },
     async markInvoicesOverdue(today){
@@ -365,8 +325,8 @@ if (process.env.DATABASE_URL) {
 
     async allTickets(){ return (await pool.query(`SELECT * FROM bms_tickets ORDER BY created DESC LIMIT 500`)).rows; },
     async insertTicket(tk){
-      await pool.query(`INSERT INTO bms_tickets (id,title,loc,cat,pri,asg,status,created,done_at,photo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-        [tk.id,tk.title,tk.loc,tk.cat,tk.pri,tk.asg||'',tk.status||'open',tk.created,tk.doneAt||null,tk.photo||null]);
+      await pool.query(`INSERT INTO bms_tickets (id,title,loc,cat,pri,asg,status,created,done_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [tk.id,tk.title,tk.loc,tk.cat,tk.pri,tk.asg||'',tk.status||'open',tk.created,tk.doneAt||null]);
     },
     async updateTicketStatus(id, status, doneAt){
       const r = await pool.query(`UPDATE bms_tickets SET status=$2, done_at=$3 WHERE id=$1 RETURNING *`,[id,status,doneAt||null]);
@@ -384,7 +344,7 @@ if (process.env.DATABASE_URL) {
   };
 } else {
   console.warn('[warn] DATABASE_URL not set — using JSON file store at ' + DATA_FILE + ' (dev only).');
-  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], events: [], pending: [], audit: [], payments: [], docs: [], jobs: [], catalog: null, seq: 1,
+  let mem = { users: [], orders: [], notify: [], sellerCodes: {}, ratings: [], events: [], pending: [], audit: [], jobs: [], catalog: null, seq: 1,
     leases: [], invoices: [], finance: [], tickets: [], announcements: [], bmsConfig: null };
   try { mem = Object.assign(mem, JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))); } catch (e) {}
   const flush = () => { try { fs.writeFileSync(DATA_FILE, JSON.stringify(mem)); } catch (e) {} };
@@ -439,29 +399,6 @@ if (process.env.DATABASE_URL) {
     async deleteSellerCode(tid){ delete mem.sellerCodes[tid]; flush(); },
 
     // ── tenant ratings (real, signed-in-user submitted) ──
-    // ── payments, receipts & documents ──
-    async insertPayment(p){
-      mem.payments = mem.payments || [];
-      const row = { id: mem.seq++, invoice_id:p.invoiceId, unit:p.unit, amount:p.amount, penalty:p.penalty||0,
-        method:p.method, ref:p.ref||'', receipt_no:p.receiptNo, paid_at:p.paidAt, taken_by:p.takenBy||'', note:p.note||'' };
-      mem.payments.unshift(row); flush(); return row;
-    },
-    async paymentsByUnit(unit){ mem.payments = mem.payments || []; return mem.payments.filter(p => p.unit === unit); },
-    async paymentByReceipt(rn){ mem.payments = mem.payments || []; return mem.payments.find(p => p.receipt_no === rn) || null; },
-    async allPayments(){ mem.payments = mem.payments || []; return mem.payments.slice(0,1000); },
-    async nextReceiptNo(){ mem.payments = mem.payments || []; return 'RCP-' + String(mem.payments.length + 1).padStart(5,'0'); },
-    async insertDoc(d){
-      mem.docs = mem.docs || [];
-      mem.docs.unshift({ id:d.id, unit:d.unit, title:d.title, kind:d.kind, data:d.data,
-        uploaded_by:d.uploadedBy||'', at:new Date().toISOString() });
-      flush();
-    },
-    async docsByUnit(unit){ mem.docs = mem.docs || []; return mem.docs.filter(d => d.unit === unit)
-      .map(({data, ...rest}) => rest); },
-    async getDoc(id){ mem.docs = mem.docs || []; return mem.docs.find(d => d.id === id) || null; },
-    async deleteDoc(id){ mem.docs = (mem.docs||[]).filter(d => d.id !== id); flush(); },
-
-
     // ── BMS maker/checker queue + audit ──
     async addPending(p){
       mem.pending = mem.pending || [];
@@ -560,8 +497,7 @@ if (process.env.DATABASE_URL) {
     async insertInvoice(i){
       mem.invoices.push({ id:i.id, unit:i.unit, period_start:i.periodStart, period_end:i.periodEnd,
         period_months:i.periodMonths, due_date:i.dueDate, amount:i.amount, status:i.status||'due',
-        paid_at:i.paidAt||null, method:i.method||null, ref:i.ref||null, penalty_paid:i.penaltyPaid||0,
-        paid_amount:i.paidAmount||0, receipt_no:i.receiptNo||null, kind:i.kind||'rent' });
+        paid_at:i.paidAt||null, method:i.method||null, ref:i.ref||null, penalty_paid:i.penaltyPaid||0 });
       flush();
     },
     async updateInvoice(id, patch){
@@ -583,7 +519,7 @@ if (process.env.DATABASE_URL) {
     async allTickets(){ return mem.tickets.slice().sort((a,b) => (b.created||'').localeCompare(a.created||'')).slice(0,500); },
     async insertTicket(tk){
       mem.tickets.push({ id:tk.id, title:tk.title, loc:tk.loc, cat:tk.cat, pri:tk.pri, asg:tk.asg||'',
-        status:tk.status||'open', created:tk.created, done_at:tk.doneAt||null, photo:tk.photo||null });
+        status:tk.status||'open', created:tk.created, done_at:tk.doneAt||null });
       flush();
     },
     async updateTicketStatus(id, status, doneAt){
@@ -1356,9 +1292,8 @@ app.post('/api/seller/ticket', requireSeller, async (req, res) => {
   if (!title) return res.status(400).json({ error: 'Describe the problem' });
   const cat = ('' + ((req.body && req.body.cat) || 'other')).slice(0, 30);
   const pri = ['low','med','high'].indexOf(req.body && req.body.pri) >= 0 ? req.body.pri : 'med';
-  const photo = ('' + ((req.body && req.body.photo) || '')).slice(0, 900000);   // a phone snap says more than a paragraph
   const tk = { id: 'tk-' + Date.now().toString(36), title, loc: unit, cat, pri,
-    asg: '', status: 'open', created: new Date().toISOString(), doneAt: null, photo };
+    asg: '', status: 'open', created: new Date().toISOString(), doneAt: null };
   await db.insertTicket(tk);
   res.json({ ok: true, ticket: tk });
 });
@@ -1483,45 +1418,18 @@ app.get('/api/admin/bms/invoices', requireBms, async (req, res) => {
   const withPenalty = rows.map(i => Object.assign({}, i, { daysLate: bDaysLate(i), penaltyDue: bPenaltyOf(i, config) }));
   res.json({ invoices: withPenalty });
 });
-/* Record a payment against an invoice. Supports PARTIAL payment — common when
-   a tenant pays half now — and issues a sequential receipt number. Money is
-   never marked received without an amount, method and audit entry. */
 app.post('/api/admin/bms/invoice/:id/pay', requireBms, async (req, res) => {
   const config = await getBmsConfigSafe();
-  const inv = (await db.allInvoices()).find(i => i.id === req.params.id);
+  const rows = await db.allInvoices();
+  const inv = rows.find(i => i.id === req.params.id);
   if (!inv) return res.status(404).json({ error: 'Invoice not found' });
   const penalty = bPenaltyOf(inv, config);
-  const alreadyPaid = inv.paid_amount || 0;
-  const owed = (inv.amount || 0) + penalty - alreadyPaid;
-  const amount = req.body && req.body.amount !== undefined
-    ? parseInt(req.body.amount, 10) : owed;
-  if (!amount || amount <= 0) return res.status(400).json({ error: 'Enter the amount received' });
-  if (amount > owed) return res.status(400).json({ error: 'That is more than the ' + owed + ' still owed on this invoice' });
-  const payload = {
-    invoiceId: inv.id, unit: inv.unit, amount, penalty,
-    method: ('' + ((req.body && req.body.method) || 'bank_transfer')).slice(0, 30),
-    ref: ('' + ((req.body && req.body.ref) || '')).slice(0, 60),
-    note: ('' + ((req.body && req.body.note) || '')).slice(0, 200),
-    paidAt: (req.body && req.body.paidAt) || bIso(new Date())
-  };
-  const summary = 'Payment ' + amount + ' on ' + inv.unit + ' invoice ' + inv.id +
-                  ' (' + payload.method + (payload.ref ? ' ref ' + payload.ref : '') + ')';
-  if (await queueIfDual(req, res, 'invoice.pay', payload, summary)) return;
-  const out = await applyBmsAction('invoice.pay', Object.assign({}, payload, {
-    takenBy: req.bms ? req.bms.name : 'Administrator' }));
-  await bmsAudit(req, 'invoice.pay', summary);
-  res.json(out);
-});
-/* A receipt any tenant or manager can print. */
-app.get('/api/admin/bms/receipt/:no', requireBms, async (req, res) => {
-  const pay = await db.paymentByReceipt(req.params.no);
-  if (!pay) return res.status(404).json({ error: 'No such receipt' });
-  const t = (B.tenants || []).find(x => (x.unit || x.id.toUpperCase()) === pay.unit);
-  res.json({ payment: pay, tenant: t ? { name: t.name, floor: t.floor, unit: t.unit } : null,
-    building: { name: B.name, location: B.location, phone: B.phone } });
-});
-app.get('/api/admin/bms/payments', requireBms, async (req, res) => {
-  res.json({ payments: req.query.unit ? await db.paymentsByUnit(req.query.unit.toUpperCase()) : await db.allPayments() });
+  const row = await db.updateInvoice(req.params.id, {
+    status: 'paid', paid_at: bIso(new Date()),
+    method: (req.body && req.body.method) || 'bank_transfer',
+    ref: (req.body && req.body.ref) || '', penalty_paid: penalty
+  });
+  res.json({ invoice: row, penaltyCharged: penalty });
 });
 app.post('/api/admin/bms/sweep', requireBms, async (req, res) => {
   const leases = await db.allLeases();
@@ -1539,119 +1447,7 @@ app.post('/api/admin/bms/sweep', requireBms, async (req, res) => {
       nextDue: lease.nextDue, deposit: l.deposit, rent: l.rent });
   }
   const overdue = await db.markInvoicesOverdue(bIso(today));
-  await bmsAudit(req, 'invoice.sweep', 'Generated ' + created + ' invoice(s), ' + overdue + ' marked overdue');
   res.json({ invoicesCreated: created, markedOverdue: overdue });
-});
-
-/* ── lease renewal: one click instead of retyping the whole lease ── */
-app.post('/api/admin/bms/lease/:unit/renew', requireBms, async (req, res) => {
-  const unit = req.params.unit.toUpperCase();
-  const l = await db.leaseByUnit(unit);
-  if (!l) return res.status(404).json({ error: 'No lease on ' + unit });
-  const months = Math.max(1, parseInt(req.body && req.body.months, 10) || 12);
-  const base = bDateOnly(l.end_date || l.end) > bDateOnly(bIso(new Date()))
-    ? new Date(l.end_date || l.end) : new Date();          // extend, don't backdate
-  const newEnd = bIso(bAddMonths(base, months));
-  const newRent = req.body && req.body.rent !== undefined ? parseInt(req.body.rent, 10) : undefined;
-  const payload = { unit, newEnd, newRent };
-  const summary = 'Renew ' + unit + ' by ' + months + ' months → ' + newEnd +
-                  (newRent !== undefined ? ' at rent ' + newRent : '');
-  if (await queueIfDual(req, res, 'lease.renew', payload, summary)) return;
-  await applyBmsAction('lease.renew', payload);
-  await bmsAudit(req, 'lease.renew', summary);
-  res.json({ ok: true, end: newEnd });
-});
-
-/* ── deposit: held, deducted, refunded — was stored but never used ── */
-app.get('/api/admin/bms/deposits', requireBms, async (req, res) => {
-  const leases = await db.allLeases();
-  const rows = leases.map(l => {
-    const t = (B.tenants || []).find(x => (x.unit || x.id.toUpperCase()) === l.unit);
-    return { unit: l.unit, tenant: t ? t.name : l.unit, deposit: l.deposit || 0,
-             end: l.end_date || l.end, active: t ? t.active !== false : false };
-  }).filter(r => r.deposit > 0);
-  res.json({ deposits: rows, totalHeld: rows.reduce((s, r) => s + r.deposit, 0) });
-});
-app.post('/api/admin/bms/deposit/:unit/settle', requireBms, async (req, res) => {
-  const unit = req.params.unit.toUpperCase();
-  const l = await db.leaseByUnit(unit);
-  if (!l) return res.status(404).json({ error: 'No lease on ' + unit });
-  const held = l.deposit || 0;
-  const deducted = Math.max(0, parseInt((req.body && req.body.deducted) || 0, 10));
-  const refunded = Math.max(0, parseInt((req.body && req.body.refunded) || 0, 10));
-  if (deducted + refunded > held)
-    return res.status(400).json({ error: 'Deducted + refunded cannot exceed the ' + held + ' held' });
-  const payload = { unit, deducted, refunded, note: ('' + ((req.body && req.body.note) || '')).slice(0, 200) };
-  const summary = 'Settle deposit ' + unit + ': deduct ' + deducted + ', refund ' + refunded;
-  if (await queueIfDual(req, res, 'deposit.settle', payload, summary)) return;
-  await applyBmsAction('deposit.settle', payload);
-  await bmsAudit(req, 'deposit.settle', summary);
-  res.json({ ok: true });
-});
-
-/* ── utilities & service charges: bill anything that isn't rent ── */
-app.post('/api/admin/bms/charge', requireBms, async (req, res) => {
-  const b = req.body || {};
-  const unit = ('' + (b.unit || '')).toUpperCase();
-  const t = (B.tenants || []).find(x => (x.unit || x.id.toUpperCase()) === unit);
-  if (!t) return res.status(404).json({ error: 'No tenant on ' + unit });
-  const amount = parseInt(b.amount, 10);
-  if (!amount || amount <= 0) return res.status(400).json({ error: 'Amount is required' });
-  const kind = ['water','electricity','service','cleaning','security','other'].indexOf(b.kind) >= 0 ? b.kind : 'other';
-  const inv = {
-    id: 'CHG-' + Date.now().toString(36).toUpperCase() + crypto.randomBytes(2).toString('hex').toUpperCase(),
-    unit, periodStart: b.periodStart || bIso(new Date()), periodEnd: b.periodEnd || bIso(new Date()),
-    periodMonths: 1, dueDate: b.dueDate || bIso(bAddMonths(new Date(), 1)),
-    amount, status: 'due', kind, paidAmount: 0
-  };
-  const summary = 'Charge ' + unit + ' · ' + kind + ' · ' + amount;
-  if (await queueIfDual(req, res, 'charge.add', { invoice: inv }, summary)) return;
-  await applyBmsAction('charge.add', { invoice: inv });
-  await bmsAudit(req, 'charge.add', summary);
-  res.json({ ok: true, invoice: inv });
-});
-/* apply the same charge to every occupied unit — e.g. a monthly service fee */
-app.post('/api/admin/bms/charge/bulk', requireBms, async (req, res) => {
-  const b = req.body || {};
-  const amount = parseInt(b.amount, 10);
-  if (!amount || amount <= 0) return res.status(400).json({ error: 'Amount is required' });
-  const kind = ['water','electricity','service','cleaning','security','other'].indexOf(b.kind) >= 0 ? b.kind : 'service';
-  const units = (B.tenants || []).filter(t => t.active !== false).map(t => t.unit || t.id.toUpperCase());
-  const summary = 'Bulk ' + kind + ' charge of ' + amount + ' to ' + units.length + ' units';
-  if (await queueIfDual(req, res, 'charge.bulk', { units, amount, kind, dueDate: b.dueDate }, summary)) return;
-  const r = await applyBmsAction('charge.bulk', { units, amount, kind, dueDate: b.dueDate });
-  await bmsAudit(req, 'charge.bulk', summary);
-  res.json(r);
-});
-
-/* ── documents: lease agreements, IDs, trade licences ── */
-app.post('/api/admin/bms/doc', requireBms, async (req, res) => {
-  const b = req.body || {};
-  const unit = ('' + (b.unit || '')).toUpperCase();
-  const data = '' + (b.data || '');
-  if (!unit || !data) return res.status(400).json({ error: 'Unit and file are required' });
-  if (data.length > 3000000) return res.status(413).json({ error: 'File is too large (max ~2MB)' });
-  const doc = { id: 'doc-' + Date.now().toString(36), unit,
-    title: ('' + (b.title || 'Document')).slice(0, 120),
-    kind: ('' + (b.kind || 'other')).slice(0, 30), data,
-    uploadedBy: req.bms ? req.bms.name : 'Administrator' };
-  await db.insertDoc(doc);
-  await bmsAudit(req, 'doc.upload', 'Uploaded "' + doc.title + '" for ' + unit);
-  res.json({ ok: true, id: doc.id });
-});
-app.get('/api/admin/bms/docs', requireBms, async (req, res) => {
-  const unit = ('' + (req.query.unit || '')).toUpperCase();
-  res.json({ docs: unit ? await db.docsByUnit(unit) : [] });
-});
-app.get('/api/admin/bms/doc/:id', requireBms, async (req, res) => {
-  const d = await db.getDoc(req.params.id);
-  if (!d) return res.status(404).json({ error: 'Not found' });
-  res.json({ doc: d });
-});
-app.delete('/api/admin/bms/doc/:id', requireBms, async (req, res) => {
-  await db.deleteDoc(req.params.id);
-  await bmsAudit(req, 'doc.delete', 'Deleted document ' + req.params.id);
-  res.json({ ok: true });
 });
 
 app.get('/api/admin/bms/finance', requireBms, async (req, res) => res.json({ entries: await db.allFinance() }));
@@ -1666,21 +1462,11 @@ app.put('/api/admin/bms/finance', requireBms, async (req, res) => {
       type: input.type, date: input.date || bIso(new Date()), category: ('' + (input.category || 'Other')).slice(0, 40),
       amount, note: ('' + (input.note || '')).slice(0, 200), unit: input.unit ? ('' + input.unit).toUpperCase() : null
     };
-    const summary = (entry.type === 'income' ? 'Income ' : 'Expense ') + entry.amount +
-                    ' · ' + entry.category + (entry.unit ? ' · ' + entry.unit : '');
-    if (await queueIfDual(req, res, 'finance.save', { entry }, summary)) return;
-    await applyBmsAction('finance.save', { entry });
-    await bmsAudit(req, 'finance.save', summary);
+    await db.insertFinance(entry);
     res.json({ entry });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
-app.delete('/api/admin/bms/finance/:id', requireBms, async (req, res) => {
-  const summary = 'Delete ledger entry ' + req.params.id;
-  if (await queueIfDual(req, res, 'finance.delete', { id: req.params.id }, summary)) return;
-  await applyBmsAction('finance.delete', { id: req.params.id });
-  await bmsAudit(req, 'finance.delete', summary);
-  res.json({ ok: true });
-});
+app.delete('/api/admin/bms/finance/:id', requireBms, async (req, res) => { await db.deleteFinance(req.params.id); res.json({ ok: true }); });
 
 app.get('/api/admin/bms/tickets', requireBms, async (req, res) => res.json({ tickets: await db.allTickets() }));
 app.put('/api/admin/bms/ticket', requireBms, async (req, res) => {
@@ -1700,18 +1486,6 @@ app.put('/api/admin/bms/ticket', requireBms, async (req, res) => {
 app.post('/api/admin/bms/ticket/:id/status', requireBms, async (req, res) => {
   const status = (req.body && req.body.status) || '';
   if (!['open','prog','done'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
-  // closing a job with a repair cost posts it to the expense ledger, so
-  // maintenance spend shows up in the building's finances automatically
-  const cost = parseInt((req.body && req.body.cost) || 0, 10);
-  if (status === 'done' && cost > 0) {
-    const tk = (await db.allTickets()).find(t => t.id === req.params.id);
-    await db.insertFinance({
-      id: 'EXP-' + req.params.id, type: 'expense', date: bIso(new Date()),
-      category: 'Maintenance', amount: cost, unit: tk ? tk.loc : null,
-      note: 'Ticket ' + req.params.id + (tk ? ' · ' + tk.title : '')
-    });
-    await bmsAudit(req, 'ticket.cost', 'Maintenance cost ' + cost + ' on ' + req.params.id);
-  }
   const row = await db.updateTicketStatus(req.params.id, status, status === 'done' ? bIso(new Date()) : null);
   if (!row) return res.status(404).json({ error: 'Ticket not found' });
   res.json({ ticket: row });
@@ -1784,66 +1558,9 @@ async function applyBmsAction(action, p){
   }
   if (action === 'finance.save')   { await db.insertFinance(p.entry); return true; }
   if (action === 'finance.delete') { await db.deleteFinance(p.id); return true; }
-  if (action === 'invoice.pay') {
-    const inv = (await db.allInvoices()).find(i => i.id === p.invoiceId);
-    if (!inv) throw new Error('Invoice no longer exists');
-    const receiptNo = await db.nextReceiptNo();
-    const paidTotal = (inv.paid_amount || 0) + p.amount;
-    const fullyPaid = paidTotal >= (inv.amount || 0) + (p.penalty || 0);
-    await db.updateInvoice(p.invoiceId, {
-      status: fullyPaid ? 'paid' : 'partial',
-      paid_at: fullyPaid ? (p.paidAt || bIso(new Date())) : null,
-      paid_amount: paidTotal, method: p.method, ref: p.ref,
-      receipt_no: receiptNo, penalty_paid: fullyPaid ? (p.penalty || 0) : 0
-    });
-    const payment = await db.insertPayment(Object.assign({}, p, { receiptNo }));
-    // rent received is real income — post it to the ledger automatically
-    await db.insertFinance({
-      id: 'INC-' + receiptNo, type: 'income', date: p.paidAt || bIso(new Date()),
-      category: 'Rent', amount: p.amount, unit: p.unit,
-      note: 'Invoice ' + p.invoiceId + ' · receipt ' + receiptNo
-    });
-    return { receiptNo, payment, fullyPaid, outstanding: Math.max(0, (inv.amount||0) + (p.penalty||0) - paidTotal) };
-  }
-  if (action === 'charge.add') { await db.insertInvoice(p.invoice); return true; }
-  if (action === 'charge.bulk') {
-    let n = 0;
-    for (const unit of p.units) {
-      await db.insertInvoice({
-        id: 'CHG-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase(),
-        unit, periodStart: bIso(new Date()), periodEnd: bIso(new Date()), periodMonths: 1,
-        dueDate: p.dueDate || bIso(bAddMonths(new Date(), 1)),
-        amount: p.amount, status: 'due', kind: p.kind, paidAmount: 0
-      });
-      n++;
-    }
-    return { created: n };
-  }
-  if (action === 'lease.renew') {
-    const l = await db.leaseByUnit(p.unit);
-    if (!l) throw new Error('No lease on ' + p.unit);
-    await db.upsertLease({
-      unit: l.unit, tenantId: l.tenant_id, start: l.start_date, end: p.newEnd,
-      cycleMonths: l.cycle_months, firstPeriodMonths: l.first_period_months,
-      firstDone: l.first_done, nextDue: l.next_due,
-      deposit: p.deposit !== undefined ? p.deposit : l.deposit,
-      rent: p.newRent !== undefined ? p.newRent : l.rent
-    });
-    return true;
-  }
-  if (action === 'deposit.settle') {
-    const l = await db.leaseByUnit(p.unit);
-    if (!l) throw new Error('No lease on ' + p.unit);
-    if (p.deducted > 0) {
-      await db.insertFinance({ id: 'INC-DEP-' + Date.now().toString(36).toUpperCase(),
-        type: 'income', date: bIso(new Date()), category: 'Deposit forfeited',
-        amount: p.deducted, unit: p.unit, note: p.note || 'Deducted from deposit' });
-    }
-    if (p.refunded > 0) {
-      await db.insertFinance({ id: 'EXP-DEP-' + Date.now().toString(36).toUpperCase(),
-        type: 'expense', date: bIso(new Date()), category: 'Deposit refund',
-        amount: p.refunded, unit: p.unit, note: p.note || 'Deposit returned to tenant' });
-    }
+  if (action === 'invoice.pay')    {
+    await db.updateInvoice(p.id, { status:'paid', paid_at: p.paidAt || bIso(new Date()),
+      method: p.method || null, ref: p.ref || null });
     return true;
   }
   throw new Error('Unknown action ' + action);
