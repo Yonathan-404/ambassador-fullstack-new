@@ -31,6 +31,15 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v29.1 — deployment fixes for Render
+
+`jsdom` (a test-only browser emulator) was listed as a **production**
+dependency, so every Render deploy installed it needlessly — build now runs
+`npm install --omit=dev` and production installs 82 packages instead of ~200.
+`CHECKOUT_ENABLED` is read by the server but was **missing from
+render.yaml**, so a Blueprint deploy never set it; it is now declared and
+defaults to `"false"`.
+
 ### v29 — financial integrity, receipts, deposits, utilities, sidebar UI
 
 **Dual control now covers every money path (the big gap in v28).** Only
