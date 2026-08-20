@@ -31,6 +31,61 @@ vanilla-JS single-page frontend (no build step) · Google Identity Services.
   toggle on mobile.
 - Fully bilingual (English/Amharic) like the rest of the store.
 
+### v29.1 — deployment fixes for Render
+
+`jsdom` (a test-only browser emulator) was listed as a **production**
+dependency, so every Render deploy installed it needlessly — build now runs
+`npm install --omit=dev` and production installs 82 packages instead of ~200.
+`CHECKOUT_ENABLED` is read by the server but was **missing from
+render.yaml**, so a Blueprint deploy never set it; it is now declared and
+defaults to `"false"`.
+
+### v29 — financial integrity, receipts, deposits, utilities, sidebar UI
+
+**Dual control now covers every money path (the big gap in v28).** Only
+leases and settings were gated; **payments, ledger entries, utility charges,
+renewals and deposit settlements applied immediately** even in dual mode —
+meaning an inputer could mark rent paid with nobody checking. All of them now
+queue for approval. Verified: a payment stays unapplied while pending and
+only lands after an authorisor approves.
+
+**Real payment recording.** An invoice no longer just flips to "paid".
+Payments capture amount, method and bank reference, support **partial
+payments** (common when a tenant pays half now), reject overpayment, and
+issue a **sequential receipt number**. Rent received posts to the income
+ledger automatically.
+
+**Printable receipts** — a clean, print-ready receipt with building details,
+tenant, unit, method, reference and amount, retrievable by receipt number.
+
+**Deposits are finally used.** Previously stored on every lease and read by
+nothing. Now there's a deposits register with total held, plus settle-at-
+move-out that splits deduction and refund, guards against settling more than
+held, and posts both sides to the ledger.
+
+**Utilities & service charges.** Bill water, electricity, cleaning, security
+or a shared service charge per unit — or apply one charge to every occupied
+shop at once. Each becomes an invoice the tenant sees in their portal.
+
+**One-click lease renewal** extends from the current end date (never
+backdates) and can raise the rent at the same time.
+
+**Documents** — lease agreements, ID copies and trade licences stored against
+the unit, so the BMS is the single source of truth for a tenancy.
+
+**Maintenance costs post to the ledger** when a job is closed, and tenants can
+attach a photo when reporting a problem.
+
+**The BMS page is now a proper console, not a row of buttons.** A grouped
+sidebar (Overview / Leasing / Money / Operations / Control) with live badges
+for overdue invoices, expiring leases, open tickets and pending approvals,
+a breadcrumb, and a slide-out drawer with scrim on mobile.
+
+*Note on testing:* two apparent failures during verification turned out to be
+faults in my own test — it tried to overpay a 200-birr service charge, and
+later filtered for `status='due'` when swept invoices are `overdue`. The
+server behaved correctly in both cases; the guards did their job.
+
 ### v28 — BMS roles, maker–checker, unified vacancy, tenant rent portal
 
 **Separate BMS access (item 1).** Building staff no longer need the master

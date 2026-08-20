@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Ambassador Store</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#f6f3f4;color:#221820;margin:0;padding:24px}
+  .wrap{max-width:1000px;margin:0 auto}
+  h1{font-size:1.3rem;display:flex;align-items:center;gap:10px}
+  h1 span{background:#8a1450;color:#fff;border-radius:8px;padding:4px 10px;font-size:.8rem}
+  .bar{display:flex;gap:10px;margin:14px 0 20px}
+  input{flex:1;padding:10px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:.9rem}
+  button{background:#8a1450;color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:600;cursor:pointer}
+  button.alt{background:#0D7A6F}
+  .card{background:#fff;border:1px solid #e8e2e5;border-radius:14px;padding:14px 16px;margin-bottom:12px;font-size:.85rem}
+  .top{display:flex;justify-content:space-between;font-weight:700}
+  .ref{color:#8a1450;font-family:ui-monospace,monospace}
+  .muted{color:#8a7a84;font-size:.78rem}
+  .tot{color:#8a1450;font-weight:700}
+  .pill{background:#e9f8ee;color:#1d9e54;border-radius:99px;padding:2px 10px;font-size:.7rem;font-weight:700;text-transform:uppercase}
+  .empty{padding:40px;text-align:center;color:#999}
+  table{width:100%;border-collapse:collapse}
+  td{padding:4px 8px 4px 0;vertical-align:top}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ambassador Store <span>ADMIN</span></h1>
+  <p class="muted">Enter your <b>ADMIN_KEY</b> (set in the server environment) to view orders and back-in-stock requests. This page is read-only.</p>
+  <div class="bar">
+    <input id="key" type="password" placeholder="ADMIN_KEY">
+    <button onclick="load('orders')">Orders</button>
+    <button class="alt" onclick="load('notify')">Notify requests</button>
+  </div>
+  <div id="out" class="empty">Enter the key and choose a view.</div>
+</div>
+<script>
+const out = document.getElementById('out');
+const esc = s => (''+s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function load(kind){
+  const key = document.getElementById('key').value.trim();
+  if(!key){ out.className='empty'; out.textContent='Please enter the ADMIN_KEY.'; return; }
+  out.className='empty'; out.textContent='Loading…';
+  try{
+    const r = await fetch('/api/admin/' + kind, { headers: { 'x-admin-key': key } });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || r.status);
+    out.className='';
+    if(kind === 'orders'){
+      const list = d.orders || [];
+      out.innerHTML = list.length ? list.map(o => {
+        const items = (o.items || []).map(i => esc(i.name) + (i.variant ? ' ['+esc(i.variant)+']' : '') + ' ×' + i.qty).join(', ');
+        const b = o.buyer || {};
+        return `<div class="card">
+          <div class="top"><span class="ref">${esc(o.ref)}</span><span class="pill">${esc(o.status||'placed')}</span></div>
+          <table>
+            <tr><td class="muted">Seller</td><td>${esc(o.tenant_id)}</td><td class="muted">When</td><td>${esc((o.created_at||'').toString().slice(0,19).replace('T',' '))}</td></tr>
+            <tr><td class="muted">Items</td><td colspan="3">${items}</td></tr>
+            <tr><td class="muted">Buyer</td><td>${esc(b.name||'')} · ${esc(b.phone||'')}</td>
+                <td class="muted">Deliver</td><td>${b.method==='pickup' ? 'Pickup' : esc((b.area||'')+' — '+(b.addr||''))}</td></tr>
+            <tr><td class="muted">Money</td><td colspan="3">subtotal ${o.subtotal} + delivery ${o.delivery_fee} + VAT ${o.tax} = <span class="tot">${o.total} ETB</span> → ${esc((o.bank||{}).name||'')} ${esc((o.bank||{}).acct||'')}</td></tr>
+          </table>
+        </div>`;
+      }).join('') : '<div class="empty">No orders yet.</div>';
+    } else {
+      const list = d.requests || [];
+      out.innerHTML = list.length ? '<div class="card"><table>' + list.map(n =>
+        `<tr><td class="ref">${esc(n.product_id)}</td><td>${esc(n.phone)}</td><td class="muted">${esc((n.created_at||'').toString().slice(0,19).replace('T',' '))}</td></tr>`
+      ).join('') + '</table></div>' : '<div class="empty">No notify requests yet.</div>';
+    }
+  }catch(e){ out.className='empty'; out.textContent='Error: ' + e.message; }
+}
+</script>
+</body>
+</html>
