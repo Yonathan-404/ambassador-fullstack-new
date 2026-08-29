@@ -125,8 +125,6 @@ if (process.env.DATABASE_URL) {
       hours TEXT, location TEXT, employment_type TEXT, description TEXT,
       contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
       active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
-      
-        -- ═══ Ambassador BMS (building management) ═══
     CREATE TABLE IF NOT EXISTS leases (
       unit TEXT PRIMARY KEY, tenant_id TEXT, start_date TEXT, end_date TEXT,
       cycle_months INT DEFAULT 1, first_period_months INT DEFAULT 1, first_done BOOLEAN DEFAULT false,
@@ -143,11 +141,6 @@ if (process.env.DATABASE_URL) {
     CREATE TABLE IF NOT EXISTS bms_tickets (
       id TEXT PRIMARY KEY, title TEXT, loc TEXT, cat TEXT, pri TEXT, asg TEXT, status TEXT DEFAULT 'open',
       created TEXT, done_at TEXT);
-    CREATE TABLE IF NOT EXISTS bms_announcements (
-      id TEXT PRIMARY KEY, title TEXT, aud TEXT, body TEXT, at TEXT);
-    CREATE TABLE IF NOT EXISTS bms_config (
-      id INT PRIMARY KEY, data JSONB, updated_at TIMESTAMPTZ DEFAULT now());
-
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS paid_amount INT DEFAULT 0;
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS receipt_no TEXT;
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'rent';
@@ -180,6 +173,12 @@ if (process.env.DATABASE_URL) {
       rating SMALLINT NOT NULL, created_at TIMESTAMPTZ DEFAULT now(), updated_at TIMESTAMPTZ DEFAULT now(),
       UNIQUE(tenant_id, user_id));
 
+    -- ═══ Ambassador BMS (building management) ═══
+
+    CREATE TABLE IF NOT EXISTS bms_announcements (
+      id TEXT PRIMARY KEY, title TEXT, aud TEXT, body TEXT, at TEXT);
+    CREATE TABLE IF NOT EXISTS bms_config (
+      id INT PRIMARY KEY, data JSONB, updated_at TIMESTAMPTZ DEFAULT now());
   `);
   db = {
     kind: 'postgres',
