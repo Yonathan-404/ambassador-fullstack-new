@@ -125,6 +125,7 @@ if (process.env.DATABASE_URL) {
       hours TEXT, location TEXT, employment_type TEXT, description TEXT,
       contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
       active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
+
     CREATE TABLE IF NOT EXISTS leases (
       unit TEXT PRIMARY KEY, tenant_id TEXT, start_date TEXT, end_date TEXT,
       cycle_months INT DEFAULT 1, first_period_months INT DEFAULT 1, first_done BOOLEAN DEFAULT false,
@@ -141,14 +142,15 @@ if (process.env.DATABASE_URL) {
     CREATE TABLE IF NOT EXISTS bms_tickets (
       id TEXT PRIMARY KEY, title TEXT, loc TEXT, cat TEXT, pri TEXT, asg TEXT, status TEXT DEFAULT 'open',
       created TEXT, done_at TEXT);
+
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS paid_amount INT DEFAULT 0;
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS receipt_no TEXT;
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'rent';
     ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS photo TEXT;
     ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS cost INT DEFAULT 0;
     ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS note TEXT;
-    ALTER TABLE bms_leases ADD COLUMN IF NOT EXISTS deposit_held INT DEFAULT 0;
-    ALTER TABLE bms_leases ADD COLUMN IF NOT EXISTS deposit_note TEXT;
+    ALTER TABLE leases ADD COLUMN IF NOT EXISTS deposit_held INT DEFAULT 0;
+    ALTER TABLE leases ADD COLUMN IF NOT EXISTS deposit_note TEXT;
     CREATE TABLE IF NOT EXISTS bms_payments (
       id SERIAL PRIMARY KEY, invoice_id TEXT, unit TEXT, amount INT, penalty INT DEFAULT 0,
       method TEXT, ref TEXT, receipt_no TEXT, paid_at TEXT, taken_by TEXT, note TEXT,
