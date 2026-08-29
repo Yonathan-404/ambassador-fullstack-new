@@ -1,0 +1,50 @@
+# Render Blueprint — deploy with "New +" → "Blueprint" pointing at this repo.
+# This creates BOTH the web service and the Postgres database, and wires
+# DATABASE_URL automatically. Deploying as a plain "Web Service" ignores this
+# file, which is why data would not persist.
+services:
+  - type: web
+    name: ambassador-store
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ambassador-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: CHECKOUT_ENABLED
+        value: "false"     # e-commerce is on hold; set to "true" when checkout goes live
+      - key: GOOGLE_CLIENT_ID
+        sync: false        # set in dashboard after creating a Google OAuth client
+      - key: SMS_PROVIDER
+        sync: false        # afromessage | twilio (optional buyer SMS)
+      - key: AFROMESSAGE_TOKEN
+        sync: false
+      - key: AFROMESSAGE_FROM
+        sync: false
+      - key: AFROMESSAGE_SENDER
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false        # optional: order notifications
+      - key: TELEGRAM_CHAT_ID
+        sync: false        # optional
+      - key: CHAPA_SECRET_KEY
+        sync: false        # optional: enables "Pay with Chapa" at checkout
+      - key: USSD_PROVIDER
+        sync: false        # optional: enables USSD push at checkout (needs a bank/aggregator agreement)
+      - key: USSD_API_URL
+        sync: false
+      - key: USSD_API_KEY
+        sync: false
+databases:
+  - name: ambassador-db
+    plan: free

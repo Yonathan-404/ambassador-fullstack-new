@@ -1,0 +1,29 @@
+{
+  "name": "Ambassador Shopping Mall",
+  "short_name": "Ambassador",
+  "description": "The online directory and storefront of Ambassador Shopping Mall, Arat Kilo, Addis Ababa — browse every floor, every shop. Built on Bisinka.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fffaf0",
+  "theme_color": "#8a1450",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["shopping", "business", "lifestyle"],
+  "icons": [
+    { "src": "/icons/icon-192.png",     "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png",     "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Building Directory", "short_name": "Directory", "url": "/?source=pwa#directory",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Shop Products", "short_name": "Shop", "url": "/?source=pwa#shop",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Building Services", "short_name": "Services", "url": "/?source=pwa#services",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
