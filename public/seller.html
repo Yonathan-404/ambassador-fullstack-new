@@ -33,6 +33,9 @@
   .brandbar img{height:18px;width:auto;border-radius:4px}
   .brandbar b{color:var(--wine)}
   .instbtn{background:linear-gradient(135deg,var(--gold-d),var(--gold-deep))!important}
+  .livebtn{display:flex;align-items:center;gap:7px;font-weight:700}
+  .livebtn.on{background:#e1306c;animation:livepulse 1.6s ease-in-out infinite}
+  @keyframes livepulse{0%,100%{box-shadow:0 0 0 0 rgba(225,48,108,.6)}50%{box-shadow:0 0 0 7px rgba(225,48,108,0)}}
   .top button{background:rgba(255,255,255,.15);color:#fff;border:0;border-radius:9px;padding:8px 14px;cursor:pointer;font-size:.8rem;white-space:nowrap}
 
   /* ── sidebar shell — same skeleton as the BMS/Admin consoles, tuned for the seller portal ── */
@@ -275,6 +278,9 @@ function shell(inner){
       <span class="shop">${esc(me.floor||'')}${me.cat?' · '+esc(me.cat):''}</span>
     </div>
     <span class="spacer"></span>
+    <button id="liveToggle" class="livebtn ${me.tiktokLive?'on':''}" onclick="toggleTiktokLive()" title="Let shoppers know you're live on TikTok right now">
+      <i class="fab fa-tiktok"></i> ${me.tiktokLive?'Live now — tap to end':'Go live on TikTok'}
+    </button>
     <button id="sellerInstall" style="display:none" class="instbtn" onclick="installApp()"><i class="fas fa-mobile-screen-button"></i> Install</button>
     <button onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Sign out</button>
   </div>
@@ -849,6 +855,18 @@ async function raiseTicket(){
     await api('/api/seller/ticket',{method:'POST',body:{title,
       cat:document.getElementById('tkCat').value, pri:document.getElementById('tkPri').value}});
     render();
+  }catch(e){ alert(e.message); }
+}
+/* "Go live on TikTok" — a quick top-bar switch, separate from the profile
+   Save button since live status is time-sensitive: a seller starting or
+   ending a stream shouldn't have to open the Profile tab to flip it. */
+async function toggleTiktokLive(){
+  const next = !me.tiktokLive;
+  try{
+    await api('/api/seller/profile',{method:'POST',body:{tiktokLive:next}});
+    me.tiktokLive = next;
+    const b = document.getElementById('liveToggle');
+    if(b){ b.classList.toggle('on', next); b.innerHTML = `<i class="fab fa-tiktok"></i> ${next?'Live now — tap to end':'Go live on TikTok'}`; }
   }catch(e){ alert(e.message); }
 }
 async function saveProfile(){

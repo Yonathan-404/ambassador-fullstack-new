@@ -419,7 +419,7 @@ async function show(view){
     }
     else if(view==='notify'){
       const d=await api('/api/admin/notify'); const list=d.requests||[]; out.className='';
-      out.innerHTML=list.length?'<div class="card">'+list.map(n=>`<div class="row"><span class="ref">${esc(n.product_id)}</span><span>${esc(n.phone)}</span><span class="muted">${esc((n.created_at||'').toString().slice(0,16).replace('T',' '))}</span></div>`).join('')+'</div>':'<div class="empty">No notify requests.</div>';
+      out.innerHTML=list.length?'<div class="card">'+list.map(n=>`<div class="row"><span class="ref">${n.tenant_id?'🏬 '+esc(n.tenant_id):esc(n.product_id)}</span><span>${esc(n.phone)}</span><span class="muted">${esc((n.created_at||'').toString().slice(0,16).replace('T',' '))}</span></div>`).join('')+'</div>':'<div class="empty">No notify requests.</div>';
     }
     else if(view==='sms'){
       const d=await api('/api/admin/sms'); const list=d.messages||[]; out.className='';

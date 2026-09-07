@@ -563,6 +563,14 @@
 #amb-store .amb-modal-box{position:relative;background:#fff;border-radius:22px;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;box-shadow:var(--lg);transform:scale(.95) translateY(18px);transition:transform .35s var(--ease)}
 #amb-store .amb-modal-box>.amb-modal-x{position:sticky;top:10px;left:100%;margin-right:10px;float:right}
 #amb-store .amb-modal.on .amb-modal-box{transform:none}
+/* the shop window (tenant profile) goes edge-to-edge on phones so its hero
+   image fills the width with no wasted side margin — scoped with :has() to
+   just this modal's content so every other modal type (product quick view,
+   office details, checkout, etc.) keeps its normal centered card look */
+@media(max-width:640px){
+  #amb-store .amb-modal:has(.amb-tp){padding:0}
+  #amb-store .amb-modal:has(.amb-tp) .amb-modal-box{width:100vw;max-width:100vw;max-height:100vh;border-radius:0}
+}
 #amb-store .amb-modal-x{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:var(--tr);z-index:3}
 #amb-store .amb-modal-x:hover{background:var(--danger)}
 
@@ -946,6 +954,11 @@
 #amb-store .amb-kiosk-window img{width:100%;height:100%;object-fit:cover;opacity:.9;transition:transform .55s var(--ease)}
 #amb-store .amb-kiosk:hover .amb-kiosk-window img{transform:scale(1.06)}
 #amb-store .amb-kiosk-glare{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 40%,transparent 41%);pointer-events:none}
+/* blinking "live on TikTok" chip — a seller-controlled real-time signal,
+   shown on the home-page card window and again on the shop page hero */
+#amb-store .amb-kiosk-live{position:absolute;top:8px;left:8px;z-index:6;display:flex;align-items:center;gap:4px;
+  background:#e1306c;color:#fff;font-size:.62rem;font-weight:800;padding:4px 8px 4px 6px;border-radius:100px;
+  animation:amblive 1.6s ease-in-out infinite}
 /* logo + floor sit on one horizontal row, overlapping the shop window */
 #amb-store .amb-kiosk-idrow{
   position:absolute;top:120px;left:18px;right:18px;z-index:5;
@@ -1029,10 +1042,16 @@
 #amb-store .amb-pm-thumb:hover{border-color:var(--gold)}
 
 /* tenant profile modal */
-#amb-store .amb-tp{display:flex;flex-direction:column}
+/* explicit width:100% matters here: .amb-tp sits right after the floated
+   close button, and a block box with an auto width shrinks to avoid a
+   preceding float — which was quietly clipping the hero (and everything
+   else) short on the right. An explicit width stops that shrink. */
+#amb-store .amb-tp{display:flex;flex-direction:column;width:100%}
 /* sliding hero — up to 5 shop photos auto-advance, tap to zoom, gives each
-   shop the feel of its own standalone web/app landing header */
-#amb-store .amb-tp-hero{height:210px;position:relative;overflow:hidden;border-radius:22px 22px 0 0;cursor:pointer;background:var(--surface2)}
+   shop the feel of its own standalone web/app landing header. Height is
+   viewport-relative on phones (scales with width like a widescreen banner)
+   and a fixed, more generous size on wider screens. */
+#amb-store .amb-tp-hero{height:240px;position:relative;overflow:hidden;border-radius:22px 22px 0 0;cursor:pointer;background:var(--surface2)}
 #amb-store .amb-tp-hero-track{display:flex;height:100%;transition:transform .55s var(--ease)}
 #amb-store .amb-tp-hero-slide{flex:0 0 100%;height:100%}
 #amb-store .amb-tp-hero-slide img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1045,10 +1064,80 @@
 #amb-store .amb-tp-hero-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:2}
 #amb-store .amb-tp-hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);cursor:pointer;transition:var(--tr)}
 #amb-store .amb-tp-hero-dot.on{background:#fff;width:18px;border-radius:4px}
+/* vertical social rail, overlaid on the top-left of the hero photo — styled
+   like the storefront's own floating .amb-iconrail (frosted glass pill,
+   gold hairline) so it reads as the same design language, not a bolt-on */
+#amb-store .amb-tp-hero-socials{
+  position:absolute;top:14px;left:12px;z-index:2;display:flex;flex-direction:column;gap:6px;
+  padding:7px 6px;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(212,175,55,.45);border-radius:16px;box-shadow:var(--lg)
+}
+#amb-store .amb-tp-hero-socials .amb-soc-mini{width:30px;height:30px;font-size:.78rem;border-radius:9px}
+@media(max-width:640px){
+  #amb-store .amb-tp-hero{height:56vw;min-height:190px;max-height:300px;border-radius:0}
+  #amb-store .amb-tp-hero-socials .amb-soc-mini{width:27px;height:27px;font-size:.72rem}
+}
+/* trust badges — Open/Closed, Trending, Active-now, TikTok-live — a single
+   row so the shop's real-time signals read at a glance, app-dashboard style */
+#amb-store .amb-tp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+#amb-store .amb-tp-badge{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;font-weight:700;padding:5px 10px;border-radius:100px}
+#amb-store .amb-tp-badge.open{background:var(--teal-tint,#e3f6f2);color:var(--teal-d,#0d7d6e)}
+#amb-store .amb-tp-badge.closed{background:var(--surface2);color:var(--mid)}
+#amb-store .amb-tp-badge.trending{background:var(--gold-tint);color:var(--gold-deep)}
+#amb-store .amb-tp-badge.active{background:var(--surface2);color:var(--ink2,var(--ink))}
+#amb-store .amb-tp-badge.active i{color:#1fb355}
+#amb-store .amb-tp-badge.live{background:#e1306c;color:#fff;animation:amblive 1.6s ease-in-out infinite}
+@keyframes amblive{0%,100%{box-shadow:0 0 0 0 rgba(225,48,108,.55)}50%{box-shadow:0 0 0 6px rgba(225,48,108,0)}}
+/* TikTok-live blinking chip on the hero itself (top-right, above fullscreen) */
+#amb-store .amb-tp-hero-live{position:absolute;top:14px;right:52px;z-index:3;display:flex;align-items:center;gap:5px;
+  background:#e1306c;color:#fff;font-size:.68rem;font-weight:800;padding:5px 10px 5px 8px;border-radius:100px;
+  animation:amblive 1.6s ease-in-out infinite}
+@media(max-width:640px){ #amb-store .amb-tp-hero-live{top:92px;right:12px} }
+/* favorite (heart) + notify (bell) — small icon toggles beside the shop name */
+#amb-store .amb-tp-iconbtns{display:flex;gap:6px;margin-left:auto;flex-shrink:0;align-self:center}
+#amb-store .amb-tp-iconbtn{width:34px;height:34px;border-radius:10px;background:var(--surface2);color:var(--mid);
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:var(--tr);flex-shrink:0;border:none;cursor:pointer}
+#amb-store .amb-tp-iconbtn:hover{background:var(--wine-tint);color:var(--wine)}
+#amb-store .amb-tp-iconbtn.fav.on{background:var(--wine);color:#fff}
+#amb-store .amb-tp-iconbtn.notify.on{background:var(--gold-d);color:#fff}
+/* sticky mini-header — slides in once the hero scrolls out of view, so the
+   shop's identity stays on screen like a real app's persistent top bar */
+#amb-store .amb-tp-stickybar{
+  position:sticky;top:0;left:0;right:0;z-index:15;display:flex;align-items:center;gap:10px;
+  padding:10px 16px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);transform:translateY(-110%);transition:transform .25s var(--ease)
+}
+#amb-store .amb-tp-stickybar.show{transform:translateY(0)}
+#amb-store .amb-tp-stickybar-av{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.72rem;color:#fff;flex-shrink:0}
+#amb-store .amb-tp-stickybar-name{font-weight:700;font-size:.84rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#amb-store .amb-tp-stickybar-sub{font-size:.68rem;color:var(--mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#amb-store .amb-tp-stickybar-call{margin-left:auto;flex-shrink:0;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--gold-d),var(--gold-deep));
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+/* photo grid section — Instagram-style thumbnails, "See all" opens the
+   full lightbox gallery so a shop with many photos isn't stuck in one strip */
+#amb-store .amb-tp-photogrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:16px}
+#amb-store .amb-tp-photogrid-cell{position:relative;aspect-ratio:1;border-radius:9px;overflow:hidden;cursor:pointer;background:var(--surface2)}
+#amb-store .amb-tp-photogrid-cell img{width:100%;height:100%;object-fit:cover;transition:var(--tr)}
+#amb-store .amb-tp-photogrid-cell:hover img{transform:scale(1.06)}
+#amb-store .amb-tp-photogrid-more{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem}
+/* related shops — a light "keep browsing" strip at the very end */
+#amb-store .amb-tp-related{margin-top:4px}
+#amb-store .amb-tp-related-head{font-size:.86rem;font-weight:700;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+#amb-store .amb-tp-related-head i{color:var(--wine)}
+#amb-store .amb-tp-related-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+#amb-store .amb-tp-related-row::-webkit-scrollbar{display:none}
+#amb-store .amb-tp-related-chip{flex:0 0 auto;width:112px;scroll-snap-align:start;cursor:pointer;text-align:center}
+#amb-store .amb-tp-related-chip-av{width:56px;height:56px;border-radius:16px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:1rem;box-shadow:var(--sm);background-size:cover;background-position:center}
+#amb-store .amb-tp-related-chip-name{font-size:.7rem;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3}
 /* fullscreen toggle — sits just below the modal's close (X) button so the
    shop can be viewed as if it were its own separate app */
 #amb-store .amb-tp-fullscreen{position:absolute;top:54px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;border:none;cursor:pointer;transition:var(--tr);z-index:3}
 #amb-store .amb-tp-fullscreen:hover{background:var(--wine)}
+/* on phones the .amb-tp-meta strip now sits above the hero, so the button
+   is nudged down to stay clear of it and land on the photo, not the strip */
+@media(max-width:640px){ #amb-store .amb-tp-fullscreen{top:92px} }
 /* CSS fallback used when the real Fullscreen API is unavailable/blocked, and
    also applied (harmlessly, alongside :fullscreen) when it succeeds */
 #amb-store .amb-modal-box.amb-tp-full{position:fixed;inset:0;margin:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;border-radius:0;z-index:650}
@@ -1062,8 +1151,13 @@
 #amb-store .amb-tp-psec-head{font-size:.86rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:10px}
 #amb-store .amb-tp-psec-head i{color:var(--wine)}
 #amb-store .amb-tp-psec-ct{color:var(--mid);font-weight:500}
-#amb-store .amb-tp-pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:12px}
-#amb-store .amb-tp-pgrid .amb-pcard-img{height:120px}
+/* same sizing as the main shop grid (.amb-prod-grid) on purpose — a card
+   shouldn't look like a shrunken afterthought just because it's embedded */
+#amb-store .amb-tp-pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:12px}
+@media(max-width:640px){
+  #amb-store .amb-tp-pgrid{grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:10px}
+  #amb-store .amb-tp-pgrid .amb-pcard-img{height:140px}
+}
 #amb-store .amb-tp-pmore{width:100%;margin-top:10px;padding:11px;border-radius:11px;background:var(--surface2);color:var(--wine);font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:7px;transition:var(--tr)}
 #amb-store .amb-tp-pmore:hover{background:var(--wine);color:#fff}
 #amb-store .amb-tp-pempty{padding:16px;text-align:center;color:var(--mid);font-size:.82rem;background:var(--surface2);border-radius:12px;margin-bottom:16px}
@@ -1074,6 +1168,17 @@
 #amb-store .amb-tp-cat{font-size:.74rem;color:var(--wine);font-weight:600;display:flex;align-items:center;gap:6px}
 #amb-store .amb-tp-body{padding:18px 24px 24px}
 #amb-store .amb-tp-blurb{font-size:.88rem;color:var(--mid);line-height:1.7;margin-bottom:16px}
+/* compact mobile-only strip, above the hero: Mobile + Floor as icon+value
+   only (no text labels) so the two most-needed facts are visible without
+   scrolling, without eating the width a full labeled row would need */
+#amb-store .amb-tp-meta{display:none}
+@media(max-width:640px){
+  #amb-store .amb-tp-body{padding:16px 16px 20px}
+  #amb-store .amb-tp-meta{display:flex;align-items:center;flex-wrap:wrap;gap:14px;padding:9px 16px;font-size:.78rem;font-weight:700;color:var(--ink);background:var(--surface2)}
+  #amb-store .amb-tp-meta-item{display:flex;align-items:center;gap:6px}
+  #amb-store .amb-tp-meta-item i{color:var(--wine);width:14px;text-align:center}
+  #amb-store .amb-tp-row.amb-tp-row-mobile,#amb-store .amb-tp-row.amb-tp-row-floor{display:none}
+}
 /* shop photos now live in the sliding hero above (up to 5, managed from the
    seller portal) — this lightbox is reused for tap-to-zoom on hero slides */
 #amb-store .amb-tp-lightbox{position:fixed;inset:0;z-index:800;background:rgba(10,4,8,.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -1096,10 +1201,12 @@
 #amb-store .amb-tp-row-v{font-weight:700;color:var(--ink)}
 #amb-store .amb-tp-socials{display:flex;gap:9px;margin-bottom:16px}
 #amb-store .amb-tp-socials .amb-soc-mini{width:38px;height:38px;font-size:.95rem;border-radius:11px}
-#amb-store .amb-tp-acts{display:flex;gap:9px}
-#amb-store .amb-tp-shop{flex:1;background:linear-gradient(135deg,var(--wine),var(--wine-l));color:#fff;padding:13px;border-radius:12px;font-size:.86rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;transition:var(--tr)}
+/* compact, app-style action row — a little smaller and tighter than a
+   typical marketing "big CTA button" so several fit comfortably in a row */
+#amb-store .amb-tp-acts{display:flex;gap:8px}
+#amb-store .amb-tp-shop{flex:1;background:linear-gradient(135deg,var(--wine),var(--wine-l));color:#fff;padding:10px;border-radius:11px;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--tr)}
 #amb-store .amb-tp-shop:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(123,0,63,.35)}
-#amb-store .amb-tp-wa{width:48px;height:48px;border-radius:12px;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:var(--tr)}
+#amb-store .amb-tp-wa{width:40px;height:40px;border-radius:11px;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem;transition:var(--tr);flex-shrink:0}
 #amb-store .amb-tp-wa:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(37,211,102,.4)}
 
 /* ════ VERIFIED-BADGE INFO POPUP ════ */
@@ -1924,13 +2031,13 @@
 #amb-store .amb-off-card{border:1.5px solid var(--line,#eee);border-radius:16px;overflow:hidden;transition:var(--tr);background:#fff}
 #amb-store .amb-off-card:hover{transform:translateY(-4px);box-shadow:var(--md);border-color:var(--wine-l)}
 /* ── save contact + book appointment ── */
-#amb-store .amb-tp-acts2{display:flex;gap:9px;margin-top:9px}
+#amb-store .amb-tp-acts2{display:flex;gap:8px;margin-top:8px}
 #amb-store .amb-tp-vcard,#amb-store .amb-tp-book{
-  flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
-  font-size:.78rem;font-weight:700;padding:11px;border-radius:11px;border:none;cursor:pointer;transition:var(--tr)
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:.76rem;font-weight:700;padding:9px;border-radius:10px;border:none;cursor:pointer;transition:var(--tr)
 }
-#amb-store .amb-tp-vcard{background:var(--wine-tint);color:var(--wine-d);border:1.5px solid rgba(138,20,80,.18)}
-#amb-store .amb-tp-vcard:hover{background:var(--wine);color:#fff;border-color:transparent}
+#amb-store .amb-tp-vcard{background:linear-gradient(135deg,var(--wine),var(--wine-l));color:#fff;border:none}
+#amb-store .amb-tp-vcard:hover{background:linear-gradient(135deg,var(--wine-d),var(--wine));transform:translateY(-2px)}
 #amb-store .amb-tp-book{background:linear-gradient(135deg,var(--gold-d),var(--gold-deep));color:#fff}
 #amb-store .amb-tp-book:hover{background:linear-gradient(135deg,var(--gold),var(--gold-d));transform:translateY(-2px)}
 /* ── appointment booking modal ── */
@@ -3108,6 +3215,7 @@ var state = {
   orders: load('amb-orders', []), // [order]  (local history; backend will sync later)
   user: load('amb-user', null),   // {name,email,picture,sub} — set on (simulated) Google sign-in
   notify: load('amb-notify', []), // [{pid,phone,ts}] back-in-stock requests (backend-ready)
+  favShops: load('amb-fav-shops', []), // [tid] shops saved/favorited on this device
   cartTs: load('amb-cart-ts', 0), // last time cart changed (abandoned-cart recovery)
   // checkout
   coTenant: null,
@@ -3218,6 +3326,13 @@ function applyCatalog(cat){
   var svcs = cat.services || b.services;
   if (svcs) { SERVICES.length = 0; svcs.forEach(function(s){ SERVICES.push(s); }); }
   rebuildProducts();
+  /* BUILDING.tenants was just swapped for a fresh array of objects from the
+     server (not mutated in place) — the daily-8 homepage sample cached a
+     snapshot of the OLD objects during the very first render in boot(), so
+     it must be dropped here or the home grid would keep showing stale
+     tenant references (missing live status, new photos, etc.) for the
+     rest of the day even though BUILDING.tenants itself is now current. */
+  __dailySubsetCache = null;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -3278,7 +3393,8 @@ window.__AMB = {
   load:load, save:save, $:$, esc:esc, fmt:fmt, fmtN:fmtN, P:P, tenant:tenant, stars:stars, ratingLine:ratingLine, dailyTenantSubset:dailyTenantSubset, seededRandom:seededRandom, todayKey:todayKey, t:t,
   onSaleProducts:onSaleProducts, sendOrderToTenant:sendOrderToTenant, saveOrder:saveOrder,
   saveCart:saveCart, saveNotify:saveNotify, computeTotals:computeTotals, nearestArea:nearestArea, kmBetween:kmBetween,
-  api:api, cfg:{ googleClientId:null, demoAuth:true, online:false }, applyCatalog:applyCatalog, rebuildProducts:rebuildProducts
+  api:api, cfg:{ googleClientId:null, demoAuth:true, online:false }, applyCatalog:applyCatalog, rebuildProducts:rebuildProducts,
+  trendingIds:[] // [tid] populated once from /api/trending; read live, never cached locally
 };
 
 })();
@@ -3298,6 +3414,21 @@ function initials(name){ return name.split(' ').slice(0,2).map(function(w){retur
 function nameFor(obj){ return state.lang==='am' && obj.nameAm ? obj.nameAm : obj.name; }
 function floorUnit(obj){ return obj && obj.unit ? obj.floor + ' - ' + obj.unit : (obj ? obj.floor : ''); }
 A.floorUnit = floorUnit;
+/* Open now / Closed — only computable once a shop has structured weekly
+   hours (tn.hoursWeekly = {mon:'09:00-21:00', ..., sun:'closed'}). No seller
+   UI writes this yet, so it quietly returns null (no badge) until it does —
+   built ahead of that so the badge lights up the moment the data exists. */
+function ambComputeOpenStatus(tn){
+  if (!tn.hoursWeekly) return null;
+  var days=['sun','mon','tue','wed','thu','fri','sat'];
+  var d=new Date(), key=days[d.getDay()], range=tn.hoursWeekly[key];
+  if (!range || /^closed$/i.test(range)) return { open:false, label:(state.lang==='am'?'ዛሬ ዝግ ነው':'Closed today') };
+  var m=/^\s*(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})\s*$/.exec(range);
+  if (!m) return null;
+  var openMin=(+m[1])*60+(+m[2]), closeMin=(+m[3])*60+(+m[4]), nowMin=d.getHours()*60+d.getMinutes();
+  var isOpen = nowMin>=openMin && nowMin<closeMin;
+  return { open:isOpen, label: isOpen ? (state.lang==='am'?'ክፍት አሁን':'Open now') : (state.lang==='am'?'ዝግ ነው':'Closed now') };
+}
 var FLOOR_AM = { 'Ground Floor':'መሬት ወለል', '1st Floor':'1ኛ ፎቅ', '2nd Floor':'2ኛ ፎቅ', '3rd Floor':'3ኛ ፎቅ', '4th Floor':'4ኛ ፎቅ', '5th Floor':'5ኛ ፎቅ', '6th Floor':'6ኛ ፎቅ' };
 A.FLOOR_AM = FLOOR_AM;
 function floorColor(floorName){ var t=BUILDING.tenants.filter(function(x){ return x.floor===floorName; })[0]; return (t&&t.color)||'var(--wine)'; }
@@ -3721,6 +3852,7 @@ function tenantCardHTML(tn){
       '<div class="amb-kiosk-window">'+
         '<img src="'+esc(tn.photo)+'" alt="'+esc(tn.name)+'" loading="lazy" onerror="this.style.display=\'none\'">'+
         '<div class="amb-kiosk-glare"></div>'+
+        (tn.tiktokLive?'<span class="amb-kiosk-live"><i class="fab fa-tiktok"></i> LIVE</span>':'')+
       '</div>'+
       /* logo row: the shop's own picture (initials until they upload one),
          with floor + unit sitting horizontally beside it */
@@ -3858,14 +3990,31 @@ function ambUpdateFullscreenIcon(){
   });
 });
 
+/* sticky mini-header — registered ONCE on the modal box itself (same pattern
+   as the fullscreenchange listeners above) rather than per-open, so it never
+   piles up duplicate listeners across repeated opens. It no-ops harmlessly
+   whenever the box isn't currently showing a tenant profile. */
+(function(){
+  var box = document.getElementById('ambProdModalBox');
+  if(!box) return;
+  box.addEventListener('scroll', function(){
+    var hero = document.getElementById('ambTpHero');
+    var bar = document.getElementById('ambTpStickybar');
+    if(!hero || !bar) return;
+    bar.classList.toggle('show', box.scrollTop > hero.offsetHeight - 40);
+  });
+})();
+
 window.ambOpenTenant = function(tid){
   var tn=tenant(tid); if(!tn) return;
   var callHref = tn.mobile ? 'tel:'+tn.mobile.replace(/\s/g,'') : '';
-  var waHref = tn.whatsapp ? 'https://wa.me/'+tn.whatsapp : '';
   // up to 5 shop photos, uploaded by the seller from their portal, feed the
   // sliding hero; a single tn.photo is used as a static one-slide fallback
   var heroImages = (tn.gallery && tn.gallery.length) ? tn.gallery.slice(0,5) : (tn.photo ? [tn.photo] : []);
   tpGalleryState.images = heroImages;
+  // vertical social rail overlaid on the hero photo itself (top-left corner)
+  // instead of a plain horizontal row further down the page
+  var socialsHTML = socialIcons(tn.socials, tn.color);
   var heroHTML = '<div class="amb-tp-hero" id="ambTpHero" style="background:linear-gradient(135deg,'+tn.color+','+shade(tn.color,-30)+')"'+
       (heroImages.length>1?' onmouseenter="ambTpHeroAutoStop()" onmouseleave="ambTpHeroAutoStart()"':'')+'>'+
     (heroImages.length ? '<div class="amb-tp-hero-track" id="ambTpHeroTrack">'+heroImages.map(function(src,gi){
@@ -3877,7 +4026,55 @@ window.ambOpenTenant = function(tid){
       '<div class="amb-tp-hero-dots" id="ambTpHeroDots">'+heroImages.map(function(_,gi){ return '<span class="amb-tp-hero-dot'+(gi===0?' on':'')+'" onclick="event.stopPropagation();ambTpHeroGo('+gi+')"></span>'; }).join('')+'</div>'
       : '')+
     '<div class="amb-tp-hero-shade"></div>'+
+    (socialsHTML ? '<div class="amb-tp-hero-socials">'+socialsHTML+'</div>' : '')+
+    (tn.tiktokLive ? '<div class="amb-tp-hero-live"><i class="fab fa-tiktok"></i> LIVE</div>' : '')+
   '</div>';
+  // sticky mini-header — hidden until the hero scrolls out of view (see the
+  // one-time scroll listener below), so the shop's identity stays pinned
+  // like a real app's top bar instead of disappearing once you scroll
+  var stickyHTML = '<div class="amb-tp-stickybar" id="ambTpStickybar">'+
+      '<div class="amb-tp-stickybar-av" style="background:linear-gradient(135deg,'+tn.color+','+shade(tn.color,-25)+')">'+esc(initials(tn.name))+'</div>'+
+      '<div style="min-width:0;flex:1">'+
+        '<div class="amb-tp-stickybar-name">'+esc(nameFor(tn))+'</div>'+
+        '<div class="amb-tp-stickybar-sub">'+esc(floorUnit(tn))+'</div>'+
+      '</div>'+
+      (callHref?'<a class="amb-tp-stickybar-call" href="'+esc(callHref)+'" onclick="event.stopPropagation()" title="'+(state.lang==='am'?'ይደውሉ':'Call')+'"><i class="fas fa-phone"></i></a>':'')+
+    '</div>';
+  // favorite (heart) + notify (bell) — quick personal actions beside the name
+  var isFav = state.favShops.indexOf(tn.id)>=0;
+  var iconBtnsHTML = '<div class="amb-tp-iconbtns">'+
+      '<button class="amb-tp-iconbtn fav'+(isFav?' on':'')+'" onclick="event.stopPropagation();ambToggleFavShop(\''+tn.id+'\')" title="'+(isFav?(state.lang==='am'?'ከተወዳጆች አስወግድ':'Saved — tap to remove'):(state.lang==='am'?'ወደ ተወዳጆች አክል':'Save to favorites'))+'"><i class="'+(isFav?'fas':'far')+' fa-heart"></i></button>'+
+      '<button class="amb-tp-iconbtn notify" onclick="event.stopPropagation();ambNotifyShop(\''+tn.id+'\')" title="'+(state.lang==='am'?'ስለ አዲስ ምርቶች አሳውቀኝ':'Notify me about new products')+'"><i class="fas fa-bell"></i></button>'+
+    '</div>';
+  // trust badges — Trending (from real visit data), Active now (seller used
+  // the portal recently), Open/Closed (once a shop has structured hours)
+  var badges = [];
+  if (A.trendingIds && A.trendingIds.indexOf(tn.id)>=0) badges.push('<span class="amb-tp-badge trending"><i class="fas fa-fire"></i> '+(state.lang==='am'?'ተወዳጅ':'Trending')+'</span>');
+  if (tn.lastSeenAt && (Date.now()-tn.lastSeenAt) < 15*60*1000) badges.push('<span class="amb-tp-badge active"><i class="fas fa-circle"></i> '+(state.lang==='am'?'አሁን ንቁ':'Active now')+'</span>');
+  var openInfo = ambComputeOpenStatus(tn);
+  if (openInfo) badges.push('<span class="amb-tp-badge '+(openInfo.open?'open':'closed')+'"><i class="fas fa-clock"></i> '+esc(openInfo.label)+'</span>');
+  var badgesHTML = badges.length ? '<div class="amb-tp-badges">'+badges.join('')+'</div>' : '';
+  // mobile-only compact strip, ABOVE the hero: Mobile + Floor as icon+value
+  // only (no "Mobile"/"Floor" text labels — they cost width phones don't have)
+  var metaBits = [];
+  if(tn.mobile) metaBits.push('<span class="amb-tp-meta-item"><i class="fas fa-phone"></i>'+esc(tn.mobile)+'</span>');
+  var fuVal = floorUnit(tn);
+  if(fuVal) metaBits.push('<span class="amb-tp-meta-item"><i class="fas fa-building"></i>'+esc(fuVal)+'</span>');
+  var metaHTML = metaBits.length ? '<div class="amb-tp-meta">'+metaBits.join('')+'</div>' : '';
+  // Instagram-style photo grid — the same shots as the hero, tap any to
+  // zoom; the "+N" overflow tile is ready for whenever the gallery cap
+  // (currently 5) is ever raised, so it isn't stuck at "just the carousel"
+  var photoGridHTML = '';
+  if (heroImages.length) {
+    var PGCAP=7, shownPhotos=heroImages.slice(0,PGCAP), extra=heroImages.length-PGCAP;
+    photoGridHTML = '<div class="amb-tp-psec">'+
+      '<div class="amb-tp-psec-head"><i class="fas fa-images"></i> '+(state.lang==='am'?'ፎቶዎች':'Photos')+' <span class="amb-tp-psec-ct">('+heroImages.length+')</span></div>'+
+      '<div class="amb-tp-photogrid">'+shownPhotos.map(function(src,gi){
+        var isLast = gi===PGCAP-1 && extra>0;
+        return '<div class="amb-tp-photogrid-cell" onclick="ambOpenShopGallery('+gi+')"><img src="'+esc(src)+'" alt="" loading="lazy">'+(isLast?'<div class="amb-tp-photogrid-more">+'+extra+'</div>':'')+'</div>';
+      }).join('')+'</div>'+
+    '</div>';
+  }
   // this shop's own products, embedded right in the window instead of just
   // a button that closes it — capped so the modal stays scannable, with a
   // link through to the full filtered shop page when there are more
@@ -3890,39 +4087,61 @@ window.ambOpenTenant = function(tid){
       (tenantProducts.length>PCAP ? '<button class="amb-tp-pmore" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-arrow-right"></i> '+(state.lang==='am'?'ሁሉንም ይመልከቱ':'View all '+tenantProducts.length+' products')+'</button>' : '')+
     '</div>') :
     ('<div class="amb-tp-pempty"><i class="fas fa-box-open"></i> '+(state.lang==='am'?'እስካሁን ምርቶች አልተጨመሩም':'No products listed yet')+'</div>');
+  // WhatsApp is intentionally not repeated here as a text row — the round
+  // WhatsApp icon in the actions bar below already covers it, so this list
+  // stays Owner / Mobile / Floor (+ Hours, once a shop has one) only. The
+  // 'mobile'/'floor' keys let CSS hide just those two rows on phones (info:
+  // relocated above the hero).
   var rows = [
-    ['fa-user', t('owner'), tn.owner, null],
-    ['fa-phone', t('mobile'), tn.mobile, callHref ? {href:callHref, cls:'call', label:(state.lang==='am'?'ይደውሉ':'Call'), icon:'fa-phone'} : null],
-    ['fa-building', t('floorLbl'), floorUnit(tn), null],
-    ['fab fa-whatsapp', 'WhatsApp', tn.whatsapp ? '+'+tn.whatsapp : '', waHref ? {href:waHref, cls:'wa', label:(state.lang==='am'?'መልእክት':'Chat'), icon:'fab fa-whatsapp', ext:true} : null]
+    ['fa-user', t('owner'), tn.owner, null, ''],
+    ['fa-phone', t('mobile'), tn.mobile, callHref ? {href:callHref, cls:'call', label:(state.lang==='am'?'ይደውሉ':'Call'), icon:'fa-phone'} : null, ' amb-tp-row-mobile'],
+    ['fa-building', t('floorLbl'), floorUnit(tn), null, ' amb-tp-row-floor'],
+    ['fa-clock', (state.lang==='am'?'ስራ ሰዓት':'Hours'), tn.hours, null, '']
   ].filter(function(r){ return !!r[2]; }).map(function(r){
     var fa=r[0].indexOf('fab')===0?r[0]:'fas '+r[0];
     var action = r[3];
     var actionHTML = action ? '<a class="amb-tp-row-act '+action.cls+'" href="'+esc(action.href)+'"'+(action.ext?' target="_blank" rel="noopener"':'')+' onclick="event.stopPropagation()"><i class="'+action.icon+'"></i> '+esc(action.label)+'</a>' : '';
-    return '<div class="amb-tp-row"><span class="amb-tp-row-l"><i class="'+fa+'"></i> '+esc(r[1])+'</span><span class="amb-tp-row-v">'+esc(r[2])+'</span>'+actionHTML+'</div>';
+    return '<div class="amb-tp-row'+r[4]+'"><span class="amb-tp-row-l"><i class="'+fa+'"></i> '+esc(r[1])+'</span><span class="amb-tp-row-v">'+esc(r[2])+'</span>'+actionHTML+'</div>';
   }).join('');
+  // "keep browsing" strip — other active shops in the same category
+  var relatedTenants = BUILDING.tenants.filter(function(x){ return x.id!==tn.id && x.cat===tn.cat && x.active!==false; }).slice(0,10);
+  var relatedHTML = relatedTenants.length ? (
+    '<div class="amb-tp-related">'+
+      '<div class="amb-tp-related-head"><i class="fas fa-compass"></i> '+(state.lang==='am'?'ተመሳሳይ ሱቆች':'Other shops nearby')+'</div>'+
+      '<div class="amb-tp-related-row">'+relatedTenants.map(function(o){
+        var od=shade(o.color,-40);
+        return '<div class="amb-tp-related-chip" onclick="ambOpenTenant(\''+o.id+'\')">'+
+          '<div class="amb-tp-related-chip-av" style="'+(o.photo?'background-image:url(\''+esc(o.photo)+'\')':'background:linear-gradient(135deg,'+o.color+','+od+')')+'">'+(o.photo?'':esc(initials(o.name)))+'</div>'+
+          '<div class="amb-tp-related-chip-name">'+esc(nameFor(o))+'</div>'+
+        '</div>';
+      }).join('')+'</div>'+
+    '</div>'
+  ) : '';
   $('ambProdModalBox').innerHTML =
     '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
     '<button class="amb-tp-fullscreen" id="ambTpFullscreenBtn" onclick="ambToggleShopFullscreen()" title="'+(state.lang==='am'?'ሙሉ ገጽ ይመልከቱ':'View as full screen')+'"><i class="fas fa-expand"></i></button>'+
     '<div class="amb-tp">'+
+      metaHTML+
       heroHTML+
+      stickyHTML+
       '<div class="amb-tp-head">'+
         '<div class="amb-tp-av" style="background:linear-gradient(135deg,'+tn.color+','+shade(tn.color,-25)+')">'+esc(initials(tn.name))+'</div>'+
-        '<div><div class="amb-tp-name">'+esc(nameFor(tn))+' <i class="fas fa-circle-check" style="color:var(--success);font-size:.7rem;cursor:pointer" onclick="ambShowVerifiedInfo()" title="What does Verified mean?"></i></div>'+
+        '<div style="min-width:0;flex:1"><div class="amb-tp-name">'+esc(nameFor(tn))+' <i class="fas fa-circle-check" style="color:var(--success);font-size:.7rem;cursor:pointer" onclick="ambShowVerifiedInfo()" title="What does Verified mean?"></i></div>'+
         '<div class="amb-tp-cat"><i class="fas '+tn.icon+'"></i> '+esc(tn.cat)+' · '+esc(floorUnit(tn))+'</div></div>'+
+        iconBtnsHTML+
       '</div>'+
       '<div class="amb-tp-body">'+
+        badgesHTML+
         '<p class="amb-tp-blurb">'+esc(tn.blurb)+'</p>'+
+        photoGridHTML+
         productsHTML+
         (tn.responseTime?'<div class="amb-tp-responds"><i class="fas fa-bolt"></i> '+t('responds')+': '+esc(tn.responseTime)+'</div>':'')+
-        '<div class="amb-tp-ratebox" id="ambTpRateBox"><i class="fas fa-spinner fa-spin"></i></div>'+
         '<div class="amb-tp-rows">'+rows+'</div>'+
-        (tn.reviewLink?'<a class="amb-tp-reviews" href="'+esc(tn.reviewLink)+'" target="_blank" rel="noopener"><i class="fas fa-star"></i> '+t('seeReviews')+' ('+tn.reviews+') <i class="fas fa-arrow-up-right-from-square" style="font-size:.6rem"></i></a>':'')+
-        '<div class="amb-tp-socials">'+socialIcons(tn.socials,tn.color)+'</div>'+
         '<div class="amb-tp-acts">'+
           '<button class="amb-tp-shop" onclick="ambCloseAll();ambCloseFloorPanel();ambFilter(\''+tn.id+'\');ambScrollTo(\'ambShop\')"><i class="fas fa-bag-shopping"></i> '+(state.lang==='am'?'ምርቶችን ይግዙ':'Shop Products')+'</button>'+
           (tn.whatsapp?'<a class="amb-tp-wa" href="https://wa.me/'+tn.whatsapp+'" target="_blank" rel="noopener" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>':'')+
           '<button class="amb-tp-wa" style="background:var(--accent)" onclick="ambShareTenant(\''+tn.id+'\')" title="'+esc(t('share'))+'"><i class="fas fa-share-nodes"></i></button>'+
+          '<button class="amb-tp-wa" style="background:var(--ink)" onclick="ambInstallApp()" title="'+(state.lang==='am'?'መተግበሪያ ጫን':'Install app')+'"><i class="fas fa-arrow-down-to-bracket"></i></button>'+
         '</div>'+
         /* save-contact + appointment: a vCard downloads straight into the phone's
            address book; booking opens WhatsApp pre-filled so the shop gets a
@@ -3935,9 +4154,17 @@ window.ambOpenTenant = function(tid){
           ((tn.appointments && tn.whatsapp)?'<button class="amb-tp-book" onclick="ambBookAppointment(\''+tn.id+'\')"><i class="fas fa-calendar-check"></i> '+
             (state.lang==='am'?'ቀጠሮ ይያዙ':'Book Appointment')+'</button>':'')+
         '</div>'+
+        /* ratings + reviews sit near the end — visitors decide from the
+           photos, products and contact info first, and check reviews on
+           the way out; "other shops nearby" is the very last thing, an
+           invitation to keep browsing rather than close the window */
+        '<div class="amb-tp-ratebox" id="ambTpRateBox"><i class="fas fa-spinner fa-spin"></i></div>'+
+        (tn.reviewLink?'<a class="amb-tp-reviews" href="'+esc(tn.reviewLink)+'" target="_blank" rel="noopener"><i class="fas fa-star"></i> '+t('seeReviews')+' ('+tn.reviews+') <i class="fas fa-arrow-up-right-from-square" style="font-size:.6rem"></i></a>':'')+
+        relatedHTML+
       '</div>'+
     '</div>';
   $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+  $('ambProdModalBox').scrollTop = 0;  // fresh view every time — matters when opened from the "nearby shops" strip while already scrolled down
   ambSetDeepLink('tenant', tn.id);
   // ambTrack lives in a later script block (exposed on the shared A namespace,
   // not as a bare global) — calling it directly here threw a ReferenceError
@@ -3948,6 +4175,42 @@ window.ambOpenTenant = function(tid){
   ambTpHeroRender();
   ambTpHeroAutoStart();
   ambUpdateFullscreenIcon();
+};
+
+/* ── FAVORITE SHOPS — saved locally on this device, mirrors the product wishlist ── */
+window.ambToggleFavShop = function(tid){
+  var i = state.favShops.indexOf(tid);
+  if(i>=0) state.favShops.splice(i,1); else state.favShops.push(tid);
+  save('amb-fav-shops', state.favShops);
+  var btn = document.querySelector('.amb-tp-iconbtn.fav');
+  if(btn){ btn.classList.toggle('on', i<0); var ic=btn.querySelector('i'); if(ic) ic.className = (i<0?'fas':'far')+' fa-heart'; }
+  var tn = tenant(tid);
+  window.ambToast(i>=0 ? (state.lang==='am'?'ከተወዳጆች ተወግዷል':'Removed from saved shops') : ((tn?nameFor(tn):'Shop')+(state.lang==='am'?' ተቀምጧል ♥':' saved ♥')), i>=0?'':'suc');
+};
+
+/* ── NOTIFY ME ABOUT NEW PRODUCTS FROM THIS SHOP — same backend table as the
+   product-level "back in stock" notify, just tagged by shop instead of item ── */
+window.ambNotifyShop = function(tid){
+  var tn = tenant(tid); if(!tn) return;
+  var prefill = (state.user&&state.user.phone) || (state.coData&&state.coData.phone) || '';
+  $('ambProdModalBox').innerHTML =
+    '<button class="amb-modal-x" onclick="ambCloseAll()"><i class="fas fa-times"></i></button>'+
+    '<div class="amb-notify-modal">'+
+      '<div class="amb-notify-ic"><i class="fas fa-bell"></i></div>'+
+      '<div class="amb-notify-t">'+(state.lang==='am'?'ስለ አዲስ ምርቶች አሳውቀኝ':'Notify me about new drops')+'</div>'+
+      '<div class="amb-notify-p">'+esc(nameFor(tn))+'</div>'+
+      '<div class="amb-notify-d">'+(state.lang==='am'?'ይህ ሱቅ አዲስ ምርት ሲጨምር ወይም ሲሞላ በስልክዎ እናሳውቅዎታለን።':"We'll text you when this shop adds new products or restocks.")+'</div>'+
+      '<input class="amb-inp" id="ambShopNotifyPhone" type="tel" placeholder="'+t('yourPhone')+'" value="'+esc(prefill)+'" style="margin-bottom:12px">'+
+      '<button class="amb-notify-btn" onclick="ambNotifyShopSubmit(\''+tid+'\')"><i class="fas fa-bell"></i> '+(state.lang==='am'?'አሳውቀኝ':'Notify Me')+'</button>'+
+    '</div>';
+  $('ambProdModal').classList.add('on'); $('ambOverlay').classList.add('on'); document.body.style.overflow='hidden';
+};
+window.ambNotifyShopSubmit = function(tid){
+  var inp=$('ambShopNotifyPhone'); var ph=inp?inp.value.trim():'';
+  if(!ph){ window.ambToast(state.lang==='am'?'እባክዎ ስልክ ያስገቡ':'Please enter your phone','err'); return; }
+  A.api('/api/notify', { method:'POST', body:{ tenantId: tid, phone: ph } }).catch(function(){});
+  ambCloseAll();
+  window.ambToast(state.lang==='am'?'ተመዝግበዋል!':"You're on the list — we'll text you",'suc');
 };
 
 /* ── real tenant ratings: signed-in users only, one rating each, updatable ── */
@@ -6379,6 +6642,12 @@ function boot(){
     A.render.onSale(); A.render.filterChips(); A.render.filterBar(); A.render.products(); A.render.heroVisual(); A.render.i18n();
     if (A.renderRail){ try{ A.renderRail(); A.renderRailDrawer(); }catch(e){ console.error('rail render failed, rest of page unaffected:', e); } }
     if (window.ambOpenFromHash) window.ambOpenFromHash();
+  }).catch(function(){});
+  A.api('/api/trending').then(function(d){
+    A.trendingIds = (d && d.ids) || [];
+    // re-render whatever's already on screen so a badge can appear without
+    // the visitor needing to refresh; harmless no-op if nothing changed
+    A.render.tenants();
   }).catch(function(){});
   A.api('/api/auth/me').then(function(d){
     if(d.user){ A.state.user = d.user; A.save('amb-user', d.user); }
