@@ -115,6 +115,7 @@ if (process.env.DATABASE_URL) {
     ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_ref TEXT;
     CREATE TABLE IF NOT EXISTS notify_requests (
       id SERIAL PRIMARY KEY, product_id TEXT, phone TEXT, created_at TIMESTAMPTZ DEFAULT now());
+    ALTER TABLE notify_requests ADD COLUMN IF NOT EXISTS tenant_id TEXT;
     CREATE TABLE IF NOT EXISTS catalog_doc (
       id INT PRIMARY KEY, data JSONB, updated_at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE IF NOT EXISTS seller_codes (
@@ -125,32 +126,14 @@ if (process.env.DATABASE_URL) {
       hours TEXT, location TEXT, employment_type TEXT, description TEXT,
       contact_phone TEXT, contact_whatsapp TEXT, deadline TEXT,
       active BOOLEAN DEFAULT true, created_at TIMESTAMPTZ DEFAULT now());
-
-    CREATE TABLE IF NOT EXISTS leases (
-      unit TEXT PRIMARY KEY, tenant_id TEXT, start_date TEXT, end_date TEXT,
-      cycle_months INT DEFAULT 1, first_period_months INT DEFAULT 1, first_done BOOLEAN DEFAULT false,
-      next_due TEXT, deposit INT DEFAULT 0, rent INT DEFAULT 0,
-      created_at TIMESTAMPTZ DEFAULT now());
-    CREATE TABLE IF NOT EXISTS bms_invoices (
-      id TEXT PRIMARY KEY, unit TEXT, period_start TEXT, period_end TEXT, period_months INT,
-      due_date TEXT, amount INT, status TEXT DEFAULT 'due', paid_at TEXT, method TEXT, ref TEXT,
-      paid_amount INT DEFAULT 0, receipt_no TEXT, kind TEXT DEFAULT 'rent',
-      penalty_paid INT DEFAULT 0, created_at TIMESTAMPTZ DEFAULT now());
-    CREATE TABLE IF NOT EXISTS bms_finance (
-      id TEXT PRIMARY KEY, type TEXT, date TEXT, category TEXT, amount INT, note TEXT, unit TEXT,
-      created_at TIMESTAMPTZ DEFAULT now());
-    CREATE TABLE IF NOT EXISTS bms_tickets (
-      id TEXT PRIMARY KEY, title TEXT, loc TEXT, cat TEXT, pri TEXT, asg TEXT, status TEXT DEFAULT 'open',
-      created TEXT, done_at TEXT);
-
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS paid_amount INT DEFAULT 0;
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS receipt_no TEXT;
     ALTER TABLE bms_invoices ADD COLUMN IF NOT EXISTS kind TEXT DEFAULT 'rent';
     ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS photo TEXT;
     ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS cost INT DEFAULT 0;
     ALTER TABLE bms_tickets ADD COLUMN IF NOT EXISTS note TEXT;
-    ALTER TABLE leases ADD COLUMN IF NOT EXISTS deposit_held INT DEFAULT 0;
-    ALTER TABLE leases ADD COLUMN IF NOT EXISTS deposit_note TEXT;
+    ALTER TABLE bms_leases ADD COLUMN IF NOT EXISTS deposit_held INT DEFAULT 0;
+    ALTER TABLE bms_leases ADD COLUMN IF NOT EXISTS deposit_note TEXT;
     CREATE TABLE IF NOT EXISTS bms_payments (
       id SERIAL PRIMARY KEY, invoice_id TEXT, unit TEXT, amount INT, penalty INT DEFAULT 0,
       method TEXT, ref TEXT, receipt_no TEXT, paid_at TEXT, taken_by TEXT, note TEXT,
@@ -176,7 +159,22 @@ if (process.env.DATABASE_URL) {
       UNIQUE(tenant_id, user_id));
 
     -- ═══ Ambassador BMS (building management) ═══
-
+    CREATE TABLE IF NOT EXISTS leases (
+      unit TEXT PRIMARY KEY, tenant_id TEXT, start_date TEXT, end_date TEXT,
+      cycle_months INT DEFAULT 1, first_period_months INT DEFAULT 1, first_done BOOLEAN DEFAULT false,
+      next_due TEXT, deposit INT DEFAULT 0, rent INT DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS bms_invoices (
+      id TEXT PRIMARY KEY, unit TEXT, period_start TEXT, period_end TEXT, period_months INT,
+      due_date TEXT, amount INT, status TEXT DEFAULT 'due', paid_at TEXT, method TEXT, ref TEXT,
+      paid_amount INT DEFAULT 0, receipt_no TEXT, kind TEXT DEFAULT 'rent',
+      penalty_paid INT DEFAULT 0, created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS bms_finance (
+      id TEXT PRIMARY KEY, type TEXT, date TEXT, category TEXT, amount INT, note TEXT, unit TEXT,
+      created_at TIMESTAMPTZ DEFAULT now());
+    CREATE TABLE IF NOT EXISTS bms_tickets (
+      id TEXT PRIMARY KEY, title TEXT, loc TEXT, cat TEXT, pri TEXT, asg TEXT, status TEXT DEFAULT 'open',
+      created TEXT, done_at TEXT);
     CREATE TABLE IF NOT EXISTS bms_announcements (
       id TEXT PRIMARY KEY, title TEXT, aud TEXT, body TEXT, at TEXT);
     CREATE TABLE IF NOT EXISTS bms_config (
@@ -220,7 +218,7 @@ if (process.env.DATABASE_URL) {
         `SELECT * FROM orders WHERE created_at >= $1 AND created_at < $2 ORDER BY created_at ASC LIMIT 20000`,
         [fromISO, toISO])).rows;
     },
-    async insertNotify(n){ await pool.query(`INSERT INTO notify_requests (product_id,phone) VALUES ($1,$2)`,[n.productId,n.phone]); },
+    async insertNotify(n){ await pool.query(`INSERT INTO notify_requests (product_id,tenant_id,phone) VALUES ($1,$2,$3)`,[n.productId||null,n.tenantId||null,n.phone]); },
     async allNotify(){ return (await pool.query(`SELECT * FROM notify_requests ORDER BY id DESC LIMIT 500`)).rows; },
     async setSellerCode(tid, phone, hash){
       await pool.query(`INSERT INTO seller_codes (tenant_id,phone,code_hash) VALUES ($1,$2,$3)
@@ -434,7 +432,7 @@ if (process.env.DATABASE_URL) {
         return ts >= f && ts < t;
       }).sort((a, b) => new Date(a.created_at||a.date) - new Date(b.created_at||b.date));
     },
-    async insertNotify(n){ mem.notify.unshift({ id: mem.seq++, product_id:n.productId, phone:n.phone, created_at:new Date().toISOString() }); flush(); },
+    async insertNotify(n){ mem.notify.unshift({ id: mem.seq++, product_id:n.productId||null, tenant_id:n.tenantId||null, phone:n.phone, created_at:new Date().toISOString() }); flush(); },
     async allNotify(){ return mem.notify.slice(0, 500); },
     async setSellerCode(tid, phone, hash){ mem.sellerCodes[tid] = { tenant_id: tid, phone, code_hash: hash }; flush(); },
     async findSellerByPhone(phone){ return Object.values(mem.sellerCodes).find(s => s.phone === phone) || null; },
@@ -1140,10 +1138,14 @@ app.post('/api/orders/:ref/pay/ussd', async (req, res) => {
 /* ── notify-me ── */
 app.post('/api/notify', async (req, res) => {
   const pid = (req.body && req.body.productId) || '';
+  const tid = (req.body && req.body.tenantId) || '';
   const phone = ('' + ((req.body && req.body.phone) || '')).trim().slice(0, 25);
-  if (!PRODUCTS[pid] || !phone) return res.status(400).json({ error: 'Invalid request' });
-  await db.insertNotify({ productId: pid, phone });
-  res.json({ ok: true });
+  if (!phone) return res.status(400).json({ error: 'Invalid request' });
+  // either a specific product (back-in-stock) or a whole shop (new drops) —
+  // never both, and the target must actually exist
+  if (pid && PRODUCTS[pid]) { await db.insertNotify({ productId: pid, phone }); return res.json({ ok: true }); }
+  if (tid && TENANTS[tid]) { await db.insertNotify({ tenantId: tid, phone }); return res.json({ ok: true }); }
+  res.status(400).json({ error: 'Invalid request' });
 });
 
 /* ════════ SELLER PORTAL (phone + access code) ════════ */
@@ -1254,11 +1256,16 @@ async function bmsAudit(req, action, summary){
 function requireSeller(req, res, next){
   const s = getSeller(req);
   if (!s || s.role !== 'seller' || !TENANTS[s.tid]) return res.status(401).json({ error: 'Please sign in' });
-  req.sellerTid = s.tid; next();
+  req.sellerTid = s.tid;
+  // lightweight "active now" signal for the storefront — in-memory only (not
+  // persisted to disk on every request), stamped on the shared TENANTS[id]
+  // object so it rides along in publicCatalog()'s next JSON clone for free.
+  TENANTS[s.tid].lastSeenAt = Date.now();
+  next();
 }
 app.get('/api/seller/me', requireSeller, (req, res) => {
   const t = TENANTS[req.sellerTid];
-  res.json({ tenant: { id: t.id, name: t.name, floor: t.floor, cat: t.cat } });
+  res.json({ tenant: { id: t.id, name: t.name, floor: t.floor, cat: t.cat, tiktokLive: !!t.tiktokLive } });
 });
 app.get('/api/seller/orders', requireSeller, async (req, res) => {
   res.json({ orders: await db.ordersByTenant(req.sellerTid), statuses: STATUS_FLOW });
@@ -1376,6 +1383,10 @@ app.post('/api/seller/profile', requireSeller, async (req, res) => {
   const SOCIAL_KEYS = ['instagram','facebook','tiktok','telegram','youtube','website'];
   const blurb = req.body && typeof req.body.blurb === 'string' ? req.body.blurb.slice(0, 240) : undefined;
   const appointments = typeof (req.body && req.body.appointments) === 'boolean' ? req.body.appointments : undefined;
+  // "I'm live on TikTok right now" — a seller-controlled flag that blinks a
+  // badge on the shop's card and profile; sellers flip this on/off themselves
+  // around their livestream, distinct from the tiktok profile link in socials.
+  const tiktokLive = typeof (req.body && req.body.tiktokLive) === 'boolean' ? req.body.tiktokLive : undefined;
   const logo = req.body && typeof req.body.logo === 'string' ? req.body.logo.slice(0, 400000) : undefined;
   // only accept a real #rrggbb value — never trust a colour string straight into CSS
   const colorIn = req.body && typeof req.body.color === 'string' ? req.body.color.trim() : undefined;
@@ -1403,6 +1414,7 @@ app.post('/api/seller/profile', requireSeller, async (req, res) => {
     if (blurb !== undefined) t.blurb = blurb;
     if (socials !== undefined) t.socials = socials;
     if (appointments !== undefined) t.appointments = appointments;
+    if (tiktokLive !== undefined) t.tiktokLive = tiktokLive;
     if (logo !== undefined) t.logo = logo;
     if (color !== undefined) t.color = color;
     if (gallery !== undefined) t.gallery = gallery;
@@ -2474,6 +2486,17 @@ app.post('/api/tenant/:id/event', async (req, res) => {
   if (['visit', 'share'].indexOf(kind) < 0) return res.status(400).json({ error: 'Unknown event' });
   try { await db.logShopEvent(t.id, kind); } catch (e) { /* analytics must never break browsing */ }
   res.json({ ok: true });
+});
+/* public: which shops are trending this week — just the ids, ranked by
+   7-day visit volume, so the storefront can badge them without exposing
+   the raw visit counts that /api/admin/shop-stats gives management */
+app.get('/api/trending', async (req, res) => {
+  try {
+    const rows = (await db.shopStats(7)).filter(r => r.kind === 'visit' && r.window > 0);
+    const ranked = rows.sort((a, b) => b.window - a.window)
+      .map(r => r.tenant_id).filter(id => TENANTS[id] && TENANTS[id].active !== false);
+    res.json({ ids: ranked.slice(0, 8) });
+  } catch (e) { res.json({ ids: [] }); }
 });
 /* admin: every shop, ranked */
 app.get('/api/admin/shop-stats', requireAdmin, async (req, res) => {
